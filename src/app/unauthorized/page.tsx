@@ -36,6 +36,7 @@ const UnAuthorized = () => {
             <h1 className="mt-6 text-2xl font-bold tracking-tight text-blue-900 sm:text-4xl">Uh oh!</h1>
 
             <p className="mt-4 text-gray-500">You are not authorized to view that page!</p>
+            <p className=" text-gray-500 font-black">TIP! Try signing into DailySAT.</p>
             <p className="mt-2 text-xs">If you believe this is a mistake, please contact DailySAT support!</p>
         </div>
     </div>  

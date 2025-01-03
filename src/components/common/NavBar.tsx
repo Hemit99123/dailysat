@@ -1,18 +1,29 @@
-"use client"; // Indicates this is a client-side component
-import useUserStore, { useCoinStore, useLoggedInStore } from "@/store/user";
+"use client"; 
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import CookieConsent from "react-cookie-consent";
-import Spinner from "./Spinner";
-import axios, { AxiosResponse } from "axios";
-import { User } from "@/types/user";
 import { menuItems } from "@/data/menuItem";
+import { handleSignIn, handleSignOut } from "./server-actions";
+import { determineAuthStatus } from "@/lib/authStatus";
 
 const NavBar = () => {
-  const router = useRouter(); // Hook to navigate programmatically
+  const router = useRouter(); 
+  const [status, setStatus] = useState<boolean | null>(null)
+
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to track if the mobile menu is open
-  const [renderUI, setRenderUI] = useState(false); // State for UI rendering
+
+  useEffect(() => {
+    const handleStatus = async () => {
+      const status = await determineAuthStatus()
+      setStatus(status)
+    }
+
+    handleStatus()
+
+  }, [])
 
   // Toggles the mobile menu open/close state
   const toggleMenu = () => {
@@ -23,44 +34,8 @@ const NavBar = () => {
     router.push(link);
   };
 
-  useEffect(() => {
-    const loadCookieData = async () => {
-      setRenderUI(false);
 
-      // Load in cookie data
-      const localUser = JSON.parse(localStorage.getItem("USER") || "{}");
-      const loggedIn = JSON.parse(localStorage.getItem("loggedin") || "false");
-      useLoggedInStore.getState().setLoggedIn(loggedIn);
-
-      if (loggedIn == true) {
-        // Make sure that our data is updated with the database (there is a possibility that the user logged in from another device and changed the data)
-        const response: AxiosResponse<{ code: number, user: User }> = await axios.get("/api/user-data?email=" + localUser.email);
-
-        if (response.data.code == 200) {
-          // Update our localUserData so it's the same as the database's
-          useUserStore.getState().setUser(response.data.user);
-          useCoinStore.getState().setCoins(response.data.user.currency);
-          localStorage.setItem("USER", JSON.stringify(response.data.user));
-        }
-        else {
-          // Just set it as the local userData
-          useUserStore.getState().setUser(localUser);
-        }
-      }
-      else {
-        // Set it to the defaults
-        useUserStore.getState().setUser(localUser);
-        useCoinStore.getState().setCoins(0);
-      }
-
-      // Request takes time, and updating stores in useEffect isn't best practices, plus the loading in effect at the beginning looks cool.
-      setTimeout(() => setRenderUI(true), 30);
-    };
-
-    loadCookieData();
-  }, []);
-
-  return renderUI ? (
+  return (
     <nav className="bg-white w-full border-b border-gray-200">
       {/* Container for the main navigation bar */}
       <div className="max-w-screen-xl mx-auto flex justify-between items-center p-4">
@@ -97,24 +72,27 @@ const NavBar = () => {
           ))}
         </div>
 
-        {/* Signup Button for Desktop View */}
+        {status ? (
         <div className="hidden md:block">
-          {/* If we're logged in, display the user's information */}
-          {useLoggedInStore.getState().loggedIn ? (
-            <div className="cursor-pointer flex items-center" onClick={() => handleGoToNewPage("/")}>
-              <img src="/icons/coin.png" className="w-10 h-10" />
-              <p className="mr-5 ml-1 font-semibold">{useCoinStore.getState().coins}</p>
-              <img src={useUserStore.getState().user.picture} className="w-12 h-12 rounded-lg" />
-            </div>
-          ) : (
             <button
-              onClick={() => handleGoToNewPage("/signup")}
+              onClick={() => handleSignOut()}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
-              Signup
+              Sign out
             </button>
-          )}
         </div>
+        ) : (
+          <div className="hidden md:block">
+            <button
+              onClick={() => handleSignIn()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              Sign in
+            </button>
+          </div>
+        )}
+
+
       </div>
 
       {/* Mobile Menu Items with transition effect */}
@@ -169,9 +147,7 @@ const NavBar = () => {
         <span style={{ fontSize: "10px" }}>We use these to make the website more enjoyable!</span>
       </CookieConsent>
     </nav>
-  ) : (
-    <Spinner />
-  );
+  )
 };
 
 export default NavBar;

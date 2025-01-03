@@ -4,9 +4,9 @@ import Image from 'next/image';
 
 interface CoinDisplayProps {
     header: string;
-    number: number;
+    number: number | undefined;
     status: trend;
-    percentage: number;
+    percentage: number | undefined;
     type: string;
     icon: string;
     color: string;

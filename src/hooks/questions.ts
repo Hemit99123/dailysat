@@ -1,7 +1,6 @@
 import { useStreakAnnouncerModalStore } from "@/store/modals";
 import { useAnswerCorrectStore, useAnswerStore, useQuestionStore, useTopicStore } from "@/store/questions";
 import { useScoreStore, useAnswerCounterStore } from "@/store/score";
-import useUserStore from "@/store/user";
 import { Answers } from "@/types/answer";
 import { Topic } from "@/types/topic";
 import axios from "axios";
@@ -56,7 +55,6 @@ const useQuestionHandler = () => {
     // Send request to backend
     if (useQuestionStore.getState().randomQuestion !== null) {
       await axios.post("/api/add-points", {
-        email: useUserStore.getState().user.email || "",
         question: useQuestionStore.getState().randomQuestion ,
         state: isCorrect == true ? 1 : 0,
         userAnswer: answerCorrectRef[answer || "A"]

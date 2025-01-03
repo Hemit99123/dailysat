@@ -8,11 +8,13 @@ import Quotes from "@/types/quotes";
 import Spinner from "@/components/common/Spinner";
 import MathSVG from "@/components/common/icons/MathSVG";
 import BookSVG from "@/components/common/icons/BookSVG";
-import useUserStore, { useCoinStore } from "@/store/user";
 import { DBQuestionRecord } from "@/types/questions";
 import ExtraModal from "@/components/features/Dashboard/ExtraModal";
+import { User } from "@/types/user";
 
 const Home = () => {
+  const [user, setUser] = useState<User>()
+  const [loading, setLoading] = useState(true)
   const [greeting, setGreeting] = useState("");
   const [quote, setQuote] = useState<Quotes | null>(null);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
@@ -42,7 +44,18 @@ const Home = () => {
       }
     };
 
+    const handleGetUser = async () => {
+
+      // It is post instead of get because it can create new resources on the server (if user is not found)
+      
+      const response = await axios.post("/api/auth/get-user")
+
+      setUser(response.data.user)
+
+    }
+
     handleFetchQuote();
+    handleGetUser();
   }, []);
 
   // Determine the greeting based on the time of day
@@ -58,11 +71,17 @@ const Home = () => {
       }
     };
     setGreeting(getGreeting());
+    setLoading(false)
+
   }, []);
+
+
 
   // Copy Referral ID
   const handleCopy = async () => {
-    const referralCode = useUserStore.getState().user._id;
+    // referall code is just the object id of the mongodb doc
+
+    const referralCode = user?._id;
     await navigator.clipboard.writeText(referralCode || "");
   };
 
@@ -86,12 +105,16 @@ const Home = () => {
     return [correct_count, wrong_count]
   }
 
+  if (loading) {
+    return <Spinner />
+  }
+
   return (
     <div>
       {/* Greeting Section */}
       <div className="mt-8 text-center">
         <h1 className="text-4xl font-bold text-gray-800">
-          {greeting ? `${greeting}, ${useUserStore.getState().user.given_name}` : "Loading greeting..."}
+          {greeting ? `${greeting}, ${user?.name || "unknown"}` : "Loading greeting..."}
         </h1>
         <p className="text-gray-600 font-light">
           Choose what to study and start practicing...
@@ -138,15 +161,15 @@ const Home = () => {
         <div className="shadow-lg rounded-lg w-full bg-white p-4 flex lg:items-center flex-col lg:flex-row lg:justify-between">
           <div className="flex items-center mb-3">
             <img
-              src={useUserStore.getState().user.picture || ""}
+              src={user?.image || ""}
               alt="userpfpic"
               width={120}
               height={120}
               className="rounded-2xl"
             />
             <div className="ml-6">
-              <p className="text-3xl font-bold text-blue-600">{useUserStore.getState().user.name}</p>
-              <p>Email: {useUserStore.getState().user.email}</p>
+              <p className="text-3xl font-bold text-blue-600">{user?.name}</p>
+              <p>Email: {user?.email}</p>
             </div>
           </div>
 
@@ -161,16 +184,16 @@ const Home = () => {
                   aria-label="Copy Referral Code"
                 />
               </button>
-              {useUserStore.getState().user._id}</p>
+              {user?._id}</p>
           </div>
         </div>
       </div>
 
       {/* Second row */}
       <div className="lg:flex lg:space-x-2 mt-1.5 p-3.5">
-        <StatDisplay type="coins" color="black" icon="coin" header="DailySAT Coins:" number={useCoinStore.getState().coins} status="upward" percentage={useCoinStore.getState().coins * 100} />
-        <StatDisplay type="questions" color="green" icon="checked" header="Questions Correct:" number={filterQuestions(useUserStore.getState().user.questionsAnswered || [])[0]} status="upward" percentage={filterQuestions(useUserStore.getState().user.questionsAnswered || [])[0] * 100} />
-        <StatDisplay type="questions" color="#ff5454" icon="cross" header="Questions Wrong:" number={filterQuestions(useUserStore.getState().user.questionsAnswered || [])[1]} status="upward" percentage={filterQuestions(useUserStore.getState().user.questionsAnswered || [])[1] * 100} />
+        <StatDisplay type="coins" color="black" icon="coin" header="DailySAT Coins:" number={user?.currency} status="upward" percentage={user?.currency || 0 * 100} />
+        <StatDisplay type="questions" color="green" icon="checked" header="Questions Correct:" number={filterQuestions(user?.questionsAnswered || [])[0]} status="upward" percentage={filterQuestions(user?.questionsAnswered || [])[0] * 100} />
+        <StatDisplay type="questions" color="#ff5454" icon="cross" header="Questions Wrong:" number={filterQuestions(user?.questionsAnswered || [])[1]} status="upward" percentage={filterQuestions(user?.questionsAnswered || [])[1] * 100} />
       </div>
 
       {/* Third row of boxes area */}
@@ -231,7 +254,15 @@ const Home = () => {
           )}
         </div>
 
-        <ExtraModal art="/icons/high-five.png" buttonText="Redeem Points" color="blue" desc="Both you and your friend can redeem 3000 coins." url="/misc-login?t=Referee bonus" header="Referred by a friend?" type="URL" />
+        <ExtraModal 
+          art="/icons/high-five.png" 
+          buttonText="Redeem Points" 
+          color="blue" 
+          desc="Both you and your friend can redeem 3000 coins." 
+          url="/redeem?t=Referee bonus" 
+          header="Referred by a friend?" 
+          type="URL" 
+        />
 
       </div>
     </div>

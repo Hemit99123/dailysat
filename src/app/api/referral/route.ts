@@ -1,9 +1,9 @@
 import { client } from "../../../lib/mongo";
 import { Db, Document, WithId, ObjectId } from "mongodb";
 import { REFERRAL_BONUS_REFERRED_PERSON, REFERRAL_BONUS_REFERREE } from "@/lib/CONSTANTS";
+import { auth } from "@/auth";
 
 interface ReferralUpdate {
-    email_referred : string,
     id_referee : string
 }
 
@@ -38,6 +38,8 @@ interface ReferralUpdate {
 export async function POST(request: Request) {
     try{
         const data : ReferralUpdate = await request.json();
+        const session = await auth()
+        const email = session?.user?.email
 
         try{
             await client.connect();
@@ -55,7 +57,7 @@ export async function POST(request: Request) {
                 })
             }
             else{
-                await db.collection("users").findOneAndUpdate({email : data.email_referred}, {$inc : {currency : REFERRAL_BONUS_REFERRED_PERSON}});
+                await db.collection("users").findOneAndUpdate({email}, {$inc : {currency : REFERRAL_BONUS_REFERRED_PERSON}});
                 await db.collection("users").findOneAndUpdate({_id : new ObjectId(data.id_referee)}, {$inc : {currency : REFERRAL_BONUS_REFERREE}});
                 
                 return Response.json({

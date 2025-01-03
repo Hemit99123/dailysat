@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { QUESTION_IS_CORRECT_POINTS } from "@/lib/CONSTANTS";
 import { client } from "@/lib/mongo";
 import { Collection, Db, Document } from "mongodb";
@@ -37,8 +38,12 @@ import { Collection, Db, Document } from "mongodb";
  */
 
 export async function POST(request: Request) {
-  const {email, question, state, userAnswer} = await request.json();
+  const { question, state, userAnswer} = await request.json();
 
+  const session = await auth()
+
+  const email = session?.user?.email
+  
   // Check if the id query parameter is provided
   if (email === "" || question === null || state === "" || userAnswer === "") {
     return Response.json({
