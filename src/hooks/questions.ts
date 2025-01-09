@@ -5,6 +5,7 @@ import { useScoreStore, useAnswerCounterStore } from "@/store/score";
 import { Answers } from "@/types/answer";
 import { Topic } from "@/types/topic";
 import axios from "axios";
+import { useAnswerAttemptsStore } from "@/store/questions"
 
 // Custom hook to encapsulate logic because it is used in both math and reading/writing components
 const useQuestionHandler = () => {
@@ -17,6 +18,10 @@ const useQuestionHandler = () => {
   const setIsAnswerCorrect = useAnswerCorrectStore((state) => state.setIsAnswerCorrect);
   const correctCount = useAnswerCounterStore((state) => state.count);
   const openAnnouncerModal = useStreakAnnouncerModalStore((state) => state.openModal);
+
+  const resetAttempts = useAnswerAttemptsStore((state) => state.resetAttempts) 
+  const incrementAttempts = useAnswerAttemptsStore((state) => state.incrementAttempts)
+  const attempts = useAnswerAttemptsStore((state) => state.attempts)
 
   const fetchRandomQuestion = async (type: "Math" | "Reading", topic: Topic): Promise<void> => {
     try {
@@ -47,15 +52,18 @@ const useQuestionHandler = () => {
     if (isCorrect) {
       increaseCorrectCounter();
       increaseScore();
+      resetAttempts();
     } else {
       resetCorrectCounter();
+      incrementAttempts();
     }
 
     setIsAnswerCorrect(isCorrect);
 
     // making a new token from a server-side action (function that runs on the SEVER!!)
     const token = await generateJWT({
-      state: isCorrect == true ? 1 : 0
+      state: isCorrect == true ? 1 : 0,
+      attempts
     })
 
     // Send request to backend

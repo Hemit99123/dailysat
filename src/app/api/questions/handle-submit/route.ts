@@ -28,10 +28,10 @@ export async function POST(request: Request) {
     const decodedToken = verifyJWT(jwtToken);
 
     // Ensure the payload contains the required fields
-    const { state, userAnswer } = decodedToken;
+    const { state, attempts } = decodedToken;
 
     // Check if the required parameters are valid
-    if (state === null || userAnswer === '') {
+    if (state === null || attempts == null) {
       return Response.json({
         code: 400,
         error: 'a parameter was not specified',
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       { email },
       {
         $inc: {
-          currency: state === 1 ? QUESTION_IS_CORRECT_POINTS : 0,
+          currency: state === 1 ? QUESTION_IS_CORRECT_POINTS && attempts == 0 : 0,
           correctAnswered: state === 1 ? 1 : 0,
           wrongAnswered: state !== 1 ? 1 : 0,
         },
