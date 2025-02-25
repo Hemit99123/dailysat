@@ -1,6 +1,6 @@
 "use client"
 
-import { handleSignIn } from "@/components/common/server-actions/auth";
+import { handleSignIn } from "@/lib/server-actions/auth";
 import { FcGoogle } from "react-icons/fc";
 
 const GoogleSignInPage: React.FC = () => {

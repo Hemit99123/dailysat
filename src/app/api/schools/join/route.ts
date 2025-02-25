@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { client } from "@/lib/mongo";
 import { Collection, Db, Document, ObjectId } from "mongodb";
 import { NextResponse } from "next/server";

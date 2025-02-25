@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import protectedRoutes from "@/data/protected-routes/protectedLoginRoutes";
 import type { NextRequest } from "next/server";
 import redirectTo from "../common/redirect";

@@ -1,7 +1,7 @@
 "use server"
 
 import jwt from "jsonwebtoken";
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 
 const JWT_SECRET = process.env.JWT_SECRET; // Secret stored securely in environment variables
 

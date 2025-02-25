@@ -1,6 +1,6 @@
 "use server"
 
-import {auth} from "@/auth"
+import { auth } from "@/lib/auth"
 
 export const determineAuthStatus = async () => {
 

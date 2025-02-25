@@ -1,5 +1,5 @@
 'use server'
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut } from "@/lib/auth";
 
 export const handleSignIn = async () => { 
         await signIn("google", {redirectTo: "/auth/success"})

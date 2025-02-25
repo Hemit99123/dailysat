@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { QUESTION_IS_CORRECT_POINTS } from '@/data/CONSTANTS';
 import { client } from '@/lib/mongo';
 import jwt, { JwtPayload } from 'jsonwebtoken';
