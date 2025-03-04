@@ -6,10 +6,13 @@ import Image from "next/image";
 import axios from "axios";
 import { QuestionsProps } from "@/types/sat-platform/questions";
 import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions-func/crossOff";
+import wrongAns from "@/components/features/Questions/Question-UI/QuestionModules/wrong_answer.mp3";
+import rightAns from "@/components/features/Questions/Question-UI/QuestionModules/correct_answer.mp3";
 
 const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
+  const setIsAnswerCorrect = useAnswerCorrectStore((state) => state.setIsAnswerCorrect);
   const [mode, setMode] = useState<"highlight" | "clear" | null>(null);
   const [crossOffMode, setCrossOffMode] = useState(false);
   const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers>>(new Set());
@@ -117,11 +120,28 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   };
 
   const handleSubmit = () => {
+    
     if (selectedAnswer) {
+      // const isCorrect = onAnswerSubmit(selectedAnswer);
       onAnswerSubmit(selectedAnswer);
       setSelectedAnswer(null);
     }
   };
+
+  useEffect(() => {
+    if (isAnswerCorrect !== "none") {
+      const audio = new Audio(isAnswerCorrect ? rightAns : wrongAns);
+      audio.play();
+  
+      // Delay resetting isAnswerCorrect to prevent the explanation from disappearing
+      const resetTimeout = setTimeout(() => {
+        setIsAnswerCorrect("none");
+      }, 3000); // Adjust delay as needed
+  
+      return () => clearTimeout(resetTimeout); // Cleanup on unmount
+    }
+  }, [isAnswerCorrect]);
+  
 
   return (
     <div className="flex flex-col items-start px-8 -mt-6">

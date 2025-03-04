@@ -10,7 +10,7 @@ export const team = [
       role: 'President & Chief Operating Officer',
       imgSrc: './people/hemit.png',
       linkedIn: "https://www.linkedin.com/in/hemit-patel-383ab3271/"
-    }, 
+    },
     {
       name: "Wilman Chan",
       role: "Chief Marketing Officer",
@@ -28,6 +28,23 @@ export const team = [
       role: "Chief Business Officer",
       imgSrc: "./people/devesh.png",
       linkedIn: "https://www.linkedin.com/in/dkhilnani/"
-    }
-    
+    },
+    {
+      name: "Gautham Korrapati",
+      role: "Lead Web Dev",
+      imgSrc: "./people/gautham.png",
+      linkedin: "https://www.linkedin.com/in/gautham-korrapati-946369272"
+    },
+    {
+      name: "Shriya Verma",
+      role: "Graphic Designer",
+      imgSrc: "./people/shriya.png",
+      linkedin: "https://www.linkedin.com/in/shriya-verma-384a1732b/"
+    },
+    {
+      name: "Arnav Maheswari",
+      role: "Marketing Intern",
+      imgSrc: "./people/arnav.png",
+      linkedin: "https://www.linkedin.com/in/arnav-maheshwari0/"
+    }    
 ];

@@ -5,7 +5,7 @@ import { Answers } from "./answer";
 export type questionType = "math" | "reading-writing";
 
 export interface QuestionsProps {
-  onAnswerSubmit: (answer: Answers) => void;
+  onAnswerSubmit: (answer: Answers) => boolean;
 }
 
 // Types for READING question
