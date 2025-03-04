@@ -2,7 +2,8 @@
 
 Welcome to the codebase of **DailySAT**! Here you will find a quickstart to our application and some information on it ✨
 
-### 📚 To access the API documentation, navigate to: /api-docs
+📚 To access the API documentation, navigate to: /api-docs
+
 NOTE: You will to have an authorized email. If you do not, kindly email `dailysatorg@gmail.com` or `hemit@dailysat.org` (COO) and we can assist you from there! Afterwards, you will have 4 hour access to employee privledges
 
 
@@ -15,7 +16,7 @@ Our mission is to build an app that is free and accessible! This means we love i
   issue that has been assigned
 
   You will given given **credit** for any work that we use from you. Do remember that all work done through open-source is purely volunteer and **NOT SUBJECT TO PAYMENT** You can add     
-  *YOUR* contributions as experience however.
+  your contributions as experience however.
 
 ##### 📛 When naming your ticket, please use the following prefixes...
 - feat: (for a feature)
@@ -41,4 +42,4 @@ Unlike the admin platform, the regular DailySAT platform's auth is handled by th
 
 ## 📚 School B2B Model:
 
-Schools can now partner with DailySAT. It is **free of charge**. Once partnered, their school will be added to the `school` collection in MongoDB. In /schools route, this collection will be shown and students can enroll into one school from that collection. They can then work on questions normally. Data from these interactions (correct answers/incorrect answers) will be stored within the `school` collection document and authorized teachers will be able to see each student and how they are doing. Teachers get authenticated through their emails, it is cross referenced with the `school` document and if their email is found they get access to /schools/dashboard?school=SCHOOL NAME.
+Schools can now partner with DailySAT. It is **free of charge**. Once partnered, their school will be added to the `school` collection in MongoDB. In /schools route, this collection will be shown and students can enroll into one school from that collection. They can then work on questions normally. Data from these interactions (correct answers/incorrect answers) will be stored within the `school` collection document and authorized teachers will be able to see each student and how they are doing. Teachers get authenticated through their emails, it is cross referenced with the `school` document and if their email is found they get access to /schools/dashboard?school=SCHOOL_NAME.
