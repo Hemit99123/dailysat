@@ -23,7 +23,7 @@ const Home = () => {
 
   const [imageError, setImageError] = useState(false)
 
-  // Fetch a random quote once the component has been mounted
+  // Fetch a random quote once the component has been mounted from locally hosted json file
   useEffect(() => {
     const handleFetchQuote = async () => {
       setIsLoadingQuote(true);
