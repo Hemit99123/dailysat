@@ -8,6 +8,7 @@ import Spinner from "@/components/common/Spinner";
 import Redeem from "@/components/features/Dashboard/Redeem";
 import { useUserStore } from "@/store/user";
 import ExploreSectionFeats from "@/components/features/Dashboard/ExploreSectionFeats";
+import { quotes } from "@/data/quotes";
 
 const Home = () => {
   const user = useUserStore((state) => state.user)
@@ -28,18 +29,10 @@ const Home = () => {
     const handleFetchQuote = async () => {
       setIsLoadingQuote(true);
       try {
-        const response = await axios.get("https://api.realinspire.tech/v1/quotes/random", {
-          params: {
-            maxLength: 30,
-          },
-        });
-
-        // Adjust based on API response structure
-        if (response.data && response.data.length > 0) {
-          setQuote(response.data[0]);
-        } else {
-          throw new Error("No quotes available");
-        }
+        const quotesLength = quotes.length
+        const randomIndex = Math.floor(Math.random() * quotesLength)
+        setQuote(quotes[randomIndex])
+        
       } catch (error) {
         console.error("Error fetching quote:", error);
         alert("Something went wrong while retrieving your quote.");
