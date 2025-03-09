@@ -4,5 +4,6 @@ export const menuItems = [
   { label: "Reading & Writing", href:"/reading-writing"},
   { label: "About", href: "/about" },
   { label: "Schools", href: "/schools"},
-  { label: "Tips", href: "/tips"}
+  { label: "Tips", href: "/tips"},
+  { label: "Tutorials", href: "/tutorials"}
 ];

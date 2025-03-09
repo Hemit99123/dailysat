@@ -1,3 +1,3 @@
-const protectedRoutes = ['/', '/shop', '/math', '/reading-writing', '/schools', '/tips']
+const protectedRoutes = ['/', '/shop', '/math', '/reading-writing', '/schools', '/tips', '/tutorials']
 
 export default protectedRoutes
