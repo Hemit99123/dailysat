@@ -254,7 +254,7 @@ const SubtopicPreview = ({
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button size="lg" className="font-bold" onClick={navigateToTopic}>
+        <Button className="font-bold" onClick={navigateToTopic}>
           Start Learning
           <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
@@ -351,7 +351,7 @@ export default function TutorialsPage() {
             </div>
           </div>
           <div className="mt-6 flex justify-center">
-            <Button size="lg" variant="secondary" className="font-bold text-blue-700">
+            <Button className="font-bold text-blue-700">
               View Detailed Progress
             </Button>
           </div>
@@ -360,4 +360,3 @@ export default function TutorialsPage() {
     </div>
   )
 }
-
