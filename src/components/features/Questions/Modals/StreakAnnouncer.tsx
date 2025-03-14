@@ -3,8 +3,14 @@ import React from 'react';
 import CloseButton from '@/components/features/Shared/Cancel';
 
 const StreakAnnouncer = () => {
-  const onClose = useStreakAnnouncerModalStore((state) => state.closeModal);
-  const isOpen = useStreakAnnouncerModalStore((state) => state.isOpen);
+  const { isOpen, closeModal } = useStreakAnnouncerModalStore((state) => ({
+    isOpen: state.isOpen,
+    closeModal: state.closeModal,
+  }));
+
+  const handleClose = () => {
+    closeModal();
+  };
 
   return (
     <>
@@ -12,7 +18,7 @@ const StreakAnnouncer = () => {
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 flex flex-col items-center relative">
             <div className='absolute top-3 right-3'>
-              <CloseButton onClose={onClose} />
+              <CloseButton onClose={handleClose} />
             </div>
             <svg
               fill="#e68600"
