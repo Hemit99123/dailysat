@@ -3,7 +3,7 @@
 <!-- markdownlint-disable no-duplicate-header -->
 
 <div align="center">
-  <img src="https://ibb.co/5gnWCFbv" width="30%" alt="DailySAT" />
+  <img src="https://i.ibb.co/4nYZCdhM/dailysat-removebg-preview.png" width="30%" alt="DailySAT" />
 </div>
 <hr>
 <div align="center" style="line-height: 1;">
