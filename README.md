@@ -3,16 +3,13 @@
 <!-- markdownlint-disable no-duplicate-header -->
 
 <div align="center">
-  <img src="https://i.ibb.co/ns0wZdtj/I-20250310-004605-0000-1-removebg-preview.png/" width="30%" alt="Talem AI" />
+  <img src="https://ibb.co/5gnWCFbv" width="30%" alt="DailySAT" />
 </div>
 <hr>
 <div align="center" style="line-height: 1;">
-  <a href="https://talem.org/ai"><img alt="Demo"
+  <a href="https://dailysat.org/"><img alt="Demo"
     src="https://img.shields.io/badge/🚀%20Live%20Demo-Talem%20AI-2F80ED?color=2F80ED&logoColor=white"/></a>
-  <a href="https://huggingface.co/microsoft/Phi-3.5-mini-instruct"><img alt="Model Hub"
-    src="https://img.shields.io/badge/🧠%20Model%20Hub-Talem%20AI-8E44AD?color=8E44AD&logoColor=white"/></a>
-  <br>
-  <a href="https://twitter.com/talem_ai"><img alt="Twitter"
+  <a href="https://twitter.com/dailysat"><img alt="Twitter"
     src="https://img.shields.io/badge/Twitter-@talem__ai-1DA1F2?logo=x&logoColor=white"/></a>
   <br>
   <a href="LICENSE-CODE"><img alt="Code License"
