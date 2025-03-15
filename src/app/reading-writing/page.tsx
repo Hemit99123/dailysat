@@ -44,6 +44,7 @@ const Reading = () => {
 
   useEffect(() => {
     handleCheckThreeStreak();
+    
   }, [correctCount, handleCheckThreeStreak]);
 
   const handleTopicClick = (topic: Topic) => {

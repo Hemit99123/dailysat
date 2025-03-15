@@ -7,6 +7,7 @@ import { Topic } from "@/types/sat-platform/topic";
 import axios from "axios";
 import { useAnswerAttemptsStore } from "@/store/questions"
 import { questionType } from "@/types/sat-platform/questions";
+import { useState } from "react";
 
 // Custom hook to encapsulate logic because it is used in both math and reading/writing components
 const useQuestionHandler = () => {
@@ -23,6 +24,10 @@ const useQuestionHandler = () => {
   const resetAttempts = useAnswerAttemptsStore((state) => state.resetAttempts) 
   const incrementAttempts = useAnswerAttemptsStore((state) => state.incrementAttempts)
   const attempts = useAnswerAttemptsStore((state) => state.attempts)
+
+  // alreadyUsed is used for the 3 streaks modal. This way, whenever a new component re-render happens to subbed components
+  // the correctCount === 3 is still there but since alr used, will not work again
+  const [alreadyUsed, setAlreadyUsed] = useState(false)
 
   const fetchRandomQuestion = async (type: questionType, topic: Topic): Promise<void> => {
     try {
@@ -81,8 +86,9 @@ const useQuestionHandler = () => {
   };
 
   const handleCheckThreeStreak = () => {
-    if (correctCount === 3) {
+    if (correctCount === 3 && alreadyUsed == false) {
       openAnnouncerModal();
+      setAlreadyUsed(true)
     }
   }
 

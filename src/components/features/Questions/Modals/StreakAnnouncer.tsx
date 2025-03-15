@@ -3,10 +3,7 @@ import React from 'react';
 import CloseButton from '@/components/features/Shared/Cancel';
 
 const StreakAnnouncer = () => {
-  const { isOpen, closeModal } = useStreakAnnouncerModalStore((state) => ({
-    isOpen: state.isOpen,
-    closeModal: state.closeModal,
-  }));
+  const { isOpen, closeModal } = useStreakAnnouncerModalStore();
 
   const handleClose = () => {
     closeModal();
