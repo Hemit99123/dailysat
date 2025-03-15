@@ -17,12 +17,6 @@ export const team = [
       imgSrc: "/people/G10_Yearbook_Picture.png",
       linkedIn: "https://www.linkedin.com/in/wilman-chan-03a468286/"
     },
-      {
-      name: "Lakshaya Jain",
-      role: "Chief Technical Officer",
-      imgSrc: "/people/Lakshaya.png",
-      linkedIn: "https://www.linkedin.com/in/lakshya-jain-9a66a22a5/"
-    },
     {
       name: "Devesh Khilnani",
       role: "Chief Business Officer",
