@@ -2,12 +2,12 @@
 
 import React from "react";
 
-interface CTASideBarProps {
+interface SideDisplayProps {
     score: number;
     title: string;
 }
 
-const CTASideBar: React.FC<CTASideBarProps> = ({ score, title }) => {
+const SideDisplay: React.FC<SideDisplayProps> = ({ score, title }) => {
 
     return (
         <>
@@ -23,4 +23,4 @@ const CTASideBar: React.FC<CTASideBarProps> = ({ score, title }) => {
     );
 };
 
-export default CTASideBar;
+export default SideDisplay;

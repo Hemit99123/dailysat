@@ -1,6 +1,6 @@
 // Sidebar.js
 import React from 'react';
-import CTASideBar from './CTASideBar';
+import SideDisplay from './SideDisplay';
 import { Topic } from '@/types/sat-platform/topic';
 import { useTopicStore } from '@/store/questions';
 import { useAnswerCounterStore, useScoreStore } from '@/store/score';
@@ -54,8 +54,8 @@ const Sidebar: React.FC<SideBarProps> = ({ svg, title, topics, handleTopicClick}
 
       {/* Call-to-Action Sidebars */}
       <div className="flex flex-col">
-        <CTASideBar score={score} title="Score:" />
-        <CTASideBar score={streak} title="Streak:" />
+        <SideDisplay score={score} title="Score:" />
+        <SideDisplay score={streak} title="Streak:" />
       </div>
     </div>
   );
