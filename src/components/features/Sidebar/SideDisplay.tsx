@@ -1,25 +1,31 @@
 "use client";
 
+import { CircleCheck } from "lucide-react";
 import React from "react";
 
 interface SideDisplayProps {
     score: number;
     title: string;
+    icon: React.ReactNode;
 }
 
-const SideDisplay: React.FC<SideDisplayProps> = ({ score, title }) => {
+const SideDisplay: React.FC<SideDisplayProps> = ({ icon, score, title }) => {
 
     return (
-        <>
-                <div className="flex flex-col border border-gray-200 rounded-sm px-1.5 py-3 mt-8">
-                    <div className="flex items-center mb-0.5">
-                        <p className="font-medium uppercase text-[12px]">{title}</p>
-                    </div>
-                    <div>
-                        {score}
-                    </div>
-                </div>
-        </>
+        <div className="rounded-lg shadow-md border border-blue-100 overflow-hidden transition-all duration-300 hover:shadow-lg group">
+        <div className="bg-blue-50 px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold uppercase text-sm tracking-wide">{title}</h3>
+            {icon || <CircleCheck className="h-4 w-4 transition-colors" />}
+          </div>
+        </div>
+  
+        <div className="px-4 py-3">
+          <div className="flex items-end justify-between">
+            <span className="text-3xl font-bold text-blue-500">{score}</span>
+          </div>
+        </div>
+      </div>
     );
 };
 

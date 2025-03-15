@@ -4,6 +4,7 @@ import SideDisplay from './SideDisplay';
 import { Topic } from '@/types/sat-platform/topic';
 import { useTopicStore } from '@/store/questions';
 import { useAnswerCounterStore, useScoreStore } from '@/store/score';
+import { Award, Target } from 'lucide-react';
 
 interface SideBarProps {
     svg: React.ReactElement;
@@ -53,9 +54,9 @@ const Sidebar: React.FC<SideBarProps> = ({ svg, title, topics, handleTopicClick}
       </div>
 
       {/* Call-to-Action Sidebars */}
-      <div className="flex flex-col">
-        <SideDisplay score={score} title="Score:" />
-        <SideDisplay score={streak} title="Streak:" />
+      <div className="flex flex-col space-y-6 mt-16">
+        <SideDisplay icon={<Award />} score={score} title="Score:" />
+        <SideDisplay icon={<Target />} score={streak} title="Streak:" />
       </div>
     </div>
   );
