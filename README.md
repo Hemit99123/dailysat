@@ -42,7 +42,7 @@ Our mission is to build an app that is free and accessible! This means we love i
 
 ## 👷 Developers:
 - Hemit Patel (COO and Principal Maintainer of DailySAT)
-- Laksyha Jain (Former Chief Technology Officer)
+- Laksyha Jain (Chief Technology Officer)
 - Aarush Kute (Founder AND Chief Executive)
 
 ## 🔐 How our authentication works ##
