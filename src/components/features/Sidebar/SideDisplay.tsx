@@ -1,6 +1,5 @@
 "use client";
 
-import { CircleCheck } from "lucide-react";
 import React from "react";
 
 interface SideDisplayProps {
@@ -16,7 +15,7 @@ const SideDisplay: React.FC<SideDisplayProps> = ({ icon, score, title }) => {
         <div className="bg-blue-50 px-4 py-3">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold uppercase text-sm tracking-wide">{title}</h3>
-            {icon || <CircleCheck className="h-4 w-4 transition-colors" />}
+            {icon}
           </div>
         </div>
   
