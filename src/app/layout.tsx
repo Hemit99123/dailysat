@@ -17,10 +17,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-      <link
-            href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"
-            rel="stylesheet"
-        />
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
           <NavBar />
           {children}

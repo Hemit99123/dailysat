@@ -112,10 +112,12 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {team.map((member, index) => (
                 <div key={index} className="flex flex-col items-center justify-center">
-                <img
-                    className="w-36 h-36 rounded-3xl object-cover mb-4"
+                <Image
+                    className="rounded-3xl object-cover mb-4"
                     src={member.imgSrc}
                     alt={member.name}
+                    width={250}
+                    height={250}
                 />
                 <div>
                     <h3 className="text-2xl font-bold tracking-tight text-gray-900">{member.name}</h3>

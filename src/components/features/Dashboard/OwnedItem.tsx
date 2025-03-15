@@ -1,4 +1,5 @@
 import { Items } from '@/types/items';
+import Image from 'next/image';
 import React from 'react';
 
 interface OwnedItemProps {
@@ -11,7 +12,7 @@ const OwnedItem: React.FC<OwnedItemProps> = ({ item }) => {
       <div className="flex items-center p-4 cursor-pointer hover:bg-gray-50 duration-150">
         {/* Image */}
         <div className="w-12 h-12 flex-shrink-0">
-          <img src={item.url} alt={`${item.name}`} className="rounded-full w-full h-full object-cover" />
+          <Image src={item.url} alt={`${item.name}`} width={100} height={100} className="rounded-full object-cover" />
         </div>
 
         {/* Name */}

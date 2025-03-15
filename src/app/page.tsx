@@ -9,6 +9,7 @@ import Redeem from "@/components/features/Dashboard/Redeem";
 import { useUserStore } from "@/store/user";
 import ExploreSectionFeats from "@/components/features/Dashboard/ExploreSectionFeats";
 import { quotes } from "@/data/quotes";
+import Image from "next/image";
 
 const Home = () => {
   const user = useUserStore((state) => state.user)
@@ -79,7 +80,7 @@ const Home = () => {
 
 
   // Copy Referral ID
-  const handleCopy = async () => {
+  const handleCopyReferral = async () => {
     // referall code is just the object id of the mongodb doc
 
     const referralCode = user?._id;
@@ -124,7 +125,7 @@ const Home = () => {
       <div className="lg:flex lg:space-x-2 mt-1.5 p-3.5">
         <div className="shadow-lg rounded-lg w-full bg-white p-4 flex lg:items-center flex-col lg:flex-row lg:justify-between">
           <div className="flex items-center mb-3">
-            <img
+            <Image
               src={!imageError && user?.image || "https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-gender-neutral-silhouette-profile-picture-suitable-social-media-profiles-icons-screensavers-as-templatex9xa_719432-875.jpg"}
               alt="userpfpic"
               width={120}
@@ -141,12 +142,13 @@ const Home = () => {
           <div className="lg:mr-[10vw] relative">
             <p className="text-xl font-semibold text-green-600">Referral Code</p>
             <p className="text-gray-700 flex items-center -ml-2">          {/* Copy Button */}
-              <button>
-                <img
+              <button onClick={handleCopyReferral}>
+                <Image
                   src={"/icons/copy.png"}
-                  onClick={handleCopy}
                   className="w-10 h-10"
-                  aria-label="Copy Referral Code"
+                  alt="Copy Referral Code"
+                  width={100}
+                  height={100}
                 />
               </button>
               {user?._id}</p>

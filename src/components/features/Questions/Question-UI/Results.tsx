@@ -1,6 +1,7 @@
 import { useAnswerCorrectStore } from "@/store/questions";
 import { questionType } from "@/types/sat-platform/questions";
 import React, { MutableRefObject } from "react";
+import Image from "next/image"
 
 interface ResultProps {
   answerComponent: MutableRefObject<HTMLDivElement | null>;
@@ -32,10 +33,12 @@ const Result: React.FC<ResultProps> = ({
             {type === "math" &&
               imageUrls &&
               imageUrls.map((url, idx) => (
-                <img
+                <Image
                   key={idx}
                   src={url}
                   alt={`Explanation Visual ${idx}`}
+                  width={200}
+                  height={200}
                   className="mt-2"
                 />
               ))}

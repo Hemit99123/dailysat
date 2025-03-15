@@ -2,6 +2,7 @@ import { generateJWT } from '@/lib/jwt/action';
 import { useUserStore } from '@/store/user';
 import axios from 'axios';
 import React, { FC } from 'react';
+import Image from "next/image"
 
 interface RedeemProps {
     isReferred: boolean | undefined
@@ -52,7 +53,7 @@ const Redeem: FC<RedeemProps> = ({isReferred}) => {
                     Both you and your friend can both redeem 200 coins when your friend first logs in!
                 </p>
             </div>
-            <img src={"/icons/high-five.png"} className="w-32 ml-auto mr-auto " />
+            <Image alt="Redeem icon" height={150} width={150} src={"/icons/high-five.png"} className="w-32 ml-auto mr-auto " />
             <div className='flex justify-center mt-10 items-center'>
 
             {isReferred == false &&
