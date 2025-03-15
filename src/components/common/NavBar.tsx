@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 import CookieConsent from "react-cookie-consent";
-import { menuItems } from "@/data/menuItem";
+import { menuItems } from "@/data/navbar";
 import AuthButton from "./AuthButton";
 
 
