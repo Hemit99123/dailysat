@@ -2,8 +2,8 @@
 import React from 'react';
 import CTASideBar from './CTASideBar';
 import { Topic } from '@/types/sat-platform/topic';
-import { useScoreModalStore, useStreakCounterModalStore } from '@/store/modals';
 import { useTopicStore } from '@/store/questions';
+import { useAnswerCounterStore, useScoreStore } from '@/store/score';
 
 interface SideBarProps {
     svg: React.ReactElement;
@@ -15,9 +15,11 @@ interface SideBarProps {
 
 const Sidebar: React.FC<SideBarProps> = ({ svg, title, topics, handleTopicClick}) => {
 
-  const openScoreModal = useScoreModalStore((state) => state.openModal)
-  const openStreakModal = useStreakCounterModalStore((state) => state.openModal)
   const selectedTopic = useTopicStore((state) => state.selectedTopic)
+  const score = useScoreStore((state) => state.score);
+  const streak = useAnswerCounterStore((state) => state.count)
+
+
   
   return (
     <div className="w-full md:w-96 p-5 md:p-10 flex-shrink-0">
@@ -52,8 +54,8 @@ const Sidebar: React.FC<SideBarProps> = ({ svg, title, topics, handleTopicClick}
 
       {/* Call-to-Action Sidebars */}
       <div className="flex flex-col">
-        <CTASideBar open={openScoreModal} text="Click to open the scoreboard!" />
-        <CTASideBar open={openStreakModal} text="Click to see your current streak!" />
+        <CTASideBar score={score} title="Score:" />
+        <CTASideBar score={streak} title="Streak:" />
       </div>
     </div>
   );

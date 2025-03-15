@@ -8,10 +8,8 @@ import { useEffect, useRef } from "react";
 import ReadingQuestion from "@/components/features/Questions/Question-UI/QuestionModules/ReadingQuestion";
 import Header from "@/components/features/Questions/Question-UI/Header";
 import { useAnswerCounterStore } from "@/store/score";
-import ScoreModal from "@/components/features/Questions/Modals/ScoreModal";
-import StreakModal from "@/components/features/Questions/Modals/StreakModal";
 import { Answers } from "@/types/sat-platform/answer";
-import { useScoreModalStore, useStreakAnnouncerModalStore, useStreakCounterModalStore } from "@/store/modals";
+import { useStreakAnnouncerModalStore } from "@/store/modals";
 import StreakAnnouncer from "@/components/features/Questions/Modals/StreakAnnouncer";
 import useQuestionHandler from "@/hooks/questions";
 import Spinner from "@/components/common/Spinner";
@@ -31,9 +29,7 @@ const Reading = () => {
   const correctCount = useAnswerCounterStore((state) => state.count);
   const answerCorrectRef: Record<Answers, number> = { A: 0, B: 1, C: 2, D: 3 };
 
-  const isScoreModalOpen = useScoreModalStore((state) => state.isOpen);
   const isAnnouncerModalOpen = useStreakAnnouncerModalStore((state) => state.isOpen);
-  const isStreakModalOpen = useStreakCounterModalStore((state) => state.isOpen);
 
   const answerComponent = useRef<HTMLDivElement | null>(null);
 
@@ -44,22 +40,13 @@ const Reading = () => {
 
   useEffect(() => {
     handleCheckThreeStreak();
-    
+
   }, [correctCount, handleCheckThreeStreak]);
 
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
     fetchRandomQuestion("reading-writing", topic);
   };
-
-  if (isScoreModalOpen || isStreakModalOpen) {
-    return (
-      <>
-        <ScoreModal />
-        <StreakModal />
-      </>
-    );
-  }
 
   return (
     <MainWrappers>
