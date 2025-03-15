@@ -18,6 +18,12 @@ export const team = [
       linkedIn: "https://www.linkedin.com/in/wilman-chan-03a468286/"
     },
     {
+      name: "Gautham Korrapati",
+      role: "Interim CTO",
+      imgSrc: "/people/gautham.png",
+      linkedIn: "https://www.linkedin.com/in/gautham-korrapati-946369272/"
+    },
+    {
       name: "Devesh Khilnani",
       role: "Chief Business Officer",
       imgSrc: "/people/devesh.png",
