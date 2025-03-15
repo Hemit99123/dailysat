@@ -3,7 +3,7 @@
 @tailwind utilities;
 @import '//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css';
 
-/* From codepen. Can't do them in tailwind lol */
+/* From codepen. Can't do them in tailwind */
 .fancy-input {
     border-radius: 10px;
     outline: 2px solid blue;
