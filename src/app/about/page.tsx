@@ -57,8 +57,8 @@ const About = () => {
                 </div>
                 <div className="w-full lg:justify-start justify-center items-center sm:gap-10 space-x-10 inline-flex">
                   <div className="flex-col justify-start items-start inline-flex">
-                    <h3 className="text-blue-400 text-4xl font-bold font-manrope leading-normal">70,000+</h3>
-                    <h6 className="text-gray-500 text-base font-normal leading-relaxed">Users</h6>
+                    <h3 className="text-blue-400 text-4xl font-bold font-manrope leading-normal">80,000+</h3>
+                    <h6 className="text-gray-500 text-base font-normal leading-relaxed">users</h6>
                   </div>
                   <div className="flex-col justify-start items-start inline-flex">
                     <h4 className="text-blue-400 text-4xl font-bold font-manrope leading-normal">3500+</h4>
@@ -70,35 +70,6 @@ const About = () => {
           </div>
         </div>
       </section>
-
-      <section className="py-24 relative">
-        <div className="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
-            <div className="w-full justify-start items-center gap-8 grid lg:grid-cols-2 grid-cols-1">
-            <Image 
-                    className='lg:mx-0 mx-auto h-full rounded-3xl object-cover" src="https://pagedone.io/asset/uploads/1717751272.png'
-                    src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=3032&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="About Us image"
-                    width={500}
-                    height={300}
-                />
-                <div className="w-full flex-col justify-start lg:items-start items-center gap-10 inline-flex">
-                    <div className="w-full flex-col justify-start lg:items-start items-center gap-4 flex">
-                        <h2 className="text-gray-900 text-4xl font-bold font-manrope leading-normal lg:text-start text-center">
-                          School <span className="text-blue-500">B2B</span> Model
-                        </h2>
-                        <p className="text-gray-500 text-base font-normal leading-relaxed lg:text-start text-center">
-                          Schools can easily partner with us and add their names to /schools. Students can then enroll into their schools and teachers can track students progress when they work within the DailySAT platform
-                        </p>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLScGb4Pj_Jn1kmAxMVzJ2lCQ5QCyOnOqtGFqvWr9C3RttQlstg/viewform?usp=header" className="rounded-lg font-semibold cursor-pointer bg-blue-500 text-white py-2 px-5">
-                          Contact form
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
      <section>
   <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-blue-900 text-center">Workshops:</h2>
   <p className="font-light text-gray-500 sm:text-xl text-center">
