@@ -1,27 +1,31 @@
-import React, { useState, useRef, useEffect } from "react";
-import AnswerOption from "../AnswerOption";
+import React, { useState, useEffect } from "react";
 import { Answers } from "@/types/sat-platform/answer";
-import { useAnswerCorrectStore, useAnswerStore, useQuestionStore } from "@/store/questions";
-import { QuestionsProps } from "@/types/sat-platform/questions";
-import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions/crossOff";
+import { useAnswerStore, useAnswerCorrectStore, useQuestionStore } from "@/store/questions";
 import { CalculatorIcon } from "lucide-react";
 import { useCalcOptionModalStore } from "@/store/modals";
 import CalcOption from "../../Modals/CalcOption";
 import { parseContent } from "@/lib/latex";
+import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Import the shared UI component
+import { toggleCrossOffOption } from "@/lib/questions/crossOff";
+import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 
-const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
+const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
+  onAnswerSubmit,
+}) => {
+  const [mode, setMode] = useState<"highlight" | "clear" | null>(null);
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
   const isAnswerCorrect = useAnswerCorrectStore((state) => state.isAnswerCorrect);
+  
+  // Remove null from the state type
   const [crossOffMode, setCrossOffMode] = useState(false);
-  const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers> | null>(new Set());
-  const textRef = useRef<HTMLParagraphElement | null>(null);
-
+  const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers>>(new Set());
+  
   useEffect(() => {
     if (isAnswerCorrect) {
       setSelectedAnswer(null);
-      setCrossedOffOptions(null);
+      setCrossedOffOptions(new Set());
     }
   }, [isAnswerCorrect, setSelectedAnswer]);
 
@@ -41,50 +45,45 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
 
   const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
 
+  const isCrossedOff = (answer: Answers) => {
+    return crossedOffOptions.has(answer);
+  };
+
   if (!randomQuestion) {
     return <div>Loading...</div>;
   }
 
-  const options: Record<Answers, string> = {
-    A: randomQuestion.optionA,
-    B: randomQuestion.optionB,
-    C: randomQuestion.optionC,
-    D: randomQuestion.optionD,
-  };
-
   return (
     <div className="flex flex-col items-start px-8 -mt-6">
-      <div className="flex items-center mb-2 space-x-4">
+      <div className="flex tems-center mb-2 space-x-4">
         <button onClick={handleOpenCalcModal}>
           <CalculatorIcon />
         </button>
-        <button
-          onClick={() => toggleCrossOffMode(setCrossOffMode)}
-          className={`p-1 rounded ${
-            crossOffMode ? "bg-blue-300 text-white" : "bg-gray-300"
-          }`}
-        >
-          Cross off
-        </button>
+        <div className="mt-6">
+          <QuestionSharedUI
+            crossOffMode={crossOffMode}
+            setCrossOffMode={setCrossOffMode}
+          />
+        </div>
+
       </div>
-      
+
       {/* Question Text with LaTeX rendering */}
-      <p className="mb-5 text-xl relative" ref={textRef}>
+      <p className="mb-5 text-xl relative">
         {parseContent(randomQuestion.question || "")}
       </p>
-      
+
       <span className="mb-3 text-sm font-semibold">Choose 1 answer:</span>
-      <div className="w-full space-y-2">
-        {Object.entries(options).map(([letter, text]) => (
-          <AnswerOption
-            key={letter}
-            text={text}
-            onClick={() => handleAnswerClick(letter as Answers)}
-            isSelected={selectedAnswer === letter}
-            isCrossedOff={crossedOffOptions?.has(letter as Answers) || false}
-          />
-        ))}
+      
+      <div className="w-full">
+        <MultipleChoice 
+          crossOffMode={crossOffMode}
+          selectedAnswer={selectedAnswer}
+          setSelectedAnswer={setSelectedAnswer}
+        />
       </div>
+
+
       <button
         onClick={handleSubmit}
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
