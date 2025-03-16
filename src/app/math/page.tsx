@@ -16,6 +16,7 @@ import Result from "@/components/features/Questions/Question-UI/Results";
 import { useQuestionStore, useTopicStore } from "@/store/questions";
 import QuestionWrappers from "@/components/wrappers/question/Question";
 import MainWrappers from "@/components/wrappers/question/Main";
+import Head from "next/head";
 
 const Math = () => {
   const {fetchRandomQuestion, handleAnswerSubmit, handleCheckThreeStreak} = useQuestionHandler()
@@ -66,6 +67,9 @@ const Math = () => {
 
   return (
     <MainWrappers>
+      <Head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" />
+      </Head>
       <Sidebar
         title="Math"
         svg={<MathSVG />}

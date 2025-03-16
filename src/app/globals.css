@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css';
 
 /* From codepen. Can't do them in tailwind */
 .fancy-input {
