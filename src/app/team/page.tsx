@@ -1,6 +1,4 @@
-import src from "next/image";
 import React from "react";
-import WorkshopItem from "@/components/features/About/WorkshopItem";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 
 const About = () => {
@@ -39,8 +37,8 @@ const About = () => {
       src: "/people/G10_Yearbook_Picture.png",
       quote: (
         <>
-          Hi there, I'm Wilman! I am a student founder passionate about social
-          media marketing & content creation.
+          Hi there, I&apos;m Wilman! I am a student founder passionate about
+          social media marketing & content creation.
         </>
       ),
     },
