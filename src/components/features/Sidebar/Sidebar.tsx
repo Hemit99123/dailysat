@@ -55,7 +55,7 @@ const Sidebar: React.FC<SideBarProps> = ({ svg, title, topics, handleTopicClick}
 
       {/* Call-to-Action Sidebars */}
       <div className="flex flex-col space-y-6 mt-16">
-        <SideDisplay icon={<Award />} score={score} title="Score:" />
+        <SideDisplay icon={<Award />} score={score} title="Correct Answers:" />
         <SideDisplay icon={<Target />} score={streak} title="Streak:" />
       </div>
     </div>
