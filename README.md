@@ -19,10 +19,7 @@
 
 Welcome to the codebase of **DailySAT**! 
 
-📚 To access the API documentation, navigate to: /api-docs
-
-NOTE: You will to have an authorized email. If you do not, kindly email `dailysatorg@gmail.com` or `hemit@dailysat.org` (COO) and we can assist you from there! Afterwards, you will have 4 hour access to employee privledges
-
+📚 To access the API documentation, navigate [here](www.talem.org/api-docs)
 
 ## 🧑‍🤝‍🧑 For open-source contributions:
 Our mission is to build an app that is free and accessible! This means we love input from the DailySAT community :) If you have any suggestions or feedback on our webapp, you can issue a "ticket" for our team to review. Kindly create an Issue within the issues tabs provided by the Github web app.
