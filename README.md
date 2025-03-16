@@ -17,8 +17,6 @@
   <br>
 </div>
 
-Welcome to the codebase of **DailySAT**! 
-
 📚 To access the API documentation, navigate [here](https://www.dailysat.org/api-docs)
 
 ## 🧑‍🤝‍🧑 For open-source contributions:
