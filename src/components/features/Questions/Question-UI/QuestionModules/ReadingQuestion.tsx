@@ -5,7 +5,7 @@ import { useAnswerCorrectStore, useAnswerStore, useQuestionStore } from "@/store
 import Image from "next/image";
 import axios from "axios";
 import { QuestionsProps } from "@/types/sat-platform/questions";
-import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions-func/crossOff";
+import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions/crossOff";
 
 const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   const selectedAnswer = useAnswerStore((state) => state.answer);

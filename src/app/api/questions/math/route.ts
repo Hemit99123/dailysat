@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { getQuestion } from "@/lib/questions";
+
 
 /**
  * @swagger
@@ -43,26 +43,8 @@ import path from 'path';
  *                   example: Internal server error
  */
 
-export const GET = async () => {
-  try {
-    const filePath = path.join(process.cwd(), 'src', 'data', 'math_questions.json');
-    const data = await fs.readFile(filePath, 'utf-8');
-    const questions = JSON.parse(data);
 
-    if (!Array.isArray(questions) || questions.length === 0) {
-      return new Response(JSON.stringify({ error: 'No questions available' }), { status: 404 });
-    }
-
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    const doc_array = questions[randomIndex];
-
-    return Response.json( {
-      doc_array: [doc_array]
-    });
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ code: 500, error }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
-  }
+export const GET = async (request: Request) => {
+  const question = await getQuestion(request, "questions-math")
+  return question
 };

@@ -3,7 +3,7 @@ import AnswerOption from "../AnswerOption";
 import { Answers } from "@/types/sat-platform/answer";
 import { useAnswerCorrectStore, useAnswerStore, useQuestionStore } from "@/store/questions";
 import { QuestionsProps } from "@/types/sat-platform/questions";
-import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions-func/crossOff";
+import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions/crossOff";
 import { CalculatorIcon } from "lucide-react";
 import { useCalcOptionModalStore } from "@/store/modals";
 import CalcOption from "../../Modals/CalcOption";

@@ -1,4 +1,4 @@
-import { getQuestion } from "../../../../lib/mongo";
+import { getQuestion } from "@/lib/questions/index";
 
 /**
  * @swagger
