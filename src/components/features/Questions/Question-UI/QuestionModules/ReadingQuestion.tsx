@@ -112,7 +112,7 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   };
 
   const betaBugReport = async () => {
-    await axios.get("/api/beta/bug?id=" + randomQuestion?.id);
+    await axios.get("/api/report/bug?id=" + randomQuestion?.id);
     window.location.reload();
   };
 
