@@ -30,7 +30,7 @@ const Result: React.FC<ResultProps> = ({
         ) : (
           <div className="mt-4 p-4 bg-gray-100 rounded">
             <h5 className="text-red-500">Incorrect!</h5>
-            {parseContent(explanation || "")}
+            {type === "math" ? parseContent(explanation || ""): explanation}
             {type === "math" &&
               imageUrls &&
               imageUrls.map((url, idx) => (
