@@ -7,8 +7,7 @@ import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions/crossO
 import { CalculatorIcon } from "lucide-react";
 import { useCalcOptionModalStore } from "@/store/modals";
 import CalcOption from "../../Modals/CalcOption";
-import { InlineMath } from 'react-katex';
-import 'katex/dist/katex.min.css';
+import { parseContent } from "@/lib/latex";
 
 const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
@@ -41,18 +40,6 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   };
 
   const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
-
-  const parseContent = (content: string) => {
-    const parts = content.split(/(\$.*?\$)/g);
-    return parts.map((part, index) => {
-      if (part.startsWith('$') && part.endsWith('$')) {
-        const latex = part.slice(1, -1);
-        return <InlineMath key={index} math={latex} />;
-      } else {
-        return <span key={index}>{part}</span>;
-      }
-    });
-  };
 
   if (!randomQuestion) {
     return <div>Loading...</div>;
