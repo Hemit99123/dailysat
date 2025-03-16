@@ -7,24 +7,18 @@ import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions/crossO
 import { CalculatorIcon } from "lucide-react";
 import { useCalcOptionModalStore } from "@/store/modals";
 import CalcOption from "../../Modals/CalcOption";
-import Latex from "react-latex-next";
+import { InlineMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
-  // Use zustand stores for question data and answer handling.
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
   const isAnswerCorrect = useAnswerCorrectStore((state) => state.isAnswerCorrect);
-
-  // Local state for cross-off mode and crossed-off options.
   const [crossOffMode, setCrossOffMode] = useState(false);
-  const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers> | null>(
-    new Set()
-  );
-
+  const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers> | null>(new Set());
   const textRef = useRef<HTMLParagraphElement | null>(null);
 
-  // Reset answer and crossed-off options when the answer becomes correct.
   useEffect(() => {
     if (isAnswerCorrect) {
       setSelectedAnswer(null);
@@ -32,8 +26,6 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
     }
   }, [isAnswerCorrect, setSelectedAnswer]);
 
-
-  // --- Handlers ---
   const handleAnswerClick = (answer: Answers) => {
     if (crossOffMode) {
       toggleCrossOffOption(setCrossedOffOptions, answer);
@@ -42,22 +34,30 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
     }
   };
 
-  // Call the onAnswerSubmit prop if an answer is selected and then reset the selected answer.
   const handleSubmit = () => {
     if (!selectedAnswer) return;
     onAnswerSubmit(selectedAnswer);
     setSelectedAnswer(null);
   };
 
-  const handleOpenCalcModal = useCalcOptionModalStore(
-    (state) => state.openModal
-  );
+  const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
+
+  const parseContent = (content: string) => {
+    const parts = content.split(/(\$.*?\$)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('$') && part.endsWith('$')) {
+        const latex = part.slice(1, -1);
+        return <InlineMath key={index} math={latex} />;
+      } else {
+        return <span key={index}>{part}</span>;
+      }
+    });
+  };
 
   if (!randomQuestion) {
     return <div>Loading...</div>;
   }
 
-  // Build an object with answer options keyed by their letter.
   const options: Record<Answers, string> = {
     A: randomQuestion.optionA,
     B: randomQuestion.optionB,
@@ -68,11 +68,9 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   return (
     <div className="flex flex-col items-start px-8 -mt-6">
       <div className="flex items-center mb-2 space-x-4">
-        {/* Calculator Modal Button */}
         <button onClick={handleOpenCalcModal}>
           <CalculatorIcon />
         </button>
-        {/* Cross-Off Mode Button */}
         <button
           onClick={() => toggleCrossOffMode(setCrossOffMode)}
           className={`p-1 rounded ${
@@ -82,12 +80,12 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
           Cross off
         </button>
       </div>
-
-      {/* Question Text */}
+      
+      {/* Question Text with LaTeX rendering */}
       <p className="mb-5 text-xl relative" ref={textRef}>
-        <Latex>{randomQuestion.question || ""}</Latex>
+        {parseContent(randomQuestion.question || "")}
       </p>
-
+      
       <span className="mb-3 text-sm font-semibold">Choose 1 answer:</span>
       <div className="w-full space-y-2">
         {Object.entries(options).map(([letter, text]) => (
@@ -100,8 +98,6 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
           />
         ))}
       </div>
-
-      {/* Submit Answer Button */}
       <button
         onClick={handleSubmit}
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -109,8 +105,6 @@ const MathQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
       >
         Submit Answer
       </button>
-
-      {/* Calculator Option Modal */}
       <CalcOption />
     </div>
   );
