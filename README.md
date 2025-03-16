@@ -13,7 +13,7 @@
     src="https://img.shields.io/badge/Twitter-@dailysat-1DA1F2?logo=x&logoColor=white"/></a>
   <br>
   <a href="LICENSE-CODE"><img alt="Code License"
-    src="https://img.shields.io/badge/Code%20License-Apache%202.0-00BFFF?color=00BFFF"/></a>
+    src="https://img.shields.io/badge/Code%20License-MIT%202.0-00BFFF?color=00BFFF"/></a>
   <br>
 </div>
 
