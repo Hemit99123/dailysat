@@ -6,13 +6,11 @@ import { useCalcOptionModalStore } from "@/store/modals";
 import CalcOption from "../../Modals/CalcOption";
 import { parseContent } from "@/lib/latex";
 import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Import the shared UI component
-import { toggleCrossOffOption } from "@/lib/questions/crossOff";
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 
 const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
   onAnswerSubmit,
 }) => {
-  const [mode, setMode] = useState<"highlight" | "clear" | null>(null);
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
@@ -20,22 +18,12 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
   
   // Remove null from the state type
   const [crossOffMode, setCrossOffMode] = useState(false);
-  const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers>>(new Set());
   
   useEffect(() => {
     if (isAnswerCorrect) {
       setSelectedAnswer(null);
-      setCrossedOffOptions(new Set());
     }
   }, [isAnswerCorrect, setSelectedAnswer]);
-
-  const handleAnswerClick = (answer: Answers) => {
-    if (crossOffMode) {
-      toggleCrossOffOption(setCrossedOffOptions, answer);
-    } else {
-      setSelectedAnswer(answer);
-    }
-  };
 
   const handleSubmit = () => {
     if (!selectedAnswer) return;
@@ -44,10 +32,6 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
   };
 
   const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
-
-  const isCrossedOff = (answer: Answers) => {
-    return crossedOffOptions.has(answer);
-  };
 
   if (!randomQuestion) {
     return <div>Loading...</div>;

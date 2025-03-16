@@ -1,6 +1,4 @@
-// components/QuestionSharedUI.tsx
 import React from "react";
-import { Answers } from "@/types/sat-platform/answer";
 import { toggleCrossOffMode } from "@/lib/questions/crossOff";
 import { useQuestionStore } from "@/store/questions";
 import axios from "axios";

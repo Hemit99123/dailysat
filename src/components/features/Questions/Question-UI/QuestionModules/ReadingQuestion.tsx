@@ -1,19 +1,16 @@
 // components/ReadingQuestion.tsx
 import React, { useState, useRef, useEffect } from "react";
-import { Answers } from "@/types/sat-platform/answer";
 import { useAnswerCorrectStore, useAnswerStore, useQuestionStore } from "@/store/questions";
 import Image from "next/image";
 import { QuestionsProps } from "@/types/sat-platform/questions";
 import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Importing the new component
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
-import { toggleCrossOffMode } from "@/lib/questions/crossOff";
 
 const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
   const [mode, setMode] = useState<"highlight" | "clear" | null>(null);
   const [crossOffMode, setCrossOffMode] = useState(false);
-  const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers>>(new Set());
   const textRef = useRef<HTMLDivElement | null>(null);
   const isAnswerCorrect = useAnswerCorrectStore((state) => state.isAnswerCorrect);
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
@@ -24,10 +21,9 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   useEffect(() => {
     if (isAnswerCorrect) {
       setSelectedAnswer(null);
-      setCrossedOffOptions(new Set());
       setMode(null);
     }
-  }, [isAnswerCorrect, setSelectedAnswer, setCrossedOffOptions, setMode]);
+  }, [isAnswerCorrect, setSelectedAnswer, setMode]);
 
 
   const renderHighlightedText = () => {
