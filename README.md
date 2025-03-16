@@ -51,7 +51,3 @@ Unlike the admin platform, the regular DailySAT platform's auth is handled by th
 - **Redis** (storage solution for sessions, rate limiting and caching layer)
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
-
-## 📚 School B2B Model:
-
-Schools can now partner with DailySAT. It is **free of charge**. Once partnered, their school will be added to the `school` collection in MongoDB. In /schools route, this collection will be shown and students can enroll into one school from that collection. They can then work on questions normally. Data from these interactions (correct answers/incorrect answers) will be stored within the `school` collection document and authorized teachers will be able to see each student and how they are doing. Teachers get authenticated through their emails, it is cross referenced with the `school` document and if their email is found they get access to /schools/dashboard?school=SCHOOL_NAME.
