@@ -16,3 +16,7 @@
   outline-offset: 5px;
   background-color: #fff
 }
+
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}

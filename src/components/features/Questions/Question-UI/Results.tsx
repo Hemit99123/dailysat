@@ -2,6 +2,7 @@ import { useAnswerCorrectStore } from "@/store/questions";
 import { questionType } from "@/types/sat-platform/questions";
 import React, { MutableRefObject } from "react";
 import Image from "next/image"
+import { parseContent } from "@/lib/latex";
 
 interface ResultProps {
   answerComponent: MutableRefObject<HTMLDivElement | null>;
@@ -29,7 +30,7 @@ const Result: React.FC<ResultProps> = ({
         ) : (
           <div className="mt-4 p-4 bg-gray-100 rounded">
             <h5 className="text-red-500">Incorrect!</h5>
-            <p className="mt-2">{explanation}</p>
+            {parseContent(explanation || "")}
             {type === "math" &&
               imageUrls &&
               imageUrls.map((url, idx) => (
