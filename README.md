@@ -10,7 +10,7 @@
   <a href="https://dailysat.org/"><img alt="Demo"
     src="https://img.shields.io/badge/🚀%20Live%20Demo-DailySAT-2F80ED?color=2F80ED&logoColor=white"/></a>
   <a href="https://twitter.com/dailysat"><img alt="Twitter"
-    src="https://img.shields.io/badge/Twitter-@dailysat-1DA1F2?logo=x&logoColor=white"/></a>
+    src="https://img.shields.io/badge/X@dailysat-1DA1F2?logo=x&logoColor=white"/></a>
   <br>
   <a href="LICENSE-CODE"><img alt="Code License"
     src="https://img.shields.io/badge/Code%20License-MIT%202.0-00BFFF?color=00BFFF"/></a>
