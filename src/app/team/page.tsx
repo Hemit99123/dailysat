@@ -1,26 +1,57 @@
 import React from "react";
+import Image from "next/image";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
-
+import "./team.css";
 const About = () => {
+  const text = "Our Executives";
+  const subText = "These are the people behind DailySAT!";
   const teamMembers = [
     {
-      name: "Aarush Kute",
+      name: (
+        <>
+          <p className="inline">Aarush Khute &nbsp;&nbsp;</p>
+          <a
+            href="https://www.linkedin.com/in/aarush-kute-1639a525b/"
+            target="_blank"
+          >
+            <img
+              src="/icons/linkedin.svg"
+              className="w-[16px] inline mb-1 "
+              alt="Check out Wilman's LinkedIn!"
+            />
+          </a>
+        </>
+      ),
       designation: "Chief Executive Officer",
       src: "/people/aarush.png", // Update with correct src path
       quote:
-        "I am passionate about artificial intelligence and machine learning, with a keen interest in Arduino projects. In my free time, I enjoy playing the piano and tennis. My career goal is to work in the AI/ML field while also pursuing entrepreneurial ventures. I am driven by the desire to innovate and create impactful solutions through technology.",
-    },
-    {
-      name: "Hemit Patel",
-      designation: "President & Chief Operating Officer",
-      src: "/people/hemit.png",
-      quote:
-        "Hi! I'm Hemit! A passionate high school student interested in Computer Science, specifically AI which I am currently learning. Additionally, I am also well-versed in full stack development. I am always open to new connections and ideas so feel free to connect with me!",
+        "I am passionate about AI and machine learning, with a keen interest in Arduino. In my free time, I enjoy playing the piano and tennis. I am driven by the desire to innovate and create impactful solutions through technology.",
     },
     {
       name: (
         <>
-          <h2 className="inline">Wilman Chan &nbsp;&nbsp;</h2>
+          <p className="inline">Hemit Patel &nbsp;&nbsp;</p>
+          <a
+            href="https://www.linkedin.com/in/hemit-patel-383ab3271/"
+            target="_blank"
+          >
+            <img
+              src="/icons/linkedin.svg"
+              className="w-[16px] inline mb-1 "
+              alt="Check out Wilman's LinkedIn!"
+            />
+          </a>
+        </>
+      ),
+      designation: "President & Chief Operating Officer",
+      src: "/people/hemit.png",
+      quote:
+        "Hi! I'm Hemit! A passionate high school student interested in Computer Science. Specifically, I am interested in AI, which I am currently learning, but I'm also well-versed in web-development.. ",
+    },
+    {
+      name: (
+        <>
+          <p className="inline">Wilman Chan &nbsp;&nbsp;</p>
           <a
             href="https://www.linkedin.com/in/wilman-chan-03a468286/"
             target="_blank"
@@ -43,22 +74,72 @@ const About = () => {
       ),
     },
     {
-      name: "Gautham Korrapati",
+      name: (
+        <>
+          <p className="inline">Gautham Korrapati &nbsp;&nbsp;</p>
+          <a
+            href="https://www.linkedin.com/in/gautham-korrapati-946369272/"
+            target="_blank"
+          >
+            <img
+              src="/icons/linkedin.svg"
+              className="w-[16px] inline mb-1 "
+              alt="Check out Wilman's LinkedIn!"
+            />
+          </a>
+        </>
+      ),
       designation: "Interim CTO",
       src: "/people/gautham.png",
       quote:
         "Hey, I'm Gautham, a current student at COC and I just want to have fun.",
     },
     {
-      name: "Devesh Khilnani",
+      name: (
+        <>
+          <p className="inline">Devesh Khilnani &nbsp;&nbsp;</p>
+          <a href="https://www.linkedin.com/in/dkhilnani/" target="_blank">
+            <img
+              src="/icons/linkedin.svg"
+              className="w-[16px] inline mb-1 "
+              alt="Check out Wilman's LinkedIn!"
+            />
+          </a>
+        </>
+      ),
       designation: "Chief Business Officer",
       src: "/people/devesh.png",
       quote:
-        "I am a 17 year old high school and college student with a passion for R&D + business, and medicine. As a startup founder with 2+ years of hands-on experience, I bring entrepreneurial energy and experience to every project, consistently seeking innovative solutions and new challenges.",
+        "I am a 17 year old high school and college student with a passion for R&D, business, & medicine. I love putting my energy and using my experience to every project, as I consistently seek new challenges.",
     },
   ];
+
   return (
     <div>
+      <div className="text-center mt-8">
+        <h2 className="text-5xl tracking-tight font-extrabold text-blue-900">
+          {text.split("").map((char, index) => (
+            <span
+              key={index}
+              className="fade-in-up inline-block"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              {char === " " ? "\u00A0" : char} {/* Preserve spaces */}
+            </span>
+          ))}
+        </h2>
+        <p className="font-light text-blue-900 sm:text-xl mt-2">
+          {subText.split("").map((char, index) => (
+            <span
+              key={index}
+              className="fade-in-up inline-block"
+              style={{ animationDelay: `${index * 25}ms` }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </span>
+          ))}
+        </p>
+      </div>
       <AnimatedTestimonials testimonials={teamMembers} />
     </div>
   );
