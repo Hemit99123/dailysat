@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import "./team.css";
 const About = () => {

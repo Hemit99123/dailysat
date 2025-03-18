@@ -96,9 +96,9 @@ const About = () => {
             We provide the ultimate online resource for mastering the SAT! Our
             mission is to empower students to achieve their best scores by
             providing an interactive, personalized, and efficient study
-            experience. Whether you're aiming for a perfect score or just trying
-            to improve in specific areas, DailySAT is here to guide you every
-            step of the way.
+            experience. Whether you&apos;re aiming for a perfect score or just
+            trying to improve in specific areas, DailySAT is here to guide you
+            every step of the way.
           </p>
           <div className="grid grid-cols-2 mb-4">
             <div>
@@ -138,7 +138,8 @@ const About = () => {
             work together and bring each other up as they prepare for this
             rigorous exam. By instituting numerous workshops, we cultivate a
             positive and supportive environment where everyone has access to the
-            same resources.Here are some workshops we've completed in the past.
+            same resources.Here are some workshops we&apos;ve completed in the
+            past.
           </p>
           <Image
             src="/assets/study-2.avif"
