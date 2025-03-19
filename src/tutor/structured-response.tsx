@@ -1,10 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import type { TutorResponse } from "./types"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ChevronLeft, ChevronRight, Info } from "lucide-react"
+
+export interface TutorResponse {
+  basicAnswer: string;
+  followUpQuestion: string;
+  options: { [key: string]: string };
+  explanation: string;
+  correctAnswer: string;
+  hints: { hint1: string; hint2: string; hint3: string };
+}
 
 interface StructuredResponseProps {
   response: TutorResponse

@@ -58,7 +58,13 @@ export function extractTutorResponse(text: string): TutorResponse | null {
 }
 
 // Helper function to extract choices from the question part
-function extractChoices(questionPart: string): any[] {
+interface Choice {
+  id: string;
+  text: string;
+  correct: boolean;
+}
+
+function extractChoices(questionPart: string): Choice[] {
   const choices = []
 
   // Match all options (A, B, C, D) with their text
@@ -184,7 +190,7 @@ function cleanJsonText(text: string): string {
     try {
       JSON.parse(jsonText)
       return jsonText
-    } catch (e) {
+    } catch {
       // If parsing fails, try more aggressive cleaning
       console.log("Initial JSON cleaning failed, trying more aggressive approach")
 
@@ -543,7 +549,7 @@ function extractHint(text: string): string | null {
 }
 
 // Validate and fix a question object to ensure it meets our requirements
-function validateAndFixQuestion(question: any): Question {
+function validateAndFixQuestion(question: Partial<Question>): Question {
   // Ensure question has all required fields
   if (!question.text) {
     question.text = "Based on the previous explanation, what is the correct answer?"
@@ -569,7 +575,7 @@ function validateAndFixQuestion(question: any): Question {
   }
 
   // Ensure each choice has id, text, and correct properties
-  question.choices.forEach((choice: any, index: number) => {
+  question.choices.forEach((choice: Partial<Choice>, index: number) => {
     if (!choice.id) {
       choice.id = String.fromCharCode(65 + index)
     }
@@ -582,10 +588,10 @@ function validateAndFixQuestion(question: any): Question {
   })
 
   // Ensure exactly one correct answer
-  const correctChoices = question.choices.filter((c: any) => c.correct)
+  const correctChoices = question.choices.filter((c: Choice) => c.correct)
   if (correctChoices.length !== 1) {
     // Reset all to false
-    question.choices.forEach((c: any) => (c.correct = false))
+    question.choices.forEach((c: Choice) => (c.correct = false))
     // Set the first one to true
     question.choices[0].correct = true
   }
@@ -604,7 +610,7 @@ function validateAndFixQuestion(question: any): Question {
 }
 
 // Validate and fix a tutor response object
-function validateAndFixTutorResponse(response: any): TutorResponse {
+function validateAndFixTutorResponse(response: Partial<TutorResponse>): TutorResponse {
   // Ensure explanation exists
   if (!response.explanation) {
     response.explanation = "Let me help you understand this concept."
