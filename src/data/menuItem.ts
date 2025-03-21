@@ -5,5 +5,7 @@ export const menuItems = [
   { label: "About", href: "/about" },
   { label: "Schools", href: "/schools"},
   { label: "Tips", href: "/tips"},
-  { label: "Tutorials", href: "/tutorials"}
+  { label: "Tutorials", href: "/tutorials"},
+  { label: "Tutor", href: "/tutor"},
+  { label: "Planner", href: "/plan"},
 ];
