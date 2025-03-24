@@ -1,50 +1,114 @@
-import Image from 'next/image';
-import React from 'react';
-import WorkshopItem from '@/components/features/About/WorkshopItem';
+"use client";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import WorkshopItem from "@/components/features/About/WorkshopItem";
+import { Timeline } from "@/components/ui/timeline";
+import { useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+
+// Counter animation only starts when the element comes into view
+const AnimatedCounter = ({
+  from,
+  to,
+  duration,
+}: {
+  from: number;
+  to: number;
+  duration: number;
+}) => {
+  const [count, setCount] = useState(from);
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.5 });
+
+  useEffect(() => {
+    if (!inView) return;
+
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min(
+        (timestamp - startTimestamp) / (duration * 1000),
+        1
+      );
+      setCount(Math.floor(progress * (to - from) + from));
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }, [inView, from, to, duration]);
+
+  return (
+    <h3 ref={ref} className="text-4xl text-[#5FA4F8] font-bold">
+      {count.toLocaleString()}+
+    </h3>
+  );
+};
 
 const About = () => {
-  return (
-    <div>
-        <section className="py-24 relative">
-        <div className="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
-            <div className="w-full justify-start items-center gap-8 grid lg:grid-cols-2 grid-cols-1">
-                <div className="w-full flex-col justify-start lg:items-start items-center gap-10 inline-flex">
-                    <div className="w-full flex-col justify-start lg:items-start items-center gap-4 flex">
-                        <h2 className="text-blue-900 text-6xl font-bold font-manrope leading-normal lg:text-start text-center">ACE the SAT.</h2>
-                        <p className="text-gray-500 text-base font-normal leading-relaxed lg:text-start text-center">Our product will help you prep for the SAT through providing a question bank! You will have annotation and other tools available to aid you in your SAT journey to your dream school 🚀</p>
-                    </div>
-                </div>
-                <Image 
-                    className='lg:mx-0 mx-auto h-full rounded-3xl object-cover" src="https://pagedone.io/asset/uploads/1717751272.png'
-                    src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="About Us image"
-                    width={500}
-                    height={300}
-                />
-            </div>
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.5 });
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (inView) {
+      controls.start({ opacity: 1, y: 0 });
+    }
+  }, [inView, controls]);
+
+  const data = [
+    {
+      title: "The Mission",
+      content: (
+        <div>
+          <p className="text-neutral-800 dark:text-neutral-200 text-xs md:text-lg font-normal mb-8">
+            Our product will help you prep for the SAT by providing a large
+            question bank! By practicing daily on this website, one will attain
+            a strong understanding of the variety of topics that are covered on
+            the SAT. With our no-pressure and stress-free environment, we truly
+            believe that you can get a 1550+ on your SAT. You also provide
+            various available to aid you in your SAT journey to your dream
+            school 🚀
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <Image
+              src="/assets/ace-sat.png"
+              alt="SAT Prep"
+              width={500}
+              height={500}
+              className="rounded-lg object-cover h-20 md:h-44 lg:h-60 w-full shadow-lg"
+            />
+            <Image
+              src="/assets/algebra-studying.webp"
+              alt="Study Resources"
+              width={500}
+              height={500}
+              className="rounded-lg object-cover h-20 md:h-44 lg:h-60 w-full shadow-lg"
+            />
+          </div>
         </div>
-    </section>
-      <section className="py-24 relative">
-        <div className="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
-          <div className="w-full justify-start items-center gap-12 grid lg:grid-cols-2 grid-cols-1">
-            <div className="w-full justify-center items-start gap-6 grid sm:grid-cols-2 grid-cols-1 lg:order-first order-last">
-              <div className="pt-24 lg:justify-center sm:justify-end justify-start items-start gap-2.5 flex">
-                <Image
-                  className="rounded-xl object-cover"
-                  src="https://images.unsplash.com/photo-1604933834215-2a64950311bd?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  width={500}
-                  height={300}
-                  alt='Image of person'
-                />
-              </div>
-              <Image
-                className="sm:ml-0 ml-auto rounded-xl object-cover"
-                src="https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="About Us image"
-                width={500}
-                height={300}
-              />
+      ),
+    },
+    {
+      title: "Why Us?",
+      content: (
+        <div ref={ref}>
+          <p className="text-neutral-800 dark:text-neutral-200 text-md md:text-lg font-normal mb-8">
+            We provide the ultimate online resource for mastering the SAT! Our
+            mission is to empower students to achieve their best scores by
+            providing an interactive, personalized, and efficient study
+            experience. Whether you&apos;re aiming for a perfect score or just
+            trying to improve in specific areas, DailySAT is here to guide you
+            every step of the way.
+          </p>
+          <div className="grid grid-cols-2 mb-4">
+            <div>
+              <AnimatedCounter from={10000} to={80000} duration={2} />
+              <p className="text-lg">Users</p>
             </div>
+
+            <div>
+              <AnimatedCounter from={0} to={3500} duration={2} />
+              <p className="text-lg">Questions</p>
             <div className="w-full flex-col justify-center lg:items-start items-center gap-10 inline-flex">
               <div className="w-full flex-col justify-center items-start gap-8 flex">
                 <div className="w-full flex-col justify-start lg:items-start items-center gap-3 flex">
@@ -67,6 +131,22 @@ const About = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Image
+              src="/assets/happy-students.avif"
+              alt="Happy Students"
+              width={500}
+              height={500}
+              className="rounded-lg object-cover h-20 md:h-44 lg:h-60 w-full shadow-lg"
+            />
+            <Image
+              src="/assets/students-happy-2.avif"
+              alt="More Students"
+              width={500}
+              height={500}
+              className="rounded-lg object-cover h-20 md:h-44 lg:h-60 w-full shadow-lg"
+            />
           </div>
         </div>
       </section>
@@ -121,22 +201,9 @@ const About = () => {
       }
     />
 
-    <WorkshopItem 
-      title='DailySAT x FTN Broadcasting'
-      people='1000+ students'
-      desc='A broadcasting network with in-house content developments, did some with us!'
-      icon={
-        <Image 
-          src='/workshop/ftnbroadcasting.png' 
-          alt="FTN Logo"
-          className="w-full h-full object-contain" 
-          width={50}
-          height={50}
-        />
-      }
-    />
-    </div>
-      </section>
+  return (
+    <div>
+      <Timeline data={data} />
     </div>
   );
 };
