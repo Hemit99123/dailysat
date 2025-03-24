@@ -113,7 +113,6 @@ const Home = () => {
         </p>
       </div>
 
-      {/* CTA Section */}
       {/* Explore Section */}
       <ExploreSectionFeats />
 

@@ -12,15 +12,13 @@ const ExploreSectionFeats = () => {
                   <Option
                       icon={<BookSVG />}
                       header="Reading & Writing"
-                      redirect="/reading-writing" />
+                      redirect="/reading-writing" 
+                   />
                   <Option
                       icon={<MathSVG />}
                       header="Math"
-                      redirect="/math" />
-                  <Option
-                      icon={<BookSVG />}
-                      header="Adaptive Practice"
-                      redirect="/adaptive-practice" />
+                      redirect="/math" 
+                   />
               </div>
           </div></> 
    )
