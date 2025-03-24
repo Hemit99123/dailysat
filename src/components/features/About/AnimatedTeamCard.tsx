@@ -12,7 +12,7 @@ type Testimonial = {
   src: string;
 };
 
-export const AnimatedTestimonials = ({
+export const AnimatedTeamCard = ({
   testimonials,
   autoplay = false,
 }: {
