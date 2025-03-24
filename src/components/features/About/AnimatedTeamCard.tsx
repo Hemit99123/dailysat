@@ -125,9 +125,11 @@ export const AnimatedTeamCard = ({
               href={testimonials[active].linkedIn}
               target="_blank"
             >
-              <img
+              <Image
                 src="/icons/linkedin.svg"
-                className="w-[16px] inline mb-1 "
+                width={20}
+                height={20}
+                className="inline mb-1"
                 alt="Check out Wilman's LinkedIn!"
               />
             </a>
