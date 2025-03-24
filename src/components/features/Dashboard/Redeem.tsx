@@ -1,4 +1,4 @@
-import { generateJWT } from '@/lib/jwt/action';
+import { generateJWT } from '@/lib/jwt/jwtAction';
 import { useUserStore } from '@/store/user';
 import axios from 'axios';
 import React, { FC } from 'react';

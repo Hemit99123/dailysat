@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css';
 
 /* From codepen. Can't do them in tailwind */
 .fancy-input {
@@ -17,7 +16,7 @@
   outline-offset: 5px;
   background-color: #fff
 }
-  
+
 
   
 @layer base {
@@ -86,3 +85,9 @@
     @apply bg-background text-foreground;
     }
 }
+
+
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}
+

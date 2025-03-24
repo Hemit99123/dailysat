@@ -1,4 +1,4 @@
-import { generateJWT } from "@/lib/jwt/action";
+import { generateJWT } from "@/lib/jwt/jwtAction";
 import { useStreakAnnouncerModalStore } from "@/store/modals";
 import { useAnswerCorrectStore, useAnswerStore, useQuestionStore, useTopicStore } from "@/store/questions";
 import { useScoreStore, useAnswerCounterStore } from "@/store/score";

@@ -1,32 +1,44 @@
+// components/ReadingQuestion.tsx
 import React, { useState, useRef, useEffect } from "react";
-import AnswerOption from "../AnswerOption";
-import { Answers } from "@/types/sat-platform/answer";
 import { useAnswerCorrectStore, useAnswerStore, useQuestionStore } from "@/store/questions";
 import Image from "next/image";
-import axios from "axios";
 import { QuestionsProps } from "@/types/sat-platform/questions";
-import { toggleCrossOffMode, toggleCrossOffOption } from "@/lib/questions-func/crossOff";
+import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Importing the new component
+import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 
 const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
   const [mode, setMode] = useState<"highlight" | "clear" | null>(null);
   const [crossOffMode, setCrossOffMode] = useState(false);
-  const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers>>(new Set());
   const textRef = useRef<HTMLDivElement | null>(null);
   const isAnswerCorrect = useAnswerCorrectStore((state) => state.isAnswerCorrect);
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
-
+  const toggleMode = (newMode: "highlight" | "clear") => {
+    setMode((prevMode) => (prevMode === newMode ? null : newMode));
+  };
+  
   useEffect(() => {
     if (isAnswerCorrect) {
       setSelectedAnswer(null);
-      setCrossedOffOptions(new Set());
       setMode(null);
     }
-  }, [isAnswerCorrect, setSelectedAnswer, setCrossedOffOptions, setMode]);
+  }, [isAnswerCorrect, setSelectedAnswer, setMode]);
 
-  const toggleMode = (newMode: "highlight" | "clear") => {
-    setMode((prevMode) => (prevMode === newMode ? null : newMode));
+
+  const renderHighlightedText = () => {
+    return (
+      <div
+        ref={textRef}
+        className="relative"
+        onMouseUp={handleSelection}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={handleSelection}
+        style={{ cursor: mode ? "text" : "default" }}
+      >
+        {randomQuestion?.question}
+      </div>
+    );
   };
 
   const handleSelection = (event: React.TouchEvent | React.MouseEvent) => {
@@ -34,7 +46,6 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
 
     let selection: Selection | null = null;
 
-    // Handle selection for touch events
     if ("changedTouches" in event) {
       const touch = event.changedTouches[0];
       const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -42,7 +53,6 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
         selection = window.getSelection();
       }
     } else {
-      // Handle selection for mouse events
       selection = window.getSelection();
     }
 
@@ -88,34 +98,6 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
     span.replaceWith(textNode);
   };
 
-  const renderHighlightedText = () => {
-    return (
-      <div
-        ref={textRef}
-        className="relative"
-        onMouseUp={handleSelection}
-        onTouchStart={(e) => e.stopPropagation()} // Avoid unnecessary propagation
-        onTouchEnd={handleSelection}
-        style={{ cursor: mode ? "text" : "default" }}
-      >
-        {randomQuestion?.question}
-      </div>
-    );
-  };
-
-  const handleAnswerClick = (answer: Answers) => {
-    if (crossOffMode) {
-      toggleCrossOffOption(setCrossedOffOptions, answer);
-    } else {
-      setSelectedAnswer(answer);
-    }
-  };
-
-  const betaBugReport = async () => {
-    await axios.get("/api/beta/bug?id=" + randomQuestion?.id);
-    window.location.reload();
-  };
-
   const handleSubmit = () => {
     if (selectedAnswer) {
       onAnswerSubmit(selectedAnswer);
@@ -125,7 +107,9 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
 
   return (
     <div className="flex flex-col items-start px-8 -mt-6">
-      <div className="flex items-center mb-2 space-x-4">
+
+
+<div className="flex items-center mb-2 space-x-4">
         <button
           onClick={() => toggleMode("highlight")}
           className={`p-1 rounded ${
@@ -158,50 +142,23 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
             height={500}
           />
         </button>
-        <button
-          onClick={() => toggleCrossOffMode(setCrossOffMode)}
-          className={`p-1 rounded ${
-            crossOffMode ? "bg-blue-300 text-white" : "bg-gray-300"
-          }`}
-        >
-          Cross off
-        </button>
-      </div>
+        <div className="mt-6">
+          <QuestionSharedUI
+            crossOffMode={crossOffMode}
+            setCrossOffMode={setCrossOffMode}
+          />
+        </div>
 
-      <p
-        className="text-xs font-extralight hover:text-red-500 hover:cursor-pointer transition-all"
-        onClick={() => betaBugReport()}
-      >
-        {randomQuestion?.id} Report this question as bugged
-      </p>
+      </div>
 
       {renderHighlightedText()}
 
       <span className="mb-3 text-sm font-semibold">Choose 1 answer:</span>
-      <div className="w-full space-y-2">
-        <AnswerOption
-          text={randomQuestion?.optionA || ""}
-          onClick={() => handleAnswerClick("A")}
-          isSelected={selectedAnswer === "A"}
-          isCrossedOff={crossedOffOptions.has("A")}
-        />
-        <AnswerOption
-          text={randomQuestion?.optionB || ""}
-          onClick={() => handleAnswerClick("B")}
-          isSelected={selectedAnswer === "B"}
-          isCrossedOff={crossedOffOptions.has("B")}
-        />
-        <AnswerOption
-          text={randomQuestion?.optionC || ""}
-          onClick={() => handleAnswerClick("C")}
-          isSelected={selectedAnswer === "C"}
-          isCrossedOff={crossedOffOptions.has("C")}
-        />
-        <AnswerOption
-          text={randomQuestion?.optionD || ""}
-          onClick={() => handleAnswerClick("D")}
-          isSelected={selectedAnswer === "D"}
-          isCrossedOff={crossedOffOptions.has("D")}
+      <div className="w-full">
+        <MultipleChoice 
+          crossOffMode={crossOffMode}
+          selectedAnswer={selectedAnswer}
+          setSelectedAnswer={setSelectedAnswer}
         />
       </div>
 

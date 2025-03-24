@@ -1,5 +1,5 @@
 import React from "react";
-import Latex from "react-latex-next";
+import { parseContent } from "@/lib/latex";
 
 interface AnswerOptionProps {
   text: string;
@@ -23,11 +23,7 @@ const AnswerOption: React.FC<AnswerOptionProps> = ({
       `}
       onClick={onClick}
     >
-      <Latex
-        
-      >
-        {text}
-      </Latex>
+      {parseContent(text)}
     </div>
   );
 };
