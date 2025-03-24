@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth';
-import { QUESTION_IS_CORRECT_POINTS } from '@/data/constants';
+import { QUESTION_IS_CORRECT_POINTS } from '@/data/constant';
 import { client } from '@/lib/mongo';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 

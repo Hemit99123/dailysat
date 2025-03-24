@@ -14,8 +14,8 @@ import Spinner from "@/components/common/Spinner";
 import GetStarted from "@/components/features/Questions/Question-UI/GetStarted";
 import Result from "@/components/features/Questions/Question-UI/Results";
 import { useQuestionStore, useTopicStore } from "@/store/questions";
-import QuestionWrappers from "@/components/Wrappers/question/Question";
-import MainWrappers from "@/components/Wrappers/question/Main";
+import QuestionWrappers from "@/components/wrappers/Question";
+import MainWrappers from "@/components/wrappers/Main";
 
 const Math = () => {
   const {fetchRandomQuestion, handleAnswerSubmit, handleCheckThreeStreak} = useQuestionHandler()
