@@ -10,6 +10,7 @@ type Testimonial = {
   name: string | React.ReactNode;
   designation: string | React.ReactNode;
   src: string;
+  linkedIn: string
 };
 
 export const AnimatedTeamCard = ({
@@ -119,7 +120,17 @@ export const AnimatedTeamCard = ({
             }}
           >
             <h3 className="text-2xl font-bold dark:text-white text-black">
-              {testimonials[active].name}
+            <p className="inline">{testimonials[active].name}&nbsp;&nbsp;</p>
+            <a
+              href={testimonials[active].linkedIn}
+              target="_blank"
+            >
+              <img
+                src="/icons/linkedin.svg"
+                className="w-[16px] inline mb-1 "
+                alt="Check out Wilman's LinkedIn!"
+              />
+            </a>
             </h3>
             <p className="text-sm text-gray-500 dark:text-neutral-500">
               {testimonials[active].designation}

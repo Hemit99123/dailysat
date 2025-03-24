@@ -1,62 +1,24 @@
 export const teamMember = [
   {
-    name: (
-      <>
-        <p className="inline">Aarush Khute &nbsp;&nbsp;</p>
-        <a
-          href="https://www.linkedin.com/in/aarush-kute-1639a525b/"
-          target="_blank"
-        >
-          <img
-            src="/icons/linkedin.svg"
-            className="w-[16px] inline mb-1 "
-            alt="Check out Wilman's LinkedIn!"
-          />
-        </a>
-      </>
-    ),
+    name: "Aarush Kute",
+    linkedIn: "https://www.linkedin.com/in/aarush-kute-1639a525b/",
     designation: "Chief Executive Officer",
     src: "/people/aarush.png", // Update with correct src path
     quote:
       "I am passionate about AI and machine learning, with a keen interest in Arduino. In my free time, I enjoy playing the piano and tennis. I am driven by the desire to innovate and create impactful solutions through technology.",
   },
+
   {
-    name: (
-      <>
-        <p className="inline">Hemit Patel &nbsp;&nbsp;</p>
-        <a
-          href="https://www.linkedin.com/in/hemit-patel-383ab3271/"
-          target="_blank"
-        >
-          <img
-            src="/icons/linkedin.svg"
-            className="w-[16px] inline mb-1 "
-            alt="Check out Wilman's LinkedIn!"
-          />
-        </a>
-      </>
-    ),
+    name: "Hemit Patel",
+    linkedIn: "https://www.linkedin.com/in/hemit-patel-383ab3271/",
     designation: "President & Chief Operating Officer",
     src: "/people/hemit.png",
     quote:
       "Hi! I'm Hemit! A passionate high school student interested in Computer Science. Specifically, I am interested in AI, which I am currently learning, but I'm also well-versed in web-development.. ",
   },
   {
-    name: (
-      <>
-        <p className="inline">Wilman Chan &nbsp;&nbsp;</p>
-        <a
-          href="https://www.linkedin.com/in/wilman-chan-03a468286/"
-          target="_blank"
-        >
-          <img
-            src="/icons/linkedin.svg"
-            className="w-[16px] inline mb-1 "
-            alt="Check out Wilman's LinkedIn!"
-          />
-        </a>
-      </>
-    ),
+    name: "Wilman Chan",
+    linkedIn: "https://www.linkedin.com/in/wilman-chan-03a468286/",
     designation: <>Chief Marketing Officer&nbsp;&nbsp;&nbsp;&nbsp;</>,
     src: "/people/G10_Yearbook_Picture.png",
     quote: (
@@ -67,39 +29,16 @@ export const teamMember = [
     ),
   },
   {
-    name: (
-      <>
-        <p className="inline">Gautham Korrapati &nbsp;&nbsp;</p>
-        <a
-          href="https://www.linkedin.com/in/gautham-korrapati-946369272/"
-          target="_blank"
-        >
-          <img
-            src="/icons/linkedin.svg"
-            className="w-[16px] inline mb-1 "
-            alt="Check out Wilman's LinkedIn!"
-          />
-        </a>
-      </>
-    ),
+    name: "Gautham Korrapati",
+    linkedIn: "https://www.linkedin.com/in/gautham-korrapati-946369272/",
     designation: "Interim CTO",
     src: "/people/gautham.png",
     quote:
       "Hey, I'm Gautham, a current student at COC and I just want to have fun.",
   },
   {
-    name: (
-      <>
-        <p className="inline">Devesh Khilnani &nbsp;&nbsp;</p>
-        <a href="https://www.linkedin.com/in/dkhilnani/" target="_blank">
-          <img
-            src="/icons/linkedin.svg"
-            className="w-[16px] inline mb-1 "
-            alt="Check out Wilman's LinkedIn!"
-          />
-        </a>
-      </>
-    ),
+    name: "Devesh Khilnani",
+    linkedIn: "https://www.linkedin.com/in/dkhilnani/",
     designation: "Chief Business Officer",
     src: "/people/devesh.png",
     quote:
