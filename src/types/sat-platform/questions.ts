@@ -17,7 +17,7 @@ export interface Highlight {
 }
 
 export interface QuestionData {
-  id: string;
+  _id: string;
   question: string;
   optionA: string;
   optionB: string;

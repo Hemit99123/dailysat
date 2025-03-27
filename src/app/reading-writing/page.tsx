@@ -8,7 +8,6 @@ import { useEffect, useRef } from "react";
 import ReadingQuestion from "@/components/features/Questions/Question-UI/QuestionModules/ReadingQuestion";
 import Header from "@/components/features/Questions/Question-UI/Header";
 import { useAnswerCounterStore } from "@/store/score";
-import { Answers } from "@/types/sat-platform/answer";
 import { useStreakAnnouncerModalStore } from "@/store/modals";
 import StreakAnnouncer from "@/components/features/Questions/Modals/StreakAnnouncer";
 import useQuestionHandler from "@/hooks/questions";
@@ -27,7 +26,6 @@ const Reading = () => {
   const setRandomQuestion = useQuestionStore((state) => state.setRandomQuestion)
   
   const correctCount = useAnswerCounterStore((state) => state.count);
-  const answerCorrectRef: Record<Answers, number> = { A: 0, B: 1, C: 2, D: 3 };
 
   const isAnnouncerModalOpen = useStreakAnnouncerModalStore((state) => state.isOpen);
 
@@ -70,8 +68,6 @@ const Reading = () => {
                 onAnswerSubmit={() =>
                   handleAnswerSubmit(
                     "reading-writing",
-                    randomQuestion.correctAnswer,
-                    answerCorrectRef
                   )
                 }
               />

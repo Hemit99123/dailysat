@@ -15,8 +15,8 @@ const QuestionOption: React.FC<QuestionOptionsProp> = ({
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
 
   const handleBugReport = async () => {
-    if (!randomQuestion?.id) return;
-    await axios.get(`/api/report/bug?id=${randomQuestion.id}`);
+    if (!randomQuestion?._id) return;
+    await axios.get(`/api/report/bug?id=${randomQuestion._id}`);
     window.location.reload();
   };
 
@@ -33,7 +33,7 @@ const QuestionOption: React.FC<QuestionOptionsProp> = ({
           className="text-xs font-extralight hover:text-red-500 hover:cursor-pointer transition-all"
           onClick={handleBugReport}
         >
-          {randomQuestion?.id} Report this question as bugged
+          {randomQuestion?._id} Report this question as bugged
         </p>
       </div>
       {/* You can add more shared UI elements here if needed */}
