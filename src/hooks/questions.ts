@@ -2,12 +2,12 @@ import { generateJWT } from "@/lib/jwt/jwtAction";
 import { useStreakAnnouncerModalStore } from "@/store/modals";
 import { useAnswerCorrectStore, useAnswerStore, useQuestionStore, useTopicStore } from "@/store/questions";
 import { useScoreStore, useAnswerCounterStore } from "@/store/score";
-import { Answers } from "@/types/sat-platform/answer";
 import { Topic } from "@/types/sat-platform/topic";
 import axios from "axios";
 import { useAnswerAttemptsStore } from "@/store/questions"
 import { questionType } from "@/types/sat-platform/questions";
 import { useState } from "react";
+import { answerCorrectRef } from "@/lib/questions/answer";
 
 // Custom hook to encapsulate logic because it is used in both math and reading/writing components
 const useQuestionHandler = () => {
@@ -24,6 +24,8 @@ const useQuestionHandler = () => {
   const resetAttempts = useAnswerAttemptsStore((state) => state.resetAttempts) 
   const incrementAttempts = useAnswerAttemptsStore((state) => state.incrementAttempts)
   const attempts = useAnswerAttemptsStore((state) => state.attempts)
+
+  const randomQuestion = useQuestionStore((state) => state.randomQuestion)
 
   // alreadyUsed is used for the 3 streaks modal. This way, whenever a new component re-render happens to subbed components
   // the correctCount === 3 is still there but since alr used, will not work again
@@ -51,10 +53,9 @@ const useQuestionHandler = () => {
 
   const handleAnswerSubmit = async(
     type: questionType,
-    correctAnswer: number, // Correct answer index
-    answerCorrectRef: Record<Answers, number> = { A: 0, B: 1, C: 2, D: 3 } // Mapping for answer keys
   ) : Promise<void> => {
-    const isCorrect = answerCorrectRef[answer ?? "A"] === correctAnswer;
+    const isCorrect = answerCorrectRef[answer ?? "A"] === randomQuestion?.correctAnswer;
+
 
     if (isCorrect) {
       increaseCorrectCounter();
@@ -67,10 +68,15 @@ const useQuestionHandler = () => {
 
     setIsAnswerCorrect(isCorrect);
 
+    // turn answer into index for the correctAnswer field
+    const answerIdx = answerCorrectRef[answer || "A"]
+
     // making a new token from a server-side action (function that runs on the SEVER!!)
     const token = await generateJWT({
-      state: isCorrect == true ? 1 : 0,
-      attempts
+      id: randomQuestion?._id,
+      attempts,
+      type,
+      answer: answerIdx
     })
 
     // Send request to backend

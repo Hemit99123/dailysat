@@ -7,7 +7,6 @@ import { Topic } from "@/types/sat-platform/topic";
 import { useEffect, useRef } from "react";
 import MathQuestion from "@/components/features/Questions/Question-UI/QuestionModules/MathQuestion";
 import Header from "@/components/features/Questions/Question-UI/Header";
-import { Answers } from "@/types/sat-platform/answer";
 import StreakAnnouncer from "@/components/features/Questions/Modals/StreakAnnouncer";
 import useQuestionHandler from "@/hooks/questions";
 import Spinner from "@/components/common/Spinner";
@@ -23,8 +22,6 @@ const Math = () => {
   const setSelectedTopic = useTopicStore((state) => state.setSelectedTopic)
   const randomQuestion = useQuestionStore((state) => state.randomQuestion)
   const setRandomQuestion = useQuestionStore((state) => state.setRandomQuestion)
-
-  const answerCorrectRef: Record<Answers, number> = { A: 0, B: 1, C: 2, D: 3 };
   const answerComponent = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -90,8 +87,6 @@ const Math = () => {
                 onAnswerSubmit={() => 
                   handleAnswerSubmit( 
                     "math",
-                    randomQuestion.correctAnswer, 
-                    answerCorrectRef
                   )
                 }
               />
