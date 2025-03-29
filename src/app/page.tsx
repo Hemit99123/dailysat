@@ -1,5 +1,4 @@
 import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
-import { motion } from 'framer-motion'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import React from 'react'
 
