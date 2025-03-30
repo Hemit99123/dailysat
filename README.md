@@ -17,7 +17,7 @@
   <br>
 </div>
 
-📚 To access the API documentation, navigate [here](https://www.dailysat.org/api-docs)
+📚 To access the API documentation, [click here](https://www.dailysat.org/api-docs)
 
 ## 🧑‍🤝‍🧑 For open-source contributions:
 Our mission is to build an app that is free and accessible! This means we love input from the DailySAT community :) If you have any suggestions or feedback on our webapp, you can issue a "ticket" for our team to review. Kindly create an Issue within the issues tabs provided by the Github web app.
