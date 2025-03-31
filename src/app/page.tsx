@@ -2,6 +2,7 @@
 
 import NavBar from '@/components/common/NavBar'
 import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
+import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
 import { ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -41,6 +42,16 @@ const Home = () => {
           <span className="text-sm text-gray-500 mb-2 font-medium">Scroll to explore</span>
           <div className="bg-blue-100 rounded-full p-2 animate-bounce">
             <ChevronDown className="h-6 w-6 text-blue-600" />
+          </div>
+        </div>
+      </section>
+      {/* Stats Section */}
+      <section className="flex justify-center w-full py-16 bg-white border-y border-gray-100">
+        <div className="container px-4 md:px-6 ">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
+            <StatsCounter value={80000} label="Users Worldwide" />
+            <StatsCounter value={3500} label="Practice Questions" />
+            <StatsCounter value={95} label="Success Rate" suffix="%" />
           </div>
         </div>
       </section>
