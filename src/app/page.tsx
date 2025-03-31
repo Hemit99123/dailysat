@@ -1,9 +1,12 @@
 "use client"
 
+import { Badge } from '@/components/common/Badge'
 import NavBar from '@/components/common/NavBar'
+import { FeatureCard3D } from '@/components/features/Landing-Page/FeatureCard3D'
 import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
 import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
-import { ChevronDown } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Award, BookCheck, ChevronDown, Rocket, Target } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -55,6 +58,98 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+          {/* Why Us Section */}
+          <section className="flex flex-col justify-center items-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-blue-50 to-transparent" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
+          >
+            <div className="space-y-2">
+              <Badge className="px-3 py-1 bg-blue-100 text-blue-700 border-blue-200 rounded-full mb-2">
+                Why Choose Us
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                The Ultimate
+                <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+                  {" "}
+                  SAT Preparation Resource
+                </span>
+              </h2>
+              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl mt-4">
+                Our mission is to empower students to achieve their best scores by providing an interactive,
+                personalized, and efficient study experience.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Why Us Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <FeatureCard3D
+                icon={<BookCheck className="h-6 w-6 text-blue-600" />}
+                title="Comprehensive Question Bank"
+                description="Access 3,500+ questions covering all SAT topics and difficulty levels."
+                color="blue"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <FeatureCard3D
+                icon={<Target className="h-6 w-6 text-purple-600" />}
+                title="Personalized Learning"
+                description="Adaptive practice that focuses on your specific areas for improvement."
+                color="purple"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <FeatureCard3D
+                icon={<Award className="h-6 w-6 text-green-600" />}
+                title="Proven Results"
+                description="Our students consistently achieve 1550+ scores on their SAT exams."
+                color="green"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <FeatureCard3D
+                icon={<Rocket className="h-6 w-6 text-orange-600" />}
+                title="Stress-Free Environment"
+                description="Practice at your own pace in a supportive, no-pressure learning space."
+                color="orange"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
     </div>
   )
 }
