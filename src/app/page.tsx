@@ -1,12 +1,15 @@
 "use client"
 
 import { Badge } from '@/components/common/Badge'
+import { Button } from '@/components/common/Button'
+import { Card, CardContent } from '@/components/common/Card'
 import NavBar from '@/components/common/NavBar'
 import { FeatureCard3D } from '@/components/features/Landing-Page/FeatureCard3D'
 import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
+import { ScoreBarGraph } from '@/components/features/Landing-Page/ScoreChart'
 import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
 import { motion } from 'framer-motion'
-import { Award, BookCheck, ChevronDown, Rocket, Target } from 'lucide-react'
+import { Award, BookCheck, CheckCircle, ChevronDown, Rocket, Target } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -48,8 +51,89 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+          {/* Score Improvement Section */}
+      <section className="flex justify-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
+        <div className="container px-4 md:px-6 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="space-y-6"
+            >
+              <Badge className="px-3 py-1 bg-indigo-100 text-indigo-700 border-indigo-200 rounded-full">Results</Badge>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                <span className="bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
+                  Boost your SAT score
+                </span>
+              </h2>
+              <p className="text-gray-500 md:text-xl">
+                Our students see an average improvement of 150+ points after completing our comprehensive practice
+                program.
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 bg-green-100 p-1 rounded-full">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Personalized Practice</h3>
+                    <p className="text-sm text-gray-500">Adaptive tests that focus on your weak areas</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 bg-green-100 p-1 rounded-full">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Detailed Analytics</h3>
+                    <p className="text-sm text-gray-500">Track your progress and identify improvement areas</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 bg-green-100 p-1 rounded-full">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Expert Strategies</h3>
+                    <p className="text-sm text-gray-500">Learn proven techniques from 1500+ scorers</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button className="mt-6" size="lg">
+                Start Your Journey
+              </Button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl blur-3xl opacity-20" />
+              <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl rounded-3xl overflow-hidden">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-6">Average Score Improvement</h3>
+                  <div className="h-80">
+                    <ScoreBarGraph />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+      
       {/* Stats Section */}
-      <section className="flex justify-center w-full py-16 bg-white border-y border-gray-100">
+      <section className="flex justify-center w-full py-16 bg-white border-t border-gray-300">
         <div className="container px-4 md:px-6 ">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
             <StatsCounter value={80000} label="Users Worldwide" />
