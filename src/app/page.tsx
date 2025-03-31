@@ -16,6 +16,11 @@ import React from 'react'
 const Home = () => {
 
   const router = useRouter()
+
+  const handleRedirectToDashboard = () => {
+    router.push("/dashboard")
+  }
+  
   return (
      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100"> {/* Adjusted padding-top to fit navbar */}
       <div className='w-screen'>
@@ -38,7 +43,7 @@ const Home = () => {
           </div>
 
           <div className="w-full">
-            <GlowingButton className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg hover:opacity-90" onClick={() => router.push("/dashboard")}>
+            <GlowingButton className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg hover:opacity-90" onClick={handleRedirectToDashboard}>
               Explore DailySAT
             </GlowingButton>
           </div>
@@ -106,7 +111,7 @@ const Home = () => {
                 </div>
               </div>
 
-              <Button className="mt-6" size="lg">
+              <Button className="mt-6" size="lg" onClick={handleRedirectToDashboard}>
                 Start Your Journey
               </Button>
             </motion.div>
