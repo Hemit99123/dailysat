@@ -9,7 +9,7 @@ export function GlowingButton({ children, className, ...props }: GlowingButtonPr
   return (
     <Button
       className={cn(
-        "relative group overflow-hidden rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white px-8 py-3 transition-all duration-300 hover:scale-105 hover:shadow-lg",
+        "w-full relative group overflow-hidden rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white px-8 py-3 transition-all duration-300 hover:scale-105 hover:shadow-lg",
         className
       )}
       {...props}

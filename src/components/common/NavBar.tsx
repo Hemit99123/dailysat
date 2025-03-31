@@ -30,7 +30,7 @@ const NavBar = () => {
     <motion.div
       style={{ y, opacity }}
       className={cn(
-        "top-0 left-0 right-0 z-50 mx-auto max-w-7xl px-4 py-4 mb-10 mt-2",
+        "top-0 left-0 right-0 mx-auto max-w-7xl px-4 py-4 mt-2",
       )}
     >
       <nav className="flex items-center justify-between">
