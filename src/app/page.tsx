@@ -7,11 +7,13 @@ import NavBar from '@/components/common/NavBar'
 import { FeatureCard3D } from '@/components/features/Landing-Page/FeatureCard3D'
 import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
 import Header from '@/components/features/Landing-Page/Header'
+import { ReviewCarousel } from '@/components/features/Landing-Page/ReviewCarousel'
 import { ScoreBarGraph } from '@/components/features/Landing-Page/ScoreChart'
 import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
 import { WorkshopCard } from '@/components/features/Landing-Page/WorkshopCard'
 import { motion } from 'framer-motion'
 import { Award, BookCheck, CheckCircle, ChevronDown, Rocket, Target } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -285,6 +287,79 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section with Infinite Carousel */}
+      <section className="flex justify-center items-center w-full py-20 md:py-32 bg-gradient-to-br from-indigo-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
+          >
+            <Header 
+              badgeText='Testimonials'
+              text='What our Students Say'
+              description='Header from students who have imporved their SAT scores with DailySAT.'
+            />
+          </motion.div>
+
+          {/* Multi-row Infinite Carousel */}
+          <ReviewCarousel />
+        </div>
+      </section>
+
+            {/* CTA Section */}
+      <section className=" flex justify-center items-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <Header 
+              badgeText='Ready?'
+              text='Convinced yet?'
+              gradientText='Boost your SAT score!'
+              description='Join thousands of students who have improved thier SAT scores with DailySAT. '
+            
+            />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <GlowingButton className="w-44 mt-3" onClick={handleRedirectToDashboard}>Start your journey</GlowingButton>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+            {/* Footer */}
+      <footer className="w-full border-t bg-white py-12">
+        <div className="container flex flex-col md:flex-row items-center justify-between gap-4 px-4 md:px-6">
+          <div className="flex items-center gap-2">
+            <div className="font-bold text-xl bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+              DailySAT
+            </div>
+          </div>
+          <nav className="flex gap-4 sm:gap-6">
+            <Link href="#" className="text-xs hover:underline underline-offset-4">
+              Terms of Service
+            </Link>
+            <Link href="#" className="text-xs hover:underline underline-offset-4">
+              Privacy
+            </Link>
+            <Link href="#" className="text-xs hover:underline underline-offset-4">
+              Cookies
+            </Link>
+          </nav>
+          <div className="text-xs text-gray-500">© 2025 DailySAT. All rights reserved.</div>
+        </div>
+      </footer>
     </div>
   )
 }
