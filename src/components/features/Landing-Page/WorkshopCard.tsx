@@ -23,7 +23,7 @@ export function WorkshopCard({ image, title, partner, attendees, description, cl
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative z-10">
         <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg">
-          <img
+          <Image
             src={image}
             alt={title}
             width={600}
