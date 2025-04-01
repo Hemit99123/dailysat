@@ -9,6 +9,7 @@ import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
 import Header from '@/components/features/Landing-Page/Header'
 import { ScoreBarGraph } from '@/components/features/Landing-Page/ScoreChart'
 import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
+import { WorkshopCard } from '@/components/features/Landing-Page/WorkshopCard'
 import { motion } from 'framer-motion'
 import { Award, BookCheck, CheckCircle, ChevronDown, Rocket, Target } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -58,8 +59,89 @@ const Home = () => {
         </div>
       </section>
 
+          {/* Why Us Section */}
+      <section className="flex flex-col justify-center items-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-40 to-transparent" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
+          >
+              <Header 
+                badgeText='Why Choose Us'
+                text='The Ultimate'
+                gradientText='SAT Preparation Resource'
+                description='Our mission is to empower students to achieve their best scores by providing an interactive, personalized, and efficient study experience.'
+              />
+          </motion.div>
+
+          {/* Why Us Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <FeatureCard3D
+                icon={<BookCheck className="h-6 w-6 text-blue-600" />}
+                title="Comprehensive Question Bank"
+                description="Access 3,500+ questions covering all SAT topics and difficulty levels."
+                color="blue"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <FeatureCard3D
+                icon={<Target className="h-6 w-6 text-purple-600" />}
+                title="Personalized Learning"
+                description="Adaptive practice that focuses on your specific areas for improvement."
+                color="purple"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <FeatureCard3D
+                icon={<Award className="h-6 w-6 text-green-600" />}
+                title="Proven Results"
+                description="Our students consistently achieve 1550+ scores on their SAT exams."
+                color="green"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <FeatureCard3D
+                icon={<Rocket className="h-6 w-6 text-orange-600" />}
+                title="Stress-Free Environment"
+                description="Practice at your own pace in a supportive, no-pressure learning space."
+                color="orange"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
           {/* Score Improvement Section */}
-      <section className="flex justify-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
+      <section className="flex justify-center w-full py-20 md:py-32 bg-gradient-to-br from-blue-50 to-indigo-50  relative overflow-hidden">
         <div className="container px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -139,7 +221,7 @@ const Home = () => {
       </section>
       
       {/* Stats Section */}
-      <section className="flex justify-center w-full py-16 bg-white border-t border-gray-300">
+      <section className="flex justify-center w-full py-16 bg-white border-t border-b border-gray-300">
         <div className="container px-4 md:px-6 ">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
             <StatsCounter value={80000} label="Visitors Worldwide" />
@@ -149,9 +231,10 @@ const Home = () => {
         </div>
       </section>
 
-          {/* Why Us Section */}
-          <section className="flex flex-col justify-center items-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
-        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-blue-50 to-transparent" />
+
+      {/* Workshops Section */}
+      <section className="flex justify-center w-full bg-white py-20 md:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
 
         <div className="container px-4 md:px-6 relative">
           <motion.div
@@ -161,27 +244,27 @@ const Home = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
           >
-              <Header 
-                badgeText='Why Choose Us'
-                text='The Ultimate'
-                gradientText='SAT Preparation Resource'
-                description='Our mission is to empower students to achieve their best scores by providing an interactive, personalized, and efficient study experience.'
-              />
+            <Header 
+              badgeText='Workshops'
+              text='Learning Together,'
+              gradientText='Growing Together'
+              description='We love educating, sharing, and learning! We encourage students to work together and bring eachother up as they prepare for this rigorous exam. By insituting numerous workshops, we cultivate a postive and supported environment.'
+            />
           </motion.div>
 
-          {/* Why Us Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <FeatureCard3D
-                icon={<BookCheck className="h-6 w-6 text-blue-600" />}
-                title="Comprehensive Question Bank"
-                description="Access 3,500+ questions covering all SAT topics and difficulty levels."
-                color="blue"
+              <WorkshopCard
+                image="https://placehold.co/600x400/3b82f6/ffffff/png?text=Education+Workshop"
+                title="Post-Secondary Education and Finances"
+                partner="DailySAT x StockSavvy"
+                attendees="60+"
+                description="Hosted a workshop on post-secondary education and finances, helping students understand the financial aspects of college planning."
               />
             </motion.div>
 
@@ -191,45 +274,17 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <FeatureCard3D
-                icon={<Target className="h-6 w-6 text-purple-600" />}
-                title="Personalized Learning"
-                description="Adaptive practice that focuses on your specific areas for improvement."
-                color="purple"
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <FeatureCard3D
-                icon={<Award className="h-6 w-6 text-green-600" />}
-                title="Proven Results"
-                description="Our students consistently achieve 1550+ scores on their SAT exams."
-                color="green"
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <FeatureCard3D
-                icon={<Rocket className="h-6 w-6 text-orange-600" />}
-                title="Stress-Free Environment"
-                description="Practice at your own pace in a supportive, no-pressure learning space."
-                color="orange"
+              <WorkshopCard
+                image="https://placehold.co/600x400/3b82f6/ffffff/png?text=Broadcasting+Workshop"
+                title="Broadcasting and Content Development"
+                partner="DailySAT x FTN Broadcasting"
+                attendees="1000+"
+                description="Collaborated with a broadcasting network with in-house content developments to reach a wider audience of students preparing for the SAT."
               />
             </motion.div>
           </div>
         </div>
       </section>
-
     </div>
   )
 }
