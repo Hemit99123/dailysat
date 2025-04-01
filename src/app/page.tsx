@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/common/Card'
 import NavBar from '@/components/common/NavBar'
 import { FeatureCard3D } from '@/components/features/Landing-Page/FeatureCard3D'
 import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
+import Header from '@/components/features/Landing-Page/Header'
 import { ScoreBarGraph } from '@/components/features/Landing-Page/ScoreChart'
 import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
 import { motion } from 'framer-motion'
@@ -141,7 +142,7 @@ const Home = () => {
       <section className="flex justify-center w-full py-16 bg-white border-t border-gray-300">
         <div className="container px-4 md:px-6 ">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
-            <StatsCounter value={80000} label="Users Worldwide" />
+            <StatsCounter value={80000} label="Visitors Worldwide" />
             <StatsCounter value={3500} label="Practice Questions" />
             <StatsCounter value={95} label="Success Rate" suffix="%" />
           </div>
@@ -160,22 +161,12 @@ const Home = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
           >
-            <div className="space-y-2">
-              <Badge className="px-3 py-1 bg-blue-100 text-blue-700 border-blue-200 rounded-full mb-2">
-                Why Choose Us
-              </Badge>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                The Ultimate
-                <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-                  {" "}
-                  SAT Preparation Resource
-                </span>
-              </h2>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl mt-4">
-                Our mission is to empower students to achieve their best scores by providing an interactive,
-                personalized, and efficient study experience.
-              </p>
-            </div>
+              <Header 
+                badgeText='Why Choose Us'
+                text='The Ultimate'
+                gradientText='SAT Preparation Resource'
+                description='Our mission is to empower students to achieve their best scores by providing an interactive, personalized, and efficient study experience.'
+              />
           </motion.div>
 
           {/* Why Us Cards */}
