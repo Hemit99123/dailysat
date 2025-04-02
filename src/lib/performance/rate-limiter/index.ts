@@ -13,7 +13,7 @@ export const handleFindRateLimitStatus = async (ip: string) => {
   tokens = Number(tokens);
 
   if (tokens >= 3) {
-      let oneTokenLess: string | number = tokens - 1;
+      const oneTokenLess = tokens - 1;
       await rateLimitClient.set(ip, oneTokenLess.toString());
       return true; // Rate limited
   }
