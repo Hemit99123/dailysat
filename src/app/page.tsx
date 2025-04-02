@@ -13,7 +13,6 @@ import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
 import { WorkshopCard } from '@/components/features/Landing-Page/WorkshopCard'
 import { motion } from 'framer-motion'
 import { Award, BookCheck, CheckCircle, ChevronDown, Rocket, Target } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -346,17 +345,6 @@ const Home = () => {
               DailySAT
             </div>
           </div>
-          <nav className="flex gap-4 sm:gap-6">
-            <Link href="#" className="text-xs hover:underline underline-offset-4">
-              Terms of Service
-            </Link>
-            <Link href="#" className="text-xs hover:underline underline-offset-4">
-              Privacy
-            </Link>
-            <Link href="#" className="text-xs hover:underline underline-offset-4">
-              Cookies
-            </Link>
-          </nav>
           <div className="text-xs text-gray-500">© 2025 DailySAT. All rights reserved.</div>
         </div>
       </footer>
