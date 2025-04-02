@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client as cacheClient } from "@/lib/performance/cache/redis";
-import { handleAPiHits, handleIncreaseAPIHits } from "@/lib/performance/rate-limiter/helper/apiHits";
+import { handleAPiHits, handleIncreaseAPIHits } from "@/lib/performance/rate-limiter";
 import { User } from "@/types/user";
 
 /**
