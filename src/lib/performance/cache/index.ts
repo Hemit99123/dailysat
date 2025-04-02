@@ -3,10 +3,10 @@ import { handleGetUser } from "@/lib/auth/getUser";
 import { client as cacheClient } from "@/lib/performance/cache/redis";
 
 
-export const getUserDataWithCache = async (userEmail: string) => {
+export const handleGetUserCached = async() => {
     const session = await auth();
 
-    const cacheData = await cacheClient.get(userEmail || "");
+    const cacheData = await cacheClient.get(session?.user?.email || "");
 
     if (!cacheData) {
         const existingUser = await handleGetUser(session);
@@ -26,7 +26,7 @@ export const getUserDataWithCache = async (userEmail: string) => {
             isReferred: existingUser.isReferred,
         };
 
-        await cacheClient.set(userEmail || "", JSON.stringify(userData), "EX", 300);
+        await cacheClient.set(session?.user?.email || "", JSON.stringify(userData), "EX", 300);
         return userData;
     }
 
