@@ -6,7 +6,7 @@ import { client as cacheClient } from "@/lib/performance/cache/redis";
 export const getUserDataWithCache = async (userEmail: string) => {
     const session = await auth();
 
-    let cacheData = await cacheClient.get(userEmail || "");
+    const cacheData = await cacheClient.get(userEmail || "");
 
     if (!cacheData) {
         const existingUser = await handleGetUser(session);
