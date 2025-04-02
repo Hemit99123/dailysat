@@ -24,6 +24,16 @@ const NavBar = () => {
     handleAuthStatus();
   }, []);
 
+  const handleAuthClick = () => {
+    setMenuOpen(false);
+
+    if (auth) {
+      handleSignOut()
+    } else {
+      handleSignIn()
+    }
+  }
+
   return (
     <motion.div
       style={{ y, opacity }}
@@ -79,10 +89,7 @@ const NavBar = () => {
             </Link>
           ))}
           <button
-            onClick={() => {
-              setMenuOpen(false);
-              auth ? handleSignOut() : handleSignIn();
-            }}
+            onClick={handleAuthClick}
             className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
           >
             {auth ? "Log out" : "Sign in"}
