@@ -1,90 +1,100 @@
-import { useRef } from "react"
+import { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartOptions,
-  ChartData,
-} from "chart.js"
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js"
+import { ChartData, ChartOptions } from "chart.js"
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 export function ScoreBarGraph() {
-  const chartRef = useRef(null)
+  const [chartData, setChartData] = useState<ChartData<"bar">>({
+    labels: [],
+    datasets: [],
+  })
 
-  // Type the data properly
-  const data: ChartData<'bar'> = {
-    labels: ['Before', 'After'],
-    datasets: [
-      {
-        label: 'Bar 1',
-        data: [120, 100], // Example data
-        backgroundColor: 'rgba(59, 130, 246, 0.8)', // Blue color
-        borderRadius: 5,
-      },
-      {
-        label: 'Bar 2',
-        data: [100, 80], // Example data
-        backgroundColor: 'rgba(139, 92, 246, 0.8)', // Purple color
-        borderRadius: 5,
-      },
-      {
-        label: 'Bar 3',
-        data: [80, 60], // Example data
-        backgroundColor: 'rgba(39, 99, 255, 0.8)', // Lighter blue color
-        borderRadius: 5,
-      },
-      {
-        label: 'Bar 4',
-        data: [140, 120], // Example data
-        backgroundColor: 'rgba(139, 60, 246, 0.8)', // Darker purple color
-        borderRadius: 5,
-      },
-    ],
-  }
+  const [options, setOptions] = useState<ChartOptions<"bar">>({})
 
-  // Type the options properly
-  const options: ChartOptions<'bar'> = {
-    responsive: true,
-    plugins: {
-      tooltip: {
-        enabled: true,
-      },
-      legend: {
-        position: 'top',
-      },
-    },
-    animation: {
-      duration: 2000, // Animation duration
-      easing: 'easeInOutQuad',
-    },
-    scales: {
-      x: {
-        stacked: true,
-      },
-      y: {
-        beginAtZero: true,
-        max: 150,
-        ticks: {
-          stepSize: 20,
+  useEffect(() => {
+    setChartData({
+      labels: ["Initial Score", "After 1 Month", "After 2 Months", "Final Score"],
+      datasets: [
+        {
+          label: "Average SAT Score",
+          data: [1050, 1150, 1250, 1350],
+          backgroundColor: [
+            "rgba(59, 130, 246, 0.5)",
+            "rgba(99, 102, 241, 0.5)",
+            "rgba(139, 92, 246, 0.5)",
+            "rgba(79, 70, 229, 0.5)",
+          ],
+          borderColor: ["rgb(59, 130, 246)", "rgb(99, 102, 241)", "rgb(139, 92, 246)", "rgb(79, 70, 229)"],
+          borderWidth: 1,
+          borderRadius: 8,
+        },
+      ],
+    })
+
+    setOptions({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "top",
+          labels: {
+            font: {
+              family: "Inter, sans-serif",
+            },
+          },
+        },
+        title: {
+          display: false,
+        },
+        tooltip: {
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          titleColor: "#000",
+          bodyColor: "#000",
+          bodyFont: {
+            family: "Inter, sans-serif",
+          },
+          titleFont: {
+            family: "Inter, sans-serif",
+            weight: "bold",
+          },
+          padding: 12,
+          borderColor: "rgba(0, 0, 0, 0.1)",
+          borderWidth: 1,
+          displayColors: false,
+          callbacks: {
+            label: (context) => `Score: ${context.parsed.y}`,
+          },
         },
       },
-    },
-  }
+      scales: {
+        y: {
+          min: 800,
+          max: 1600,
+          ticks: {
+            font: {
+              family: "Inter, sans-serif",
+            },
+          },
+          grid: {
+            display: true,
+            color: "rgba(0, 0, 0, 0.05)",
+          },
+        },
+        x: {
+          ticks: {
+            font: {
+              family: "Inter, sans-serif",
+            },
+          },
+          grid: {
+            display: false,
+          },
+        },
+      },
+    })
+  }, [])
 
-  return (
-    <div className="relative h-full w-full  rounded-lg shadow-lg overflow-hidden">
-      <div className="absolute bottom-0 left-0 right-0 flex justify-between text-lg font-semibold text-white p-2">
-        <span className="transform scale-105">Before</span>
-        <span className="transform scale-105">After</span>
-      </div>
-      <Bar ref={chartRef} data={data} options={options} />
-    </div>
-  )
+  return <Bar data={chartData} options={options} />
 }
