@@ -27,7 +27,7 @@ Our mission is to build an app that is free and accessible! This means we love i
   linking the PR with it. Our team will swiftly review it and will keep you posted on the review progess through **comments** on the 
   issue that has been assigned
 
-  You will given given **credit** for any work that we use from you. Do remember that all work done through open-source is purely volunteer and **NOT SUBJECT TO PAYMENT** You can add     
+  You will given given **credit** for any work that we use from you. Do remember that all work done through open-source is purely volunteer and **NOT SUBJECT TO PAYMENT** You can add   
   your contributions as experience however.
 
 ##### 📛 When naming your ticket, please use the following prefixes...
