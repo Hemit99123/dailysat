@@ -26,8 +26,11 @@ const Home = () => {
   
   return (
      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100"> {/* Adjusted padding-top to fit navbar */}
+        <div className='w-full'>
+        <NavBar />
+        </div>
+
       <div >
-      <NavBar />
 
       </div>
       <section className="w-full min-h-screen flex flex-col items-center pt-36 text-center relative px-4 md:px-6">

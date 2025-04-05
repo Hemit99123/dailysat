@@ -37,9 +37,9 @@ const NavBar = () => {
   return (
     <motion.div
       style={{ y, opacity }}
-      className={cn("top-0 left-0 right-0 mx-auto max-w-7xl px-4 py-4 mt-2")}
+      className={cn("mx-auto max-w-7xl py-4 mt-2")}
     >
-      <nav className="flex items-center justify-between">
+      <nav className="w-full flex items-center justify-between">
         <Link href="/" className="text-xl font-bold text-blue-600">
           DailySAT
         </Link>
