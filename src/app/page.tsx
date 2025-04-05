@@ -26,7 +26,7 @@ const Home = () => {
   
   return (
      <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100"> {/* Adjusted padding-top to fit navbar */}
-      <div className='w-screen'>
+      <div >
       <NavBar />
 
       </div>
@@ -338,7 +338,7 @@ const Home = () => {
       </section>
 
             {/* Footer */}
-      <footer className="w-full border-t bg-white py-12">
+      <footer className="flex justify-center items-center w-full border-t bg-white py-12">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4 px-4 md:px-6">
           <div className="flex items-center gap-2">
             <div className="font-bold text-xl bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
