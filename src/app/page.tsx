@@ -1,232 +1,358 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import StatDisplay from "@/components/features/Dashboard/StatDisplay";
-import axios from "axios";
-import Quotes from "@/types/dashboard/quotes";
-import Spinner from "@/components/common/Spinner";
-import Redeem from "@/components/features/Dashboard/Redeem";
-import { useUserStore } from "@/store/user";
-import ExploreSectionFeats from "@/components/features/Dashboard/ExploreSectionFeats";
-import { quotes } from "@/data/quotes";
-import Image from "next/image";
+import { Badge } from '@/components/common/Badge'
+import { Button } from '@/components/common/Button'
+import { Card, CardContent } from '@/components/common/Card'
+import NavBar from '@/components/common/NavBar'
+import { FeatureCard3D } from '@/components/features/Landing-Page/FeatureCard3D'
+import { GlowingButton } from '@/components/features/Landing-Page/GlowingButton'
+import Header from '@/components/features/Landing-Page/Header'
+import { ReviewCarousel } from '@/components/features/Landing-Page/ReviewCarousel'
+import { ScoreBarGraph } from '@/components/features/Landing-Page/ScoreChart'
+import { StatsCounter } from '@/components/features/Landing-Page/StatsCounter'
+import { WorkshopCard } from '@/components/features/Landing-Page/WorkshopCard'
+import { motion } from 'framer-motion'
+import { Award, BookCheck, CheckCircle, ChevronDown, Rocket, Target } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import React from 'react'
 
 const Home = () => {
-  const user = useUserStore((state) => state.user)
-  const setUser = useUserStore((state) => state.setUser)
 
-  // this state is used to determine whether data is from redis cache or from mongodb database
-  const [cached, setCached] = useState(false)
+  const router = useRouter()
 
-  const [loading, setLoading] = useState(true)
-  const [greeting, setGreeting] = useState("");
-  const [quote, setQuote] = useState<Quotes | null>(null);
-  const [isLoadingQuote, setIsLoadingQuote] = useState(false);
-
-  const [imageError, setImageError] = useState(false)
-
-  // Fetch a random quote once the component has been mounted from locally hosted json file
-  useEffect(() => {
-    const handleFetchQuote = async () => {
-      setIsLoadingQuote(true);
-      try {
-        const quotesLength = quotes.length
-        const randomIndex = Math.floor(Math.random() * quotesLength)
-        setQuote(quotes[randomIndex])
-        
-      } catch (error) {
-        console.error("Error fetching quote:", error);
-        alert("Something went wrong while retrieving your quote.");
-      } finally {
-        setIsLoadingQuote(false);
-      }
-    };
-
-    const handleGetUser = async () => {
-
-      // It is post instead of get because it can create new resources on the server (if user is not found)
-      
-      const response = await axios.get("/api/auth/get-user")
-
-      setUser(response.data.user)
-
-      if (response.data.result == "Success - using cache") {
-        setCached(true)
-      }
-
-    }
-
-    handleFetchQuote();
-    handleGetUser();
-  }, [setUser]);
-
-  // Determine the greeting based on the time of day
-  useEffect(() => {
-    const getGreeting = () => {
-      const hours = new Date().getHours();
-      if (hours < 12) {
-        return "Good morning";
-      } else if (hours < 18) {
-        return "Good afternoon";
-      } else {
-        return "Good evening";
-      }
-    };
-    setGreeting(getGreeting());
-    setLoading(false)
-
-  }, []);
-
-
-
-  // Copy Referral ID
-  const handleCopyReferral = async () => {
-    // referall code is just the object id of the mongodb doc
-
-    const referralCode = user?._id;
-    await navigator.clipboard.writeText(referralCode || "");
-  };
-
-  if (loading) {
-    return <Spinner />
+  const handleRedirectToDashboard = () => {
+    router.push("/dashboard")
   }
-
-  const toggleImageError = () => {
-    setImageError((prevState) => !prevState)
-  }
-
+  
   return (
-    <div>
-      {/* Greeting Section */}
-      <div className="flex flex-col items-center mt-8">
-        {cached &&
-          <div className="flex items-center text-[12px] space-x-2 text-gray-600 font-medium">
-            <svg fill="#ffb005" height="15px" width="15px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xmlSpace="preserve" stroke="#ffb005"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M256,0C155.174,0,73.143,82.027,73.143,182.857c0,67.839,38.46,130.937,98.424,162.232l1.817,25.482 c0.357,5.036,4.719,8.911,9.772,8.464c5.036-0.357,8.826-4.732,8.469-9.768l-2.187-30.661c-0.232-3.259-2.192-6.152-5.134-7.571 c-56.42-27.348-92.875-85.518-92.875-148.178c0-90.741,73.826-164.571,164.571-164.571c90.745,0,164.571,73.83,164.571,164.571 c0,66.919-39.969,126.652-101.821,152.196c-3.201,1.322-5.379,4.339-5.629,7.795l-3.978,55.661 c-0.357,5.036,3.433,9.411,8.469,9.768c0.223,0.018,0.442,0.027,0.661,0.027c4.755,0,8.768-3.679,9.112-8.491l3.58-50.116 c65.732-29.527,107.893-94.402,107.893-166.839C438.857,82.027,356.826,0,256,0z"></path> </g> </g> <g> <g> <path d="M312.915,420.804l-118.857-27.429c-4.906-1.134-9.83,1.937-10.969,6.857c-1.134,4.92,1.933,9.83,6.853,10.964 l118.857,27.429c0.692,0.161,1.384,0.232,2.067,0.232c4.161,0,7.924-2.857,8.902-7.089 C320.902,426.848,317.835,421.937,312.915,420.804z"></path> </g> </g> <g> <g> <path d="M312.915,457.375l-118.857-27.429c-4.906-1.134-9.83,1.937-10.969,6.857c-1.134,4.92,1.933,9.83,6.853,10.964 l118.857,27.429c0.692,0.161,1.384,0.232,2.067,0.232c4.161,0,7.924-2.857,8.902-7.089 C320.902,463.42,317.835,458.509,312.915,457.375z"></path> </g> </g> <g> <g> <path d="M312.915,493.947l-118.857-27.429c-4.906-1.143-9.83,1.928-10.969,6.857c-1.134,4.92,1.933,9.83,6.853,10.964 l118.857,27.429c0.692,0.161,1.384,0.232,2.067,0.232c4.161,0,7.924-2.857,8.902-7.089 C320.902,499.991,317.835,495.08,312.915,493.947z"></path> </g> </g> </g></svg>
-            <p>Old data because you reached your limit</p>
-          </div>
-        }
-        <h1 className="text-xl md:text-4xl font-bold text-gray-800">
-          {greeting ? `${greeting}, ${user?.name || "unknown"}` : "Loading greeting..."}
-        </h1>
-        <p className="text-xs md:text-base text-gray-600 font-light">
-          Choose what to study and start practicing...
-        </p>
-      </div>
-
-      {/* Explore Section */}
-      <ExploreSectionFeats />
-
-      {/* Explore Section */}
-      <div className="flex items-center pl-5 mt-10">
-        <h1 className="pl-3.5 font-bold text-4xl text-blue-900">Stats</h1>
-      </div>
-
-      <div className="lg:flex lg:space-x-2 mt-1.5 p-3.5">
-        <div className="shadow-lg rounded-lg w-full bg-white p-4 flex lg:items-center flex-col lg:flex-row lg:justify-between">
-          <div className="flex items-center mb-3">
-            <Image
-              src={!imageError && user?.image || "https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-gender-neutral-silhouette-profile-picture-suitable-social-media-profiles-icons-screensavers-as-templatex9xa_719432-875.jpg"}
-              alt="userpfpic"
-              width={120}
-              height={120}
-              onError={toggleImageError}
-              className="rounded-2xl"
-            />
-            <div className="ml-6">
-              <p className="text-3xl font-bold text-blue-600">{user?.name}</p>
-              <p>Email: {user?.email}</p>
-            </div>
-          </div>
-
-          <div className="lg:mr-[10vw] relative">
-            <p className="text-xl font-semibold text-green-600">Referral Code</p>
-            <p className="text-gray-700 flex items-center -ml-2">          {/* Copy Button */}
-              <button onClick={handleCopyReferral}>
-                <Image
-                  src={"/icons/copy.png"}
-                  className="w-10 h-10"
-                  alt="Copy Referral Code"
-                  width={100}
-                  height={100}
-                />
-              </button>
-              {user?._id}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Second row */}
-      <div className="lg:flex lg:space-x-2 mt-1.5 p-3.5">
-        <StatDisplay type="coins" color="black" icon="coin" header="DailySAT Coins:" number={user?.currency} status="upward" percentage={user?.currency || 0 * 100} />
-        <StatDisplay type="attempts" color="green" icon="checked" header="Answered Correctly:" number={user?.correctAnswered} status="upward" percentage={user?.correctAnswered || 0 * 100} />
-        <StatDisplay type="attempts" color="#ff5454" icon="cross" header="Answered Wrongly:" number={user?.wrongAnswered} status="upward" percentage={user?.wrongAnswered || 0 * 100} />
-      </div>
-
-      {/* Third row of boxes area */}
-      <div className="mt-4 flex flex-col md:flex-row p-3.5 w-full space-y-3 md:space-y-0 md:space-x-3">
-        {/* Referred by a Friend */}
-        <div className="w-full md:w-1/3 rounded-lg shadow-lg flex items-center justify-center">
-          {isLoadingQuote ? (
-            <Spinner />
-          ) : quote ? (
-            <div className="flex flex-col items-center">
-              <svg height="100px" width="100px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xmlSpace="preserve" fill="#000000">
-                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
-                <g id="SVGRepo_iconCarrier">
-                  <g>
-                    <polygon className="st0" points="239.266,387.893 212.245,371.584 212.245,512 299.755,512 299.755,364.066 289.468,358.608" />
-                    <polygon className="st0" points="316.489,512 403.991,512 403.991,419.375 316.489,372.948" />
-                    <polygon className="st0" points="420.725,428.257 420.725,512 494.459,512 494.459,467.379" />
-                    <polygon className="st0" points="108.009,512 195.511,512 195.511,361.476 108.009,308.643" />
-                    <polygon className="st0" points="17.541,512 91.275,512 91.275,298.536 17.541,254.021" />
-                    <path className="st0" d="M228.325,77.514c21.358-1.986,37.071-20.918,35.077-42.276c-1.977-21.343-20.901-37.048-42.267-35.07 c-21.343,1.978-37.055,20.902-35.07,42.268C188.043,63.787,206.959,79.491,228.325,77.514z" />
-                    <path className="st0" d="M359.999,310.898l-18.548-61.044c-0.76,1.324-1.528,2.648-2.402,3.906 c-8.49,12.208-21.841,20.003-36.646,21.368l-6.824,0.465l19.448,47.162c4.126,6.831,9.224,13.025,15.14,18.393l50.57,45.92 c7.133,6.202,17.919,5.614,24.349-1.332l0.458-0.474c6.406-6.928,6.177-17.681-0.498-24.333L359.999,310.898z" />
-                    <polygon className="st0" points="231.324,123.336 244.266,128.532 248.107,114.38 240.115,100.777 224.861,112.314" />
-                    <path className="st0" d="M225.996,350.601l0.687-0.164c9.168-2.272,14.977-11.275,13.253-20.541l-11.137-59.762l73.456-5.099 c10.541-0.736,20.199-6.21,26.229-14.888c6.038-8.694,7.795-19.643,4.813-29.79l-2.762-9.356l-22.968-83.662l39.375,2.124 l31.474,30.322c-1.52,1.855-2.28,4.282-1.667,6.798l2.574,10.418l-18.303,4.519c-4.33,1.054-6.97,5.434-5.899,9.764l12.321,49.998 c1.078,4.339,5.45,6.978,9.773,5.924l77.656-19.152c4.339-1.079,6.978-5.459,5.908-9.797l-12.33-49.989 c-1.062-4.322-5.442-6.978-9.772-5.924l-18.303,4.518l-2.566-10.402c-1.046-4.224-5.319-6.806-9.552-5.768l-1.912,0.474 c-0.433-1.773-1.218-3.489-2.394-5.025l-30.788-40.372c-3.317-4.347-8.048-7.41-13.367-8.645l-50.636-18.123 c-17.134-6.128-36.05-3.554-50.986,6.618l-4.388,62.311l-40.332-28.238l-28.148,21.596l-45.553-16.44 c-7.141-3.162-15.484-0.122-18.899,6.888l-0.474,0.964c-1.683,3.481-1.929,7.476-0.654,11.112c1.266,3.652,3.947,6.635,7.443,8.318 l54.908,26.212c6.831,3.268,14.781,3.236,21.588-0.082l29.276-19.471l20.084,57.588l-48.592,4.257 c-8.178,0.743-15.623,5.098-20.256,11.88c-4.624,6.781-5.973,15.287-3.685,23.189l24.153,82.598 C207.326,347.471,216.731,352.88,225.996,350.601z" />
-                    <path className="st0" d="M410.078,158.062l0.368,0.212l2.566,10.41l-26.318,6.495l-2.492-10.09 c4.886,4.004,11.864,4.306,16.939,0.384l0.294-0.221c2.124-1.643,3.612-3.8,4.461-6.152L410.078,158.062z" />
-                    <path className="st0" d="M275.169,198.076 c0.245,2.656-1.692,4.976-4.339,5.237c-2.639,0.229-4.976-1.7-5.237-4.347c-0.238-2.656,1.7-4.992,4.355-5.229 C272.578,193.491,274.924,195.42,275.169,198.076z" />
-                    <path className="st0" d="M262.357,167.41c2.631-0.245,4.976,1.684,5.222,4.331 c0.245,2.656-1.7,5.001-4.339,5.238c-2.639,0.237-4.984-1.692-5.221-4.339C257.765,169.992,259.709,167.655,262.357,167.41z" />
-                  </g>
-                </g>
-              </svg>
-              <p className="mt-4 text-gray-700 text-center text-lg font-semibold">{quote.content}</p>
-              <span className="text-gray-500 text-sm">- {quote.author || "Unknown"}</span>
-            </div>
-          ) : (
-            <p className="text-gray-500">No quote available at the moment.</p>
-          )}
+     <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100"> {/* Adjusted padding-top to fit navbar */}
+        <div className='w-full'>
+          <NavBar />
         </div>
 
-        <Redeem 
-          isReferred={user?.isReferred}
-        />
+      <div >
 
       </div>
+      <section className="w-full min-h-screen flex flex-col items-center pt-36 text-center relative px-4 md:px-6">
+        {/* the colorful ball over the content */}
+        <div className='absolute inset-0 w-full h-full'>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-purple-400/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-green-400/20 rounded-full blur-3xl" />
+        </div>
+
+
+        <div className="relative space-y-6">          
+          <div className="flex flex-col text-3xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+            <span className="text-black text-6xl">The SATs</span>
+            <span className=" bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">Made Easy</span>
+          </div>
+
+          <div className="w-full">
+            <GlowingButton className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg hover:opacity-90" onClick={handleRedirectToDashboard}>
+              Explore DailySAT
+            </GlowingButton>
+          </div>
+        </div>
+
+        <div className="absolute bottom-24 flex flex-col items-center">
+          <span className="text-sm text-gray-500 mb-2 font-medium">Scroll to explore</span>
+          <div className="bg-blue-100 rounded-full p-2 animate-bounce">
+            <ChevronDown className="h-6 w-6 text-blue-600" />
+          </div>
+        </div>
+      </section>
+
+          {/* Why Us Section */}
+      <section className="flex flex-col justify-center items-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-40 to-transparent" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
+          >
+              <Header 
+                badgeText='Why Choose Us'
+                text='The Ultimate'
+                gradientText='SAT Preparation Resource'
+                description='Our mission is to empower students to achieve their best scores by providing an interactive, personalized, and efficient study experience.'
+              />
+          </motion.div>
+
+          {/* Why Us Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <FeatureCard3D
+                icon={<BookCheck className="h-6 w-6 text-blue-600" />}
+                title="Comprehensive Question Bank"
+                description="Access 3,500+ questions covering all SAT topics and difficulty levels."
+                color="blue"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <FeatureCard3D
+                icon={<Target className="h-6 w-6 text-purple-600" />}
+                title="Personalized Learning"
+                description="Adaptive practice that focuses on your specific areas for improvement."
+                color="purple"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <FeatureCard3D
+                icon={<Award className="h-6 w-6 text-green-600" />}
+                title="Proven Results"
+                description="Our students consistently achieve 1550+ scores on their SAT exams."
+                color="green"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <FeatureCard3D
+                icon={<Rocket className="h-6 w-6 text-orange-600" />}
+                title="Stress-Free Environment"
+                description="Practice at your own pace in a supportive, no-pressure learning space."
+                color="orange"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+          {/* Score Improvement Section */}
+      <section className="flex justify-center w-full py-20 md:py-32 bg-gradient-to-br from-blue-50 to-indigo-50  relative overflow-hidden">
+        <div className="container px-4 md:px-6 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="space-y-6"
+            >
+              <Badge className="px-3 py-1 bg-indigo-100 text-indigo-700 border-indigo-200 rounded-full">Results</Badge>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                <span className="bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
+                  Boost your SAT score
+                </span>
+              </h2>
+              <p className="text-gray-500 md:text-xl">
+                Our students see an average improvement of 150+ points after completing our comprehensive practice
+                program.
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 bg-green-100 p-1 rounded-full">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Personalized Practice</h3>
+                    <p className="text-sm text-gray-500">Adaptive tests that focus on your weak areas</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 bg-green-100 p-1 rounded-full">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Detailed Analytics</h3>
+                    <p className="text-sm text-gray-500">Track your progress and identify improvement areas</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 bg-green-100 p-1 rounded-full">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Expert Strategies</h3>
+                    <p className="text-sm text-gray-500">Learn proven techniques from 1500+ scorers</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button className="mt-6" size="lg" onClick={handleRedirectToDashboard}>
+                Start Your Journey
+              </Button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl blur-3xl opacity-20" />
+              <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl rounded-3xl overflow-hidden">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-6">Average Score Improvement</h3>
+                  <div className="h-80">
+                    <ScoreBarGraph />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      </section>
       
-      {/* Fourth row of boxes area */}
-      <div className="mt-4 mb-20 flex flex-col md:flex-row p-3.5 w-full space-y-3 md:space-y-0 md:space-x-3">
-        {/* Owned Items Section */}
-        <div className="w-full pb-12 rounded-lg shadow-lg p-4 flex flex-col space-y-3">
-          <h2 className="text-lg font-bold text-gray-800">Your Owned Items</h2>
-          <div className="flex flex-col items-center">
-            <svg
-              className=""
-              viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#000000" height="100px" width="100px">
-              <g id="SVGRepo_bgCarrier" stroke-width="0" />
-              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier">
-                <path d="m 6.5 0 c -3.578125 0 -6.5 2.921875 -6.5 6.5 s 2.921875 6.5 6.5 6.5 c 0.171875 0 0.332031 -0.019531 0.5 -0.03125 v -2.03125 c -0.167969 0.019531 -0.328125 0.0625 -0.5 0.0625 c -2.496094 0 -4.5 -2.003906 -4.5 -4.5 s 2.003906 -4.5 4.5 -4.5 s 4.5 2.003906 4.5 4.5 c 0 0.171875 -0.042969 0.332031 -0.0625 0.5 h 2.03125 c 0.011719 -0.167969 0.03125 -0.328125 0.03125 -0.5 c 0 -3.578125 -2.921875 -6.5 -6.5 -6.5 z m 0 3 c -0.277344 0 -0.5 0.222656 -0.5 0.5 v 2.5 h -1.5 c -0.277344 0 -0.5 0.222656 -0.5 0.5 s 0.222656 0.5 0.5 0.5 h 2 c 0.277344 0 0.5 -0.222656 0.5 -0.5 v -3 c 0 -0.277344 -0.222656 -0.5 -0.5 -0.5 z m 0 0" fill="#2e3436" />
-                <path d="m 8.875 8.070312 c -0.492188 0 -0.875 0.378907 -0.875 0.867188 v 6.195312 c 0 0.488282 0.382812 0.867188 0.875 0.867188 h 6.25 c 0.492188 0 0.875 -0.378906 0.875 -0.867188 v -6.195312 c 0 -0.488281 -0.382812 -0.867188 -0.875 -0.867188 z m 2.125 0.929688 h 2 v 2.5 s 0 0.5 -0.5 0.5 h -1 c -0.5 0 -0.5 -0.5 -0.5 -0.5 z m 0.5 4 h 1 c 0.277344 0 0.5 0.222656 0.5 0.5 v 1 c 0 0.277344 -0.222656 0.5 -0.5 0.5 h -1 c -0.277344 0 -0.5 -0.222656 -0.5 -0.5 v -1 c 0 -0.277344 0.222656 -0.5 0.5 -0.5 z m 0 0" className="warning" fill="#ff7800" />
-              </g>
-            </svg>
-            <h1 className="text-6xl font-bold  bg-gradient-to-r from-blue-500 to-indigo-400 text-transparent bg-clip-text">Arrives Soon</h1>
-            <p className="mt-2 text-lg font-semibold">Greatness comes to those who wait</p>
+      {/* Stats Section */}
+      <section className="flex justify-center w-full py-16 bg-white border-t border-b border-gray-300">
+        <div className="container px-4 md:px-6 ">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
+            <StatsCounter value={80000} label="Visitors Worldwide" />
+            <StatsCounter value={3500} label="Practice Questions" />
+            <StatsCounter value={95} label="Success Rate" suffix="%" />
           </div>
-
         </div>
-      </div>
-    </div>
-  );
-};
+      </section>
 
-export default Home;
+
+      {/* Workshops Section */}
+      <section className="flex justify-center w-full bg-white py-20 md:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
+          >
+            <Header 
+              badgeText='Workshops'
+              text='Learning Together,'
+              gradientText='Growing Together'
+              description='We love educating, sharing, and learning! We encourage students to work together and bring eachother up as they prepare for this rigorous exam. By insituting numerous workshops, we cultivate a postive and supported environment.'
+            />
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <WorkshopCard
+                image="https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                title="Post-Secondary Education and Finances"
+                partner="DailySAT x StockSavvy"
+                attendees="60+"
+                description="Hosted a workshop on post-secondary education and finances, helping students understand the financial aspects of college planning."
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <WorkshopCard
+                image="https://plus.unsplash.com/premium_photo-1688700437975-0ea63cfa59e1?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                title="Broadcasting and Content Development"
+                partner="DailySAT x FTN Broadcasting"
+                attendees="1000+"
+                description="Collaborated with a broadcasting network with in-house content developments to reach a wider audience of students preparing for the SAT."
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section with Infinite Carousel */}
+      <section className="flex justify-center items-center w-full py-20 md:py-32 bg-gradient-to-br from-indigo-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
+          >
+            <Header 
+              badgeText='Testimonials'
+              text='What our Students Say'
+              description='Header from students who have imporved their SAT scores with DailySAT.'
+            />
+          </motion.div>
+
+          {/* Multi-row Infinite Carousel */}
+          <ReviewCarousel />
+        </div>
+      </section>
+
+            {/* CTA Section */}
+      <section className=" flex justify-center items-center w-full py-20 md:py-32 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+
+        <div className="container px-4 md:px-6 relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <Header 
+              badgeText='Ready?'
+              text='Convinced yet?'
+              gradientText='Boost your SAT score!'
+              description='Join thousands of students who have improved thier SAT scores with DailySAT. '
+            
+            />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <GlowingButton className="w-44 mt-3" onClick={handleRedirectToDashboard}>Start your journey</GlowingButton>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+            {/* Footer */}
+      <footer className="flex justify-center items-center w-full border-t bg-white py-12">
+        <div className="container flex flex-col md:flex-row items-center justify-between gap-4 px-4 md:px-6">
+          <div className="flex items-center gap-2">
+            <div className="font-bold text-xl bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+              DailySAT
+            </div>
+          </div>
+          <div className="text-xs text-gray-500">© 2025 DailySAT. All rights reserved.</div>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+export default Home
