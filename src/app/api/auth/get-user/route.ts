@@ -96,11 +96,13 @@ import { User } from "@/types/user";
  */
 
 export const GET = async () => {
+    console.log("Getting backend user...")
     const session = await auth();
 
     const userEmail: string | null | undefined = session?.user?.email;
 
     try {
+        console.log("checking redis")
         const numberHits: number = await handleAPiHits(userEmail || "");
 
         // Define the request limit

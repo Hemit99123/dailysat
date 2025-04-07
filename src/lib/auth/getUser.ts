@@ -3,12 +3,12 @@ import { Session } from "next-auth";
 
 export const handleGetUser = async (session: Session | null) => {
     try {
+        console.log("Connecting to server...")
         if (!session || !session.user?.email) {
             throw new Error("Session is invalid or user email is missing.");
         }
-
         await client.connect();
-        const db = client.db("DailySAT");
+        const db = client.db(process.env.DB);
         const usersCollection = db.collection("users");
 
         // Find the user
