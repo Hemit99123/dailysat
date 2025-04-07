@@ -14,7 +14,7 @@ const NavBar = () => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 100], [0, -50]);
   const opacity = useTransform(scrollY, [0, 100], [1, 0]);
-  const [auth, setAuth] = useState<any>(null);
+  const [auth, setAuth] = useState<boolean | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {

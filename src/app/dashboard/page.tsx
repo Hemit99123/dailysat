@@ -5,12 +5,10 @@ import StatDisplay from "@/components/features/Dashboard/StatDisplay";
 import axios from "axios";
 import Quotes from "@/types/dashboard/quotes";
 import Spinner from "@/components/common/Spinner";
-import Redeem from "@/components/features/Dashboard/Redeem";
 import { useUserStore } from "@/store/user";
 import ExploreSectionFeats from "@/components/features/Dashboard/ExploreSectionFeats";
 import { quotes } from "@/data/quotes";
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const Home = () => {
   const user = useUserStore((state) => state.user);
@@ -37,7 +35,7 @@ const Home = () => {
       }
     };
     const handleGetUser = async () => {
-      let response: any = null;
+      let response = null;
       try {
         console.log("Getting user...");
         response = await axios.get("/api/auth/get-user", {
