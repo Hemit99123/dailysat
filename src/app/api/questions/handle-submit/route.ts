@@ -9,8 +9,9 @@ import { ObjectId } from 'mongodb';
  * /api/questions/handle-submit:
  *   post:
  *     summary: Process user answer and update database
- *     description: 
- *       Verifies a JWT token, extracts the user's answer state and attempt count, and updates the user's data in the database accordingly.
+ *     description: >
+ *       Verifies a JWT token, extracts the user's answer state and attempt count, 
+ *       and updates the user's data in the database accordingly.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -36,6 +37,10 @@ import { ObjectId } from 'mongodb';
  *                   type: string
  *                   description: Confirmation message.
  *                   example: DONE
+ *                 isCorrect:
+ *                   type: boolean
+ *                   description: Indicates if the answer was correct.
+ *                   example: true
  *       400:
  *         description: Bad request due to missing parameters or invalid email.
  *         content:
