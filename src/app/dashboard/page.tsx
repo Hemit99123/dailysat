@@ -38,9 +38,7 @@ const Home = () => {
       let response = null;
       try {
         console.log("Getting user...");
-        response = await axios.get("/api/auth/get-user", {
-          timeout: 5000,
-        }); // Timeout in 5 seconds
+        response = await axios.get("/api/auth/get-user");
         console.log(response);
         setUser?.(response?.data?.user);
         if (response?.data?.result === "Success - using cache") {

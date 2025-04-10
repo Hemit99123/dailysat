@@ -96,13 +96,11 @@ import { User } from "@/types/user";
  */
 
 export const GET = async () => {
-    console.log("Getting backend user...")
     const session = await auth();
 
     const userEmail: string | null | undefined = session?.user?.email;
-
+    
     try {
-        console.log("checking redis")
         const numberHits: number = await handleAPiHits(userEmail || "");
 
         // Define the request limit
@@ -134,7 +132,6 @@ export const GET = async () => {
                 // Assign the user data to cacheData
                 cacheData = JSON.stringify(userData);
             }
-
             // Return the cached user data
             return new Response(
                 JSON.stringify({

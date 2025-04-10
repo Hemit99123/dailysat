@@ -8,7 +8,7 @@ export const handleGetUser = async (session: Session | null) => {
             throw new Error("Session is invalid or user email is missing.");
         }
         await client.connect();
-        const db = client.db(process.env.DB);
+        const db = client.db("SATDaily");
         const usersCollection = db.collection("users");
 
         // Find the user
