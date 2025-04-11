@@ -37,15 +37,12 @@ const Home = () => {
     const handleGetUser = async () => {
       let response = null;
       try {
-        console.log("Getting user...");
         response = await axios.get("/api/auth/get-user");
-        console.log(response);
         setUser?.(response?.data?.user);
         if (response?.data?.result === "Success - using cache") {
           setCached(true);
         }
       } catch (error) {
-        console.log(response);
         console.error("Error fetching user:", error);
       }
     };
