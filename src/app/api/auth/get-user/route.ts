@@ -84,7 +84,7 @@ import { NextResponse } from "next/server";
  *                   description: A generic error message for internal server issues.
  */
 
-export const GET = async (req: Request) => {
+export const GET = async () => {
     const session = await auth();
 
     const rateLimitResponse = await handleRateLimit(session);

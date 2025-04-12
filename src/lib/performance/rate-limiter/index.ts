@@ -2,7 +2,6 @@ export const runtime = "edge";
 
 import { Ratelimit } from "@upstash/ratelimit"
 import { client } from "./redis";
-import { auth } from "@/lib/auth";
 import { Session } from "next-auth";
 
 const ratelimit = new Ratelimit({
