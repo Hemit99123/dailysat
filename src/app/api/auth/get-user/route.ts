@@ -85,8 +85,9 @@ import { NextResponse } from "next/server";
  */
 
 export const GET = async (req: Request) => {
+    const session = await auth();
 
-    const rateLimitResponse = await handleRateLimit(req);
+    const rateLimitResponse = await handleRateLimit(session);
     
     if (rateLimitResponse) {
         const user = await handleGetUserCached()
@@ -94,7 +95,6 @@ export const GET = async (req: Request) => {
     }
 ;
     
-    const session = await auth();
     
     try {
         const user = await handleGetUser(session);
