@@ -6,7 +6,7 @@ export const handleFindRateLimitStatus = async (ip: string) => {
 
   if (tokens === null) {
       // If key does not exist, initialize it with 4 tokens and set expiry for 5 minutes
-      await rateLimitClient.set(ip, "4", "EX", 300); // 300 seconds = 5 minutes
+      await rateLimitClient.set(ip, "4", { ex: 300 });
       return false; // Not rate-limited since it's the first request
   }
 
