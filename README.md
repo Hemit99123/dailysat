@@ -40,6 +40,7 @@ Our mission is to build an app that is free and accessible! This means we love i
 - Laksyha Jain (Former Chief Technology Officer)
 - Aarush Kute (Founder and Chief Executive Officer)
 - Gautham Korrapati (Interim Chief Technology Officer)
+- Akshat Tewari 
 
 ## 🔐 How our authentication works ##
 
