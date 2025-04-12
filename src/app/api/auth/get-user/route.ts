@@ -86,9 +86,7 @@ import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
 
-    console.time("rate limit check")
     const rateLimitResponse = await handleRateLimit(req);
-    console.timeEnd("rate limit check")
     
     if (rateLimitResponse) {
         const user = await handleGetUserCached()
