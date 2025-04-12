@@ -18,7 +18,6 @@ const Home = () => {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const [cached, setCached] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState("");
   const [quote, setQuote] = useState<Quotes | null>(null);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
@@ -43,7 +42,7 @@ const Home = () => {
       try {
         response = await axios.get("/api/auth/get-user");
         setUser?.(response?.data?.user);
-        if (response?.data?.result === "Success - using cache") {
+        if (response?.data?.cached) {
           setCached(true);
         }
       } catch (error) {
@@ -66,7 +65,6 @@ const Home = () => {
     };
 
     setGreeting(getGreeting());
-    setLoading(false);
   }, []);
 
   const handleCopyReferral = async () => {
@@ -77,7 +75,6 @@ const Home = () => {
   const toggleImageError = () => {
     setImageError((prevState) => !prevState);
   };
-  if (loading) return <Spinner />;
 
   return (
     <div>

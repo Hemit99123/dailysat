@@ -1,3 +1,6 @@
-import Redis from "ioredis"
+import { Redis } from "@upstash/redis";
 
-export const client = new Redis("rediss://default:AXK_AAIjcDFmNTBmNDgzMmVlMDM0NmQzOWZlNjI0NWZmYjJiMzcxZHAxMA@careful-mammoth-29375.upstash.io:6379");
+export const client = new Redis({
+  url: "https://careful-mammoth-29375.upstash.io",
+  token: "AXK_AAIjcDFmNTBmNDgzMmVlMDM0NmQzOWZlNjI0NWZmYjJiMzcxZHAxMA",
+});
