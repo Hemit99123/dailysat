@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { handleGetUserCached } from "@/lib/performance/cache";
-import { handleRateLimit } from "@/lib/performance/rate-limiter";
+import { handleRatelimitSuccess } from "@/lib/performance/rate-limiter";
 import { NextResponse } from "next/server";
 
 /**
@@ -87,9 +87,9 @@ import { NextResponse } from "next/server";
 export const GET = async () => {
     const session = await auth();
 
-    const rateLimitResponse = await handleRateLimit(session);
+    const success = await handleRatelimitSuccess(session);
     
-    if (rateLimitResponse) {
+    if (!success) {
         const user = await handleGetUserCached()
         return NextResponse.json({user, cached: true})
     }

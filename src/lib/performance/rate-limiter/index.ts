@@ -10,7 +10,7 @@ const ratelimit = new Ratelimit({
 })
 
 // passing in session so we don't have to call it again (should already be)
-export const handleRateLimit = async (session: Session | null) => {
+export const handleRatelimitSuccess = async (session: Session | null) => {
     const email = session?.user?.email
 
     const { success } = await ratelimit.limit(email as string)

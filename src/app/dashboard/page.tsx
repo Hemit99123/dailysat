@@ -42,7 +42,7 @@ const Home = () => {
       try {
         response = await axios.get("/api/auth/get-user");
         setUser?.(response?.data?.user);
-        if (response?.data?.result === "Success - using cache") {
+        if (response?.data?.cached) {
           setCached(true);
         }
       } catch (error) {
