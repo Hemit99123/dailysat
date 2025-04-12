@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
+import { handleGetUserCached } from "@/lib/performance/cache";
 import { handleRateLimit } from "@/lib/performance/rate-limiter";
+import { NextResponse } from "next/server";
 
 /**
  * @swagger
@@ -83,19 +85,27 @@ import { handleRateLimit } from "@/lib/performance/rate-limiter";
  */
 
 export const GET = async (req: Request) => {
+
+    console.time("rate limit check")
     const rateLimitResponse = await handleRateLimit(req);
-    if (rateLimitResponse) return rateLimitResponse;
+    console.timeEnd("rate limit check")
+    
+    if (rateLimitResponse) {
+        const user = await handleGetUserCached()
+        return NextResponse.json({user, cached: true})
+    }
+;
     
     const session = await auth();
     
     try {
         const user = await handleGetUser(session);
-        return Response.json({
+        return NextResponse.json({
             user,
             cached: false
         })
     } catch (error) {
         console.error("Error fetching user data:", error);
-        return new Response(JSON.stringify({ message: "An error occurred" }), { status: 500 });
+        return NextResponse.json({ message: "An error occurred" });
     }
 }

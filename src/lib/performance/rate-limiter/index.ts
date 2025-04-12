@@ -1,5 +1,5 @@
-import { handleGetUserCached } from "@/lib/performance/cache";
-import { NextResponse } from "next/server";
+export const runtime = "edge";
+
 import { Ratelimit } from "@upstash/ratelimit"
 import { client } from "./redis";
 
@@ -9,11 +9,10 @@ const ratelimit = new Ratelimit({
 })
 
 export const handleRateLimit = async (request: Request) => {
+    "use server"
+
     const ip = request.headers.get("x-forwarded-for") ?? "";
     const { success } = await ratelimit.limit(ip)
 
-    if (!success) {
-        const user = await handleGetUserCached()
-        return NextResponse.json({user, cached: true})
-    } 
+    return success
 }
