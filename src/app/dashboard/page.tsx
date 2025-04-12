@@ -18,7 +18,6 @@ const Home = () => {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const [cached, setCached] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [greeting, setGreeting] = useState("");
   const [quote, setQuote] = useState<Quotes | null>(null);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
@@ -66,7 +65,6 @@ const Home = () => {
     };
 
     setGreeting(getGreeting());
-    setLoading(false);
   }, []);
 
   const handleCopyReferral = async () => {
@@ -77,7 +75,6 @@ const Home = () => {
   const toggleImageError = () => {
     setImageError((prevState) => !prevState);
   };
-  if (loading) return <Spinner />;
 
   return (
     <div>
