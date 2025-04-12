@@ -27,7 +27,7 @@ Our mission is to build an app that is free and accessible! This means we love i
   linking the PR with it. Our team will swiftly review it and will keep you posted on the review progess through **comments** on the 
   issue that has been assigned
 
-  You will given given **credit** for any work that we use from you. Do remember that all work done through open-source is purely volunteer and **NOT SUBJECT TO PAYMENT** You can add     
+  You will given given **credit** for any work that we use from you. Do remember that all work done through open-source is purely volunteer and **NOT SUBJECT TO PAYMENT** You can add   
   your contributions as experience however.
 
 ##### 📛 When naming your ticket, please use the following prefixes...
@@ -35,15 +35,19 @@ Our mission is to build an app that is free and accessible! This means we love i
 - fix: (for a fix in wrongful behaviour and bugs)
 - chore: (for mudane tasks such as updating documentation + refactors of code)
 
-## 👷 Developers:
+## 👷 Staff Developers:
 - Hemit Patel (Chief Operating Officer and Principal Maintainer of DailySAT)
 - Laksyha Jain (Former Chief Technology Officer)
 - Aarush Kute (Founder and Chief Executive Officer)
 - Gautham Korrapati (Interim Chief Technology Officer)
+- Akshat Tewari 
 
 ## 🔐 How our authentication works ##
 
 Unlike the admin platform, the regular DailySAT platform's auth is handled by the AuthJS lib. It features simple Google SSO and its contents are saved onto a MongoDB collection called "users." This is then used to populate the dashboard with user information. We also employed a rate limiter to regulate the amount of DB calls. This way there is less burden on our MongoDB server. During the times when the API is restircted, we use a caching layer to populate the information
+
+## 📊 How to create a mock database
+Unfortunately, we don't let community developers get access to our official MongoDB database. However, you can easily create a mock MongoDB server on your local machine. First, install Docker and MongoDB Compass. Then, run "docker pull mongo" in your terminal (the directory doesn't matter). Next, find out your mongo url, which would likely be "mongodb://localhost:27017/". After, navigate to Google Cloud and make a project. Once you have done that, go to MongoDB Compass and make a database called SATDaily. Finally, once you have ran the docker image (from "docker pull mongo") and connected to it via Compass, run "redis-server" in the terminal (pathname is irrelevant) to start Redis (install it if not already). You should be all good to go after this.
 
 ## 💻 Technology Stack:
 - **NextJS** (frontend and backend, good for SEO)
