@@ -36,23 +36,3 @@ export const handleGetUserCached = async () => {
         return user
     }
 };
-
-export const handleMissedCache = async  () => {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Missing session" }, { status: 400 });
-    }
-  
-    const existingUser = await handleGetUser(session);
-    if (!existingUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-  
-    const { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred } = existingUser;
-    const user = { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred };
-  
-    const cacheKey = `user:${email}`;
-    await client.set(cacheKey, JSON.stringify(user), { ex: 600 });
-  
-    return user
-}
