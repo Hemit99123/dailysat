@@ -6,9 +6,8 @@ export const handleGetUser = async (session: Session | null) => {
         if (!session || !session.user?.email) {
             throw new Error("Session is invalid or user email is missing.");
         }
-
         await client.connect();
-        const db = client.db("DailySAT");
+        const db = client.db("SATDaily");
         const usersCollection = db.collection("users");
 
         // Find the user

@@ -1,5 +1,6 @@
-"use client"
+"use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,7 @@ const NavBar = () => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 100], [0, -50]);
   const opacity = useTransform(scrollY, [0, 100], [1, 0]);
-  const [auth, setAuth] = useState(false);
+  const [auth, setAuth] = useState<boolean | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -28,11 +29,11 @@ const NavBar = () => {
     setMenuOpen(false);
 
     if (auth) {
-      handleSignOut()
+      handleSignOut();
     } else {
-      handleSignIn()
+      handleSignIn();
     }
-  }
+  };
 
   return (
     <motion.div
@@ -43,7 +44,7 @@ const NavBar = () => {
         <Link href="/" className="text-xl font-bold text-blue-600">
           DailySAT
         </Link>
-        
+
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -64,14 +65,18 @@ const NavBar = () => {
             </Link>
           ))}
         </div>
-        
+
         <div className="hidden md:flex items-center space-x-4">
-          <button
-            onClick={auth ? handleSignOut : handleSignIn}
-            className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-          >
-            {auth ? "Log out" : "Sign in"}
-          </button>
+          {auth == null ? (
+            <Skeleton className="bg-blue-600 w-[82px] h-[35px] rounded-full" />
+          ) : (
+            <button
+              onClick={auth ? handleSignOut : handleSignIn}
+              className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+            >
+              {auth ? "Log out" : "Sign in"}
+            </button>
+          )}
         </div>
       </nav>
 

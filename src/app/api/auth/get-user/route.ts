@@ -99,7 +99,7 @@ export const GET = async () => {
     const session = await auth();
 
     const userEmail: string | null | undefined = session?.user?.email;
-
+    
     try {
         const numberHits: number = await handleAPiHits(userEmail || "");
 
@@ -132,7 +132,6 @@ export const GET = async () => {
                 // Assign the user data to cacheData
                 cacheData = JSON.stringify(userData);
             }
-
             // Return the cached user data
             return new Response(
                 JSON.stringify({
