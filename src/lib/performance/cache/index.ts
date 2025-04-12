@@ -1,14 +1,16 @@
-import axios from "axios";
+import { auth } from "@/lib/auth";
+import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/performance/cache/redis"; 
+import { NextResponse } from "next/server";
 
 export const handleGetUserCached = async () => {
-   const cacheData = await client.get('1')
+    let cacheData = await client.get('1');
+    const session = await auth()
+
+    const existingUser = await handleGetUser(session)
 
     if (!cacheData) {
         try {
-            const response = await axios.get('http://localhost:3000/api/auth/get-user');
-
-            const existingUser = response.data.user;
 
             if (!existingUser) {
                 throw new Error("User not found");
@@ -19,22 +21,26 @@ export const handleGetUserCached = async () => {
                 name: existingUser.name,
                 currency: existingUser.currency,
                 image: existingUser.image,
-                _id: existingUser._id as unknown as string,
+                _id: existingUser._id,
                 correctAnswered: existingUser.correctAnswered,
                 wrongAnswered: existingUser.wrongAnswered,
                 isReferred: existingUser.isReferred,
             };
 
-            // Upstash `.set()` usage (key, value, { ex: seconds })
-            await client.set('1', JSON.stringify(userData), { ex: 300 });
+            await client.set('1', JSON.stringify(userData));
+            cacheData = await client.get('1'); // Re-fetch to ensure value
 
             return userData;
         } catch (error) {
             console.error("Error fetching user from API:", error);
+            throw error; // Re-throw to handle at a higher level
         }
     }
 
-    return JSON.parse(cacheData as string);
+    console.log("Existing cacheData:", cacheData);
+    
+    // Check if cacheData is already an object
+    if (typeof cacheData === 'object' && cacheData !== null) {
+        return NextResponse.json({user: cacheData, cached: true});
+    }
 };
-
-

@@ -1,22 +1,19 @@
-import {client as rateLimitClient} from "@/lib/performance/rate-limiter/redis"
+import { handleFindRateLimitStatus } from "@/lib/performance/rate-limiter/findLimitStatus";
+import { handleGetUserCached } from "@/lib/performance/cache";
 
-export const handleFindRateLimitStatus = async (ip: string) => {
-  // Check if the key exists
-  let tokens: string | number | null = await rateLimitClient.get(ip);
+const handleRateLimitedRoutes = async () => {
 
-  if (tokens === null) {
-      // If key does not exist, initialize it with 4 tokens and set expiry for 5 minutes
-      await rateLimitClient.set(ip, "4", { ex: 300 });
-      return false; // Not rate-limited since it's the first request
-  }
+    const ip = '1'
 
-  tokens = Number(tokens);
+    // get current status for if rate limited or not
+    const isRateLimited = await handleFindRateLimitStatus(ip)
 
-  if (tokens >= 3) {
-      const oneTokenLess = tokens - 1;
-      await rateLimitClient.set(ip, oneTokenLess.toString());
-      return true; // Rate limited
-  }
-
-  return false; // Not rate-limited
+  
+    if (isRateLimited) {
+      return handleGetUserCached()
+    }
+  
+    return null;
 };
+  
+export default handleRateLimitedRoutes 
