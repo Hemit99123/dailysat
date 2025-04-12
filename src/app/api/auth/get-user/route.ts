@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
-import handleRateLimitedRoutes from "@/lib/performance/rate-limiter";
-import { NextRequest } from "next/server";
+import { handleRateLimit } from "@/lib/performance/rate-limiter";
 
 /**
  * @swagger
@@ -83,17 +82,17 @@ import { NextRequest } from "next/server";
  *                   description: A generic error message for internal server issues.
  */
 
-export const GET = async (req: NextRequest) => {
-
-    const rateLimitResponse = await handleRateLimitedRoutes();
+export const GET = async (req: Request) => {
+    const rateLimitResponse = await handleRateLimit(req);
     if (rateLimitResponse) return rateLimitResponse;
-
+    
     const session = await auth();
     
     try {
         const user = await handleGetUser(session);
         return Response.json({
-            user
+            user,
+            cached: false
         })
     } catch (error) {
         console.error("Error fetching user data:", error);

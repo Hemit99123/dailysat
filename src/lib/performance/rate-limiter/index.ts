@@ -1,19 +1,19 @@
-import { handleFindRateLimitStatus } from "@/lib/performance/rate-limiter/findLimitStatus";
 import { handleGetUserCached } from "@/lib/performance/cache";
+import { NextResponse } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit"
+import { client } from "./redis";
 
-const handleRateLimitedRoutes = async () => {
+const ratelimit = new Ratelimit({
+    redis: client,
+    limiter: Ratelimit.tokenBucket(5, "5 m", 5)
+})
 
-    const ip = '1'
+export const handleRateLimit = async (request: Request) => {
+    const ip = request.headers.get("x-forwarded-for") ?? "";
+    const { success } = await ratelimit.limit(ip)
 
-    // get current status for if rate limited or not
-    const isRateLimited = await handleFindRateLimitStatus(ip)
-
-  
-    if (isRateLimited) {
-      return handleGetUserCached()
-    }
-  
-    return null;
-};
-  
-export default handleRateLimitedRoutes 
+    if (!success) {
+        const user = await handleGetUserCached()
+        return NextResponse.json({user, cached: true})
+    } 
+}

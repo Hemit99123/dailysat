@@ -1,46 +1,58 @@
 import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
-import { client } from "@/lib/performance/cache/redis"; 
+import { client } from "@/lib/performance/cache/redis";
 import { NextResponse } from "next/server";
 
+
 export const handleGetUserCached = async () => {
-    let cacheData = await client.get('1');
-    const session = await auth()
+    const session = await auth();
+    const email = session?.user?.email;
 
-    const existingUser = await handleGetUser(session)
+    if (!email) return false;
 
-    if (!cacheData) {
-        try {
+    const cacheKey = `user:${email}`;
+    const cached = await client.get(cacheKey);
 
-            if (!existingUser) {
-                throw new Error("User not found");
-            }
-
-            const userData = {
-                email: existingUser.email,
-                name: existingUser.name,
-                currency: existingUser.currency,
-                image: existingUser.image,
-                _id: existingUser._id,
-                correctAnswered: existingUser.correctAnswered,
-                wrongAnswered: existingUser.wrongAnswered,
-                isReferred: existingUser.isReferred,
-            };
-
-            await client.set('1', JSON.stringify(userData));
-            cacheData = await client.get('1'); // Re-fetch to ensure value
-
-            return userData;
-        } catch (error) {
-            console.error("Error fetching user from API:", error);
-            throw error; // Re-throw to handle at a higher level
+    if (cached) {
+        return cached
+        
+    } else {
+        const session = await auth();
+        if (!session?.user?.email) {
+          return NextResponse.json({ error: "Missing session" }, { status: 400 });
         }
-    }
-
-    console.log("Existing cacheData:", cacheData);
-    
-    // Check if cacheData is already an object
-    if (typeof cacheData === 'object' && cacheData !== null) {
-        return NextResponse.json({user: cacheData, cached: true});
+      
+        const existingUser = await handleGetUser(session);
+        if (!existingUser) {
+          return NextResponse.json({ error: "User not found" }, { status: 404 });
+        }
+      
+        const { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred } = existingUser;
+        const user = { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred };
+      
+        const cacheKey = `user:${email}`;
+        await client.set(cacheKey, user, { ex: 600 });
+      
+        return user
     }
 };
+
+export const handleMissedCache = async  () => {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Missing session" }, { status: 400 });
+    }
+  
+    const existingUser = await handleGetUser(session);
+    if (!existingUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+  
+    const { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred } = existingUser;
+    const user = { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred };
+  
+    const cacheKey = `user:${email}`;
+    await client.set(cacheKey, JSON.stringify(user), { ex: 600 });
+  
+    return user
+}
