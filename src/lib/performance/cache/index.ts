@@ -1,22 +1,14 @@
-import { auth } from "@/lib/auth";
 import axios from "axios";
 import { client } from "@/lib/performance/cache/redis"; 
 
 export const handleGetUserCached = async () => {
-    const session = await auth();
-    const email = session?.user?.email || "";
-
-    if (!email) {
-        throw new Error("Session or email not found");
-    }
-
-   const cacheData = await client.get(email)
+   const cacheData = await client.get('1')
 
     if (!cacheData) {
         try {
-            const res = await axios.get('/api/auth/get-user');
+            const response = await axios.get('http://localhost:3000/api/auth/get-user');
 
-            const existingUser = res.data.user;
+            const existingUser = response.data.user;
 
             if (!existingUser) {
                 throw new Error("User not found");
@@ -34,12 +26,11 @@ export const handleGetUserCached = async () => {
             };
 
             // Upstash `.set()` usage (key, value, { ex: seconds })
-            await client.set(email, JSON.stringify(userData), { ex: 300 });
+            await client.set('1', JSON.stringify(userData), { ex: 300 });
 
             return userData;
         } catch (error) {
             console.error("Error fetching user from API:", error);
-            throw new Error("Failed to fetch user");
         }
     }
 

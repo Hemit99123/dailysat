@@ -140,11 +140,14 @@ export const GET = async (request: Request) => {
 
         // Only update the cache if needed (already stored information within cache)
         if (cache) {
-            cacheClient.set(userEmail || "", JSON.stringify(userData), "KEEPTTL");
+            await cacheClient.set(
+                userEmail || "",
+                JSON.stringify(userData),
+                { keepTtl: true }
+              );
         }
 
         // Assign the user data to cacheData
-        // Return the data
 
         return Response.json({
             result: "Success - using cache UPDATED",
