@@ -53,6 +53,6 @@ Unfortunately, we don't let community developers get access to our official Mong
 - **NextJS** (frontend and backend, good for SEO)
 - **TailwindCSS** (styling)
 - **MongoDB** (db management solution)
-- **Redis** (storage solution for sessions, rate limiting and caching layer)
+- **Upstash Redis** (storage solution for sessions, rate limiting and caching layer)
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
