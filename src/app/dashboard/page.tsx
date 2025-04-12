@@ -165,7 +165,7 @@ const Home = () => {
                 <p className="text-3xl font-bold text-blue-600">{user.name}</p>
               )}
               {user != null ? (
-                <p>Email: + {user?.email}</p>
+                <p>Email: {user?.email}</p>
               ) : (
                 <Skeleton className="w-[200px] h-[24px]  mt-4 rounded-full bg-gray-400" />
               )}
