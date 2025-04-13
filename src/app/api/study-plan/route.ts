@@ -4,7 +4,7 @@ import { Db } from "mongodb";
 
 export const POST = async (request: Request) => {
 
-    const { studyPlan } = await request.json()
+    const { plan } = await request.json()
 
     try {
         const session = await auth()
@@ -20,7 +20,7 @@ export const POST = async (request: Request) => {
     
         const result = await usersCollection.updateOne(
           { email },
-          { $set: { studyPlan } }
+          { $set: { plan } }
         )
     
         if (result.modifiedCount === 0) {
