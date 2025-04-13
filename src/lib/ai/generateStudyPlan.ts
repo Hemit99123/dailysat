@@ -21,7 +21,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
       Create a detailed SAT study plan with the following parameters:
       - Current SAT score: ${data.currentScore}
       - Target SAT score: ${data.targetScore}
-      - Days until test: ${daysUntilTest}
+      - Test day: ${daysUntilTest}
 
       The plan should include:
       1. A day-by-day schedule from today until the test date (maximum 30 days)
@@ -32,7 +32,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
          - Brief description of what to do
       3. Make the plan personal through different personalizations such as concepts the user is struggling with, preferred study techniques, etc which is specified in ${data.personalization}. Ensure to add steps the user can complete to help reach their persoanlization within the activities in the result.
 
-      Return ONLY a valid JSON object with this EXACT structure:
+      Return ONLY a valid JSON object with this EXACT structure. There should be an corresponding object for each day until the test day:
       {
         "days": [
           {
