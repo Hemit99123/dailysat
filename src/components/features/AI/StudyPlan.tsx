@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { format } from "date-fns"
 import { Calendar } from "@/components/features/AI/Calendar"
+import axios from "axios"
 
 interface Activity {
   topic: string
@@ -98,6 +99,12 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
     )
   }
 
+  const handleSavePlan = async () => {
+    await axios.post("/api/study-plan", {
+      plan
+    })
+  }
+
   return (
     <div className="space-y-6">
       <div className="border rounded-md shadow-sm bg-white">
@@ -130,6 +137,13 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
               }`}
             >
               List View
+            </button>
+
+            <button 
+              onClick={handleSavePlan}
+              className={"px-4 py-2 rounded bg-blue-200"}
+            >
+              Save Plan
             </button>
           </div>
 

@@ -15,44 +15,52 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     const daysUntilTest = Math.ceil((testDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     const maxDays = Math.min(daysUntilTest, 30)
 
-    const systemPrompts = "You are an expert in the SATs. You are a study planner. You are a guider for students to suceed."
+    const systemPrompts = "You are an expert SAT coach and a JSON-only response generator."
 
-    const prompt = `
-      Create a detailed SAT study plan, keeping in mind the following parameters:
-      - Current SAT score: ${data.currentScore}
-      - Target SAT score: ${data.targetScore}
-      - Test day: ${daysUntilTest}
+    const prompt = `You are an expert SAT coach and a JSON-only response generator.
 
-      Based on the target increase in SAT score which is ${data.targetScore - data.currentScore}, make the study plan more intense or less intense in terms of the academic rigour and workload required. 
-
-      The plan should include:
-      1. A day-by-day schedule from today until the test date (maximum 30 days)
-      2. For each day, include 2-3 specific activities with:
-         - Topic (e.g., "Reading: Main Idea Questions", "Math: Quadratic Equations")
-         - Activity type (review or practice)
-         - Duration in minutes
-         - Brief description of what exactly to do (50-100 words)
-      3. Make the plan personal through different personalizations such as concepts the user is struggling with, preferred study techniques, etc which is specified in ${data.personalization}. Ensure to add steps the user can complete to help reach their persoanlization within the activities in the result.
-
-      Return ONLY a valid JSON object with this EXACT structure. 
-      {
-        "days": [
-          {
-            "date": "YYYY-MM-DD",
-            "activities": [
-              {
-                "topic": "string",
-                "type": "review|practice",
-                "duration": number,
-                "description": "string"
-              }
-            ]
-          }
-        ]
-      }
-
-      Ensure the final JSON result is properly formatted with no trailing commas. Do not include any explanatory text before or after the JSON.
-    `
+    Generate a personalized, detailed SAT study plan using the following inputs:
+    - Current SAT score: ${data.currentScore}
+    - Target SAT score: ${data.targetScore}
+    - Days until test: ${daysUntilTest}
+    
+    Requirements:
+    1. Create a day-by-day schedule from today until the test date (maximum 30 days).
+    2. For each day, include 2–3 unique study activities, each with:
+       - topic (e.g., "Reading: Main Idea Questions", "Math: Quadratic Equations")
+       - type (must be either "review" or "practice")
+       - duration in minutes (integer)
+       - description (50–100 words of specific instructions)
+    
+    3. Ensure that each activity:
+       - Reflects the user’s personalization: ${data.personalization}
+       - Includes steps that help achieve their personlization within their prep
+    
+    Format:
+    Return ONLY a valid and complete JSON object in the EXACT structure below — nothing else.
+    
+    {
+      "days": [
+        {
+          "date": "YYYY-MM-DD",
+          "activities": [
+            {
+              "topic": "string",
+              "type": "review|practice",
+              "duration": number,
+              "description": "string"
+            }
+          ]
+        }
+      ]
+    }
+    
+    Rules:
+    - Do NOT include any explanation or notes before or after the JSON.
+    - Ensure there are no trailing commas or invalid characters.
+    - Escape all special characters as needed.
+`;
+    
 
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -68,7 +76,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer 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`
+          Authorization: `Bearer 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`
         }
       }
     )
