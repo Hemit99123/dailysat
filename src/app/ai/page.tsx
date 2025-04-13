@@ -4,7 +4,6 @@ import type React from "react"
 import { useState } from "react"
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
 import { StudyPlan } from "@/components/features/AI/StudyPlan"
-import axios from "axios"
 
 interface Activity {
   topic: string
