@@ -15,13 +15,15 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     const daysUntilTest = Math.ceil((testDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     const maxDays = Math.min(daysUntilTest, 30)
 
-    const systemPrompts = "You are an expert in the SATs. You are a study planner for the SATs"
+    const systemPrompts = "You are an expert in the SATs. You are a study planner. You are a guider for students to suceed."
 
     const prompt = `
-      Create a detailed SAT study plan with the following parameters:
+      Create a detailed SAT study plan, keeping in mind the following parameters:
       - Current SAT score: ${data.currentScore}
       - Target SAT score: ${data.targetScore}
       - Test day: ${daysUntilTest}
+
+      Based on the target increase in SAT score which is ${data.targetScore - data.currentScore}, make the study plan more intense or less intense in terms of the academic rigour and workload required. 
 
       The plan should include:
       1. A day-by-day schedule from today until the test date (maximum 30 days)
@@ -29,10 +31,10 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
          - Topic (e.g., "Reading: Main Idea Questions", "Math: Quadratic Equations")
          - Activity type (review or practice)
          - Duration in minutes
-         - Brief description of what to do
+         - Brief description of what exactly to do (50-100 words)
       3. Make the plan personal through different personalizations such as concepts the user is struggling with, preferred study techniques, etc which is specified in ${data.personalization}. Ensure to add steps the user can complete to help reach their persoanlization within the activities in the result.
 
-      Return ONLY a valid JSON object with this EXACT structure. There should be an corresponding object for each day until the test day:
+      Return ONLY a valid JSON object with this EXACT structure. 
       {
         "days": [
           {
@@ -48,8 +50,6 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
           }
         ]
       }
-
-      Within the description, please ensure to provide a very detailed (50-100 words) on actions that the user can do for the activity
 
       Ensure the final JSON result is properly formatted with no trailing commas. Do not include any explanatory text before or after the JSON.
     `
@@ -75,6 +75,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
 
     const text = response.data?.choices?.[0]?.message?.content ?? ""
     
+    console.log(text)
     // find a json result
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -82,6 +83,8 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     }
 
     const plan = JSON.parse(jsonMatch[0])
+
+    console.log(plan)
 
     if (!plan.days || !Array.isArray(plan.days)) {
       throw new Error("Invalid plan structure: 'days' array is missing")
