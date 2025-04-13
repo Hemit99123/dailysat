@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <div className="mb-10">
       {/* Greeting Section */}
       <div className="flex flex-col items-center mt-8">
         {cached && (
