@@ -7,11 +7,12 @@ export const handleGetUser = async (session: Session | null) => {
             throw new Error("Session is invalid or user email is missing.");
         }
         await client.connect();
-        const db = client.db("SATDaily");
+        const db = client.db("DailySAT");
         const usersCollection = db.collection("users");
 
         // Find the user
         let existingUser = await usersCollection.findOne({ email: session.user.email });
+        console.log(existingUser)
 
         // If user doesn't exist, create a new record
         if (!existingUser) {
