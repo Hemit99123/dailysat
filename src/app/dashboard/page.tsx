@@ -5,10 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import StatDisplay from "@/components/features/Dashboard/StatDisplay";
 import axios from "axios";
-import Quotes from "@/types/dashboard/quotes";
-import Spinner from "@/components/common/Spinner";
 import { useUserStore } from "@/store/user";
-import { quotes } from "@/data/quotes";
 import Image from "next/image";
 import BookSVG from "../../components/features/Questions/icons/BookSVG";
 import MathSVG from "../../components/features/Questions/icons/BookSVG";
@@ -19,24 +16,9 @@ const Home = () => {
   const setUser = useUserStore((state) => state.setUser);
   const [cached, setCached] = useState(false);
   const [greeting, setGreeting] = useState("");
-  const [quote, setQuote] = useState<Quotes | null>(null);
-  const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    const handleFetchQuote = async () => {
-      setIsLoadingQuote(true);
-      try {
-        const quotesLength = quotes?.length || 0;
-        const randomIndex = Math.floor(Math.random() * quotesLength);
-        setQuote(quotes?.[randomIndex] || null);
-      } catch (error) {
-        console.error("Error fetching quote:", error);
-        alert("Something went wrong while retrieving your quote.");
-      } finally {
-        setIsLoadingQuote(false);
-      }
-    };
     const handleGetUser = async () => {
       let response = null;
       try {
@@ -50,7 +32,6 @@ const Home = () => {
       }
     };
 
-    handleFetchQuote();
     setTimeout(() => {
       handleGetUser();
     }, 1000); // 100 seconds
@@ -82,7 +63,6 @@ const Home = () => {
       <div className="flex flex-col items-center mt-8">
         {cached && (
           <div className="flex items-center text-[12px] space-x-2 text-gray-600 font-medium">
-            {/* Cached warning SVG omitted for brevity */}
             <p>Old data because you reached your limit</p>
           </div>
         )}
@@ -242,26 +222,6 @@ const Home = () => {
           />
         ) : (
           <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
-        )}
-      </div>
-
-      {/* Quote Section */}
-      <div className="mt-4 flex flex-col md:flex-row p-3.5 w-full space-y-3 md:space-y-0 md:space-x-3">
-        {user != null ? (
-          <div className="w-full md:w-1/3 rounded-lg shadow-lg flex items-center justify-center">
-            {isLoadingQuote ? (
-              <Spinner />
-            ) : quote ? (
-              <div className="flex flex-col items-center text-center p-4">
-                <p className="text-xl italic">“{quote.content}”</p>
-                <p className="mt-2 text-sm text-gray-600">- {quote.author}</p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">No quote available.</p>
-            )}
-          </div>
-        ) : (
-          <Skeleton className="md:w-1/3 w-full h-[116px] bg-gray-600/60 " />
         )}
       </div>
     </div>
