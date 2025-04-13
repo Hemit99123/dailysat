@@ -10,7 +10,6 @@ import Image from "next/image";
 import BookSVG from "../../components/features/Questions/icons/BookSVG";
 import MathSVG from "../../components/features/Questions/icons/BookSVG";
 import Option from "../../components/features/Dashboard/Option";
-import { Calendar } from "@/components/features/AI/Calendar";
 
 const Home = () => {
   const user = useUserStore((state) => state.user);
@@ -205,16 +204,6 @@ const Home = () => {
             number={user?.wrongAnswered ?? 0}
             status="upward"
             percentage={(user?.wrongAnswered ?? 0) * 100}
-          />
-        ) : (
-          <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
-        )}
-      </div>
-      
-      <div className="mt-10">
-        {user != null ? (
-          <Calendar 
-            plan={user.plan}
           />
         ) : (
           <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
