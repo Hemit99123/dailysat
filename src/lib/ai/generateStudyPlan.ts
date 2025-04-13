@@ -1,29 +1,30 @@
 "use server"
 
-import { generateText } from "ai"
-import { groq } from "@ai-sdk/groq"
+import axios from "axios"
 
 interface StudyPlanRequest {
   currentScore: number
   targetScore: number
   testDate: string
   debug?: boolean
+  personalization: string;
 }
 
 export async function generateStudyPlan(data: StudyPlanRequest) {
   try {
-    // Calculate days until test
     const today = new Date()
     const testDate = new Date(data.testDate)
     const daysUntilTest = Math.ceil((testDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    const maxDays = Math.min(daysUntilTest, 30)
 
-    // Generate prompt for Groq
+    const systemPrompts = "You are an expert in the SATs. You are a study planner for the SATs"
+
     const prompt = `
       Create a detailed SAT study plan with the following parameters:
       - Current SAT score: ${data.currentScore}
       - Target SAT score: ${data.targetScore}
       - Days until test: ${daysUntilTest}
-      
+
       The plan should include:
       1. A day-by-day schedule from today until the test date (maximum 30 days)
       2. For each day, include 2-3 specific activities with:
@@ -31,8 +32,9 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
          - Activity type (review or practice)
          - Duration in minutes
          - Brief description of what to do
-      
-      Return ONLY a valid JSON object with this exact structure:
+      3. Make the plan personal through catering with concepts that the user is struggling with, specified in ${data.personalization}
+
+      Return ONLY a valid JSON object with this EXACT structure:
       {
         "days": [
           {
@@ -48,81 +50,59 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
           }
         ]
       }
-      
+
       Ensure the JSON is properly formatted with no trailing commas. Do not include any explanatory text before or after the JSON.
     `
 
-    // Call Groq API using AI SDK
-    const { text } = await generateText({
-      model: groq("llama3-70b-8192"),
-      prompt,
-      temperature: 0.5,
-      maxTokens: 4000,
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompts },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.7,
+        stream: false
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`
+        }
+      }
+    )
+
+    const text = response.data?.choices?.[0]?.message?.content ?? ""
+
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) {
+      throw new Error("No JSON object found in the response")
+    }
+
+    const plan = JSON.parse(jsonMatch[0])
+
+    if (!plan.days || !Array.isArray(plan.days)) {
+      throw new Error("Invalid plan structure: 'days' array is missing")
+    }
+
+    const currentDate = new Date()
+    plan.days = plan.days.slice(0, maxDays).map((day: any, index: number) => {
+      const date = new Date(currentDate)
+      date.setDate(date.getDate() + index)
+
+      return {
+        ...day,
+        date: date.toISOString().split("T")[0],
+        activities: Array.isArray(day.activities) ? day.activities : []
+      }
     })
 
-    // If debug mode is enabled, return the raw response
-    if (data.debug) {
-      return {
-        rawResponse: text,
-        isDebug: true,
-      }
-    }
-
-    // Parse the response as JSON
-    try {
-      // Find JSON in the response (in case there's any extra text)
-      const jsonMatch = text.match(/\{[\s\S]*\}/)
-
-      if (!jsonMatch) {
-        throw new Error("No JSON object found in the response")
-      }
-
-      const jsonString = jsonMatch[0]
-
-      // Attempt to parse the JSON
-      const plan = JSON.parse(jsonString)
-
-      // Validate the structure
-      if (!plan.days || !Array.isArray(plan.days)) {
-        throw new Error("Invalid plan structure: 'days' array is missing")
-      }
-
-      // Process dates to ensure they're in the correct format
-      // Limit to maximum 30 days to avoid excessive data
-      const maxDays = Math.min(daysUntilTest, 30)
-
-      const currentDate = new Date()
-      plan.days = plan.days.slice(0, maxDays).map((day: { date: string; activities: { topic: string; type: "review" | "practice"; duration: number; description: string }[] }, index: number) => {
-        const dayDate = new Date(currentDate)
-        dayDate.setDate(currentDate.getDate() + index)
-
-        // Ensure activities array exists
-        if (!day.activities || !Array.isArray(day.activities)) {
-          day.activities = []
-        }
-
-        return {
-          ...day,
-          date: dayDate.toISOString().split("T")[0],
-        }
-      })
-
-      return plan
-    } catch (parseError) {
-      console.error("Error parsing Groq response:", parseError)
-      // Return both the error and the raw response for debugging
-      return {
-        error: parseError instanceof Error ? parseError.message : "Unknown error",
-        rawResponse: text,
-        isError: true,
-      }
-    }
-  } catch (error) {
-    console.error("Error generating study plan:", error)
+    return plan
+  } catch (error: any) {
     return {
-      error: "Failed to generate study plan. Please try again.",
-      isError: true,
+      error: error?.message ?? "Unknown error",
+      isError: true
     }
   }
 }
-
