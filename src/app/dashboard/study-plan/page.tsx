@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
-const page = () => {
+const StudyPlan = () => {
 
   const [plan, setPlan] = useState<StudyPlanProps | null>(null)
 
@@ -33,4 +33,4 @@ const page = () => {
   )
 }
 
-export default page
+export default StudyPlan
