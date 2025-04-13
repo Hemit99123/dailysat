@@ -85,13 +85,7 @@ const Home = () => {
         )}
       </div>
 
-      <div className="flex items-center justify-center pl-5 mt-10">
-        {user != null ? (
-          <h1 className="pl-3.5 font-bold text-4xl text-blue-900">Practice!</h1>
-        ) : (
-          <Skeleton className="w-[140px] h-[40px] mb-1 rounded-full bg-blue-900" />
-        )}
-      </div>
+
       <div className="lg:px-16 lg:p-6 px-2">
         <div className="grid grids-cols-1 md:grid-cols-2 mx-auto md:w-4/5 gap-2 mt-px">
           {user != null ? (
@@ -109,15 +103,6 @@ const Home = () => {
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
         </div>
-      </div>
-
-      {/* Stats Header */}
-      <div className="flex items-center pl-5 mt-10">
-        {user != null ? (
-          <h1 className="pl-3.5 font-bold text-4xl text-blue-900">Stats</h1>
-        ) : (
-          <Skeleton className="w-[100px] ml-2 h-[40px] rounded-full bg-blue-900" />
-        )}
       </div>
 
       {/* User Stats */}
@@ -225,10 +210,16 @@ const Home = () => {
           <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
         )}
       </div>
-
-      <Calendar 
-        plan={user?.plan}
-      />
+      
+      <div className="mt-10">
+        {user != null ? (
+          <Calendar 
+            plan={user.plan}
+          />
+        ) : (
+          <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+        )}
+      </div>
     </div>
   );
 };
