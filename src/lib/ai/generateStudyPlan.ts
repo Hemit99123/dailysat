@@ -87,6 +87,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     }
 
     const currentDate = new Date()
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     plan.days = plan.days.slice(0, maxDays).map((day: any, index: number) => {
       const date = new Date(currentDate)
       date.setDate(date.getDate() + index)
@@ -99,9 +100,9 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     })
 
     return plan
-  } catch (error: any) {
+  } catch (error) {
     return {
-      error: error?.message ?? "Unknown error",
+      error: error ?? "Unknown error",
       isError: true
     }
   }
