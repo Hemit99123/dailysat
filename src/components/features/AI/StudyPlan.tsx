@@ -3,8 +3,39 @@
 import { useState } from "react"
 import { format } from "date-fns"
 
+interface Activity {
+  topic: string
+  description: string
+  duration: number
+  type: "review" | "practice" | "lecture" | string // expand if needed
+}
+
+interface StudyDay {
+  date?: string
+  activities: Activity[]
+}
+
+interface ValidPlan {
+  isDebug?: false
+  isError?: false
+  days: StudyDay[]
+}
+
+interface DebugPlan {
+  isDebug: true
+  rawResponse: string
+}
+
+interface ErrorPlan {
+  isError: true
+  error: string
+  rawResponse?: string
+}
+
+type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan
+
 interface StudyPlanProps {
-  plan: any
+  plan: StudyPlanData
   currentScore: string
   targetScore: string
   testDate: Date | undefined
@@ -14,7 +45,7 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
   const [view, setView] = useState<"list" | "calendar">("calendar")
   const daysUntilTest = testDate ? Math.ceil((testDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0
 
-  if (plan?.isDebug) {
+  if ("isDebug" in plan && plan.isDebug) {
     return (
       <div className="border rounded-md shadow-sm bg-white">
         <div className="border-b px-4 py-3 bg-gray-100">
@@ -28,7 +59,7 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
     )
   }
 
-  if (plan?.isError) {
+  if ("isError" in plan && plan.isError) {
     return (
       <div className="border rounded-md shadow-sm bg-white">
         <div className="border-b px-4 py-3 bg-red-100">
@@ -110,7 +141,7 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
 
           {view === "list" && (
             <div className="space-y-4">
-              {plan.days.map((day: any, index: number) => (
+              {plan.days.map((day, index) => (
                 <div key={index} className="border rounded-md overflow-hidden">
                   <div className="bg-gray-50 px-4 py-2 border-b font-medium">
                     Day {index + 1}:{" "}
@@ -119,7 +150,7 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
                   <div className="p-4">
                     {day.activities && day.activities.length > 0 ? (
                       <div className="space-y-3">
-                        {day.activities.map((activity: any, actIndex: number) => (
+                        {day.activities.map((activity, actIndex) => (
                           <div
                             key={actIndex}
                             className={`flex justify-between items-start gap-3 p-3 rounded-md border text-sm ${
