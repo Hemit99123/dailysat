@@ -45,6 +45,7 @@ export interface StudyPlanProps {
 
 export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPlanProps) {
   const [view, setView] = useState<"list" | "calendar">("calendar")
+  const [isSavedPlan, setSavedPlan] = useState(false)
   const daysUntilTest = testDate ? Math.ceil((testDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0
 
   if ("isDebug" in plan && plan.isDebug) {
@@ -103,6 +104,8 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
     await axios.post("/api/study-plan", {
       plan
     })
+
+    setSavedPlan(true)
   }
 
   return (
@@ -142,6 +145,7 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
             <button 
               onClick={handleSavePlan}
               className={"px-4 py-2 rounded bg-blue-200"}
+              disabled={isSavedPlan}
             >
               Save Plan
             </button>
