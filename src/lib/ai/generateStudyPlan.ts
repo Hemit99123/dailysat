@@ -1,5 +1,3 @@
-"use server"
-
 import axios from "axios"
 
 interface StudyPlanRequest {
@@ -32,7 +30,6 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
          - Activity type (review or practice)
          - Duration in minutes
          - Brief description of what to do
-      3. Make the plan personal through catering with concepts that the user is struggling with, specified in ${data.personalization}
 
       Return ONLY a valid JSON object with this EXACT structure:
       {
@@ -68,12 +65,13 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`
+          Authorization: `Bearer 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`
         }
       }
     )
 
     const text = response.data?.choices?.[0]?.message?.content ?? ""
+    console.log(text)
 
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {

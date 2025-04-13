@@ -35,7 +35,7 @@ interface ErrorPlan {
 type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan
 
 interface StudyPlanProps {
-  plan: StudyPlanData
+  plan: StudyPlanData 
   currentScore: string
   targetScore: string
   testDate: Date | undefined
