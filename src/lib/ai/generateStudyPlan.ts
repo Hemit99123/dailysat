@@ -30,6 +30,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
          - Activity type (review or practice)
          - Duration in minutes
          - Brief description of what to do
+      3. Make the plan personal through different personalizations such as concepts the user is struggling with, preferred study techniques, etc which is specified in ${data.personalization}. Ensure to add steps the user can complete to help reach their persoanlization within the activities in the result.
 
       Return ONLY a valid JSON object with this EXACT structure:
       {
@@ -48,7 +49,9 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
         ]
       }
 
-      Ensure the JSON is properly formatted with no trailing commas. Do not include any explanatory text before or after the JSON.
+      Within the description, please ensure to provide a very detailed (50-100 words) on actions that the user can do for the activity
+
+      Ensure the final JSON result is properly formatted with no trailing commas. Do not include any explanatory text before or after the JSON.
     `
 
     const response = await axios.post(
@@ -71,8 +74,8 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     )
 
     const text = response.data?.choices?.[0]?.message?.content ?? ""
-    console.log(text)
-
+    
+    // find a json result
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       throw new Error("No JSON object found in the response")
