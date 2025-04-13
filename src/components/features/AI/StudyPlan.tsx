@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { format } from "date-fns"
+import { Calendar } from "@/components/features/AI/Calendar"
 
 interface Activity {
   topic: string
@@ -134,8 +135,9 @@ export function StudyPlan({ plan, currentScore, targetScore, testDate }: StudyPl
 
           {view === "calendar" && (
             <div>
-              <p className="text-sm text-gray-500 italic">[Calendar view goes here]</p>
-              {/* Replace or implement <CalendarView /> as needed */}
+              <Calendar 
+                plan={plan}
+              />
             </div>
           )}
 
