@@ -35,7 +35,7 @@ interface ErrorPlan {
 
 type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan
 
-interface StudyPlanProps {
+export interface StudyPlanProps {
   plan: StudyPlanData 
   currentScore: string
   targetScore: string
