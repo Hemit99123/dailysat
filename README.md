@@ -35,13 +35,6 @@ Our mission is to build an app that is free and accessible! This means we love i
 - fix: (for a fix in wrongful behaviour and bugs)
 - chore: (for mudane tasks such as updating documentation + refactors of code)
 
-## 👷 Staff Developers:
-- Hemit Patel (Chief Operating Officer and Principal Maintainer of DailySAT)
-- Laksyha Jain (Former Chief Technology Officer)
-- Aarush Kute (Founder and Chief Executive Officer)
-- Gautham Korrapati (Interim Chief Technology Officer)
-- Akshat Tewari 
-
 ## 🔐 How our authentication works ##
 
 Unlike the admin platform, the regular DailySAT platform's auth is handled by the AuthJS lib. It features simple Google SSO and its contents are saved onto a MongoDB collection called "users." This is then used to populate the dashboard with user information. We also employed a rate limiter to regulate the amount of DB calls. This way there is less burden on our MongoDB server. During the times when the API is restircted, we use a caching layer to populate the information
