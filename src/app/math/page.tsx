@@ -2,7 +2,7 @@
 
 import Sidebar from "@/components/features/Sidebar/Sidebar";
 import { mathTopics } from '@/data/topics'; 
-import MathSVG from "@/components/features/Questions/icons/MathSVG";
+import { EqualApproximately } from 'lucide-react';
 import { Topic } from "@/types/sat-platform/topic";
 import { useEffect, useRef } from "react";
 import MathQuestion from "@/components/features/Questions/Question-UI/QuestionModules/MathQuestion";
@@ -65,7 +65,7 @@ const Math = () => {
     <MainWrappers>
       <Sidebar
         title="Math"
-        svg={<MathSVG />}
+        svg={<EqualApproximately />}
         topics={mathTopics}
         handleTopicClick={handleTopicClick}
       />
