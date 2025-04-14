@@ -2,7 +2,7 @@
 
 import Sidebar from "@/components/features/Sidebar/Sidebar";
 import { readingTopics } from "@/data/topics";
-import BookSVG from "../../components/features/Questions/icons/BookSVG";
+import { Book } from "lucide-react";
 import { Topic } from "@/types/sat-platform/topic";
 import { useEffect, useRef } from "react";
 import ReadingQuestion from "@/components/features/Questions/Question-UI/QuestionModules/ReadingQuestion";
@@ -50,7 +50,7 @@ const Reading = () => {
     <MainWrappers>
       <Sidebar
         title="Reading & Writing"
-        svg={<BookSVG />}
+        svg={<Book />}
         topics={readingTopics}
         handleTopicClick={handleTopicClick}
       />
