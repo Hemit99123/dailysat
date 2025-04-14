@@ -17,5 +17,5 @@ export interface User {
     correctAnswered: number;
     wrongAnswered: number;
 
-    plan: StudyPlanProps
+    plan?: StudyPlanProps
 }
