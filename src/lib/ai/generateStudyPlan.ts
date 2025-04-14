@@ -15,7 +15,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     const daysUntilTest = Math.ceil((testDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     const maxDays = Math.min(daysUntilTest, 30)
 
-    const systemPrompts = "You are an expert SAT coach and a JSON-only response generator."
+    const systemPrompt = "You are an expert SAT coach and a JSON-only response generator."
 
     const prompt = `You are an expert SAT coach and a JSON-only response generator.
 
@@ -33,8 +33,8 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
        - description (50–100 words of specific instructions)
     
     3. Ensure that each activity:
-       - Reflects the user’s personalization: ${data.personalization}
-       - Includes steps that help achieve their personlization within their prep
+       - Reflects the user's personalization: ${data.personalization}
+       - Includes steps that help achieve their personalization within their prep
     
     Format:
     Return ONLY a valid and complete JSON object in the EXACT structure below — nothing else.
@@ -60,14 +60,17 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     - Ensure there are no trailing commas or invalid characters.
     - Escape all special characters as needed.
 `;
-    
+
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
+
+    console.log(apiKey)
 
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
         model: "llama-3.3-70b-versatile",
         messages: [
-          { role: "system", content: systemPrompts },
+          { role: "system", content: systemPrompt },
           { role: "user", content: prompt }
         ],
         temperature: 0.7,
@@ -76,31 +79,36 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer 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`
+          Authorization: `Bearer ${apiKey}`
         }
       }
     )
 
     const text = response.data?.choices?.[0]?.message?.content ?? ""
     
-    console.log(text)
-    // find a json result
+    // Find a JSON result
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       throw new Error("No JSON object found in the response")
     }
 
-    const plan = JSON.parse(jsonMatch[0])
-
-    console.log(plan)
+    const planText = jsonMatch[0]
+    let plan
+    
+    try {
+      plan = JSON.parse(planText)
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError)
+      throw new Error("Failed to parse JSON response")
+    }
 
     if (!plan.days || !Array.isArray(plan.days)) {
       throw new Error("Invalid plan structure: 'days' array is missing")
     }
 
     const currentDate = new Date()
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    plan.days = plan.days.slice(0, maxDays).map((day: any, index: number) => {
+    
+    plan.days = plan.days.slice(0, maxDays).map((day: { activities: any }, index: number) => {
       const date = new Date(currentDate)
       date.setDate(date.getDate() + index)
 
@@ -112,9 +120,13 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     })
 
     return plan
+    
   } catch (error) {
+    // Safely handle error objects to prevent circular references
+    console.error("Error in generateStudyPlan:", error)
+    
     return {
-      error: error ?? "Unknown error",
+      error: error instanceof Error ? error.message : "Unknown error",
       isError: true
     }
   }
