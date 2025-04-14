@@ -22,7 +22,7 @@ const StudyPlan = () => {
   return (
     <>
     {plan !== null ? (
-            <Calendar 
+        <Calendar 
             plan={plan}
         />
     ): (
