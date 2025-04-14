@@ -16,7 +16,7 @@ const StatDisplay: React.FC<CoinDisplayProps> = ({ header, number, type, icon, c
                 <Image src={`/icons/${icon}.png`} width={40} height={40} alt="hi" />
                 <p className={`text-md font-bold text-gray-600 ml-2`}>{header}</p>
             </div>
-            <div className='flex items-center'>
+            <div className='flex items-center mb-10'>
                 <div>
                     <p className="text-6xl font-bold">
                         <span style={{ color: color }}>{number || 0}</span> <span className="text-xl text-gray-400">{type}</span>
