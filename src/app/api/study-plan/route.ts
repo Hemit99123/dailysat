@@ -51,8 +51,7 @@ export const GET = async () => {
 
         return Response.json({ message: "Found study plan", plan: user?.plan })
       } catch (error) {
-        console.error(error)
-        return Response.json({ message: "Internal Server Error" })
+        return Response.json({ message: "Internal Server Error", error })
       } finally {
         await client.close()
       }
