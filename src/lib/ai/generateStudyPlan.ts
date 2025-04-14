@@ -8,6 +8,13 @@ interface StudyPlanRequest {
   personalization: string;
 }
 
+interface Activity {
+  topic: string;
+  type: string;
+  duration: number;
+  description: string;
+}
+
 export async function generateStudyPlan(data: StudyPlanRequest) {
   try {
     const today = new Date()
@@ -63,8 +70,6 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
 
     const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
 
-    console.log(apiKey)
-
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -108,7 +113,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
 
     const currentDate = new Date()
     
-    plan.days = plan.days.slice(0, maxDays).map((day: { activities: any }, index: number) => {
+    plan.days = plan.days.slice(0, maxDays).map((day: { activities: Activity[] }, index: number) => {
       const date = new Date(currentDate)
       date.setDate(date.getDate() + index)
 
