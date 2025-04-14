@@ -5,38 +5,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import StatDisplay from "@/components/features/Dashboard/StatDisplay";
 import axios from "axios";
-import Quotes from "@/types/dashboard/quotes";
-import Spinner from "@/components/common/Spinner";
 import { useUserStore } from "@/store/user";
-import { quotes } from "@/data/quotes";
 import Image from "next/image";
-import BookSVG from "../../components/features/Questions/icons/BookSVG";
-import MathSVG from "../../components/features/Questions/icons/BookSVG";
 import Option from "../../components/features/Dashboard/Option";
+import { Book, Calendar, EqualApproximately } from "lucide-react";
 
 const Home = () => {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const [cached, setCached] = useState(false);
   const [greeting, setGreeting] = useState("");
-  const [quote, setQuote] = useState<Quotes | null>(null);
-  const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    const handleFetchQuote = async () => {
-      setIsLoadingQuote(true);
-      try {
-        const quotesLength = quotes?.length || 0;
-        const randomIndex = Math.floor(Math.random() * quotesLength);
-        setQuote(quotes?.[randomIndex] || null);
-      } catch (error) {
-        console.error("Error fetching quote:", error);
-        alert("Something went wrong while retrieving your quote.");
-      } finally {
-        setIsLoadingQuote(false);
-      }
-    };
     const handleGetUser = async () => {
       let response = null;
       try {
@@ -50,7 +31,6 @@ const Home = () => {
       }
     };
 
-    handleFetchQuote();
     setTimeout(() => {
       handleGetUser();
     }, 1000); // 100 seconds
@@ -77,12 +57,11 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <div className="mb-10">
       {/* Greeting Section */}
       <div className="flex flex-col items-center mt-8">
         {cached && (
           <div className="flex items-center text-[12px] space-x-2 text-gray-600 font-medium">
-            {/* Cached warning SVG omitted for brevity */}
             <p>Old data because you reached your limit</p>
           </div>
         )}
@@ -104,18 +83,12 @@ const Home = () => {
         )}
       </div>
 
-      <div className="flex items-center justify-center pl-5 mt-10">
-        {user != null ? (
-          <h1 className="pl-3.5 font-bold text-4xl text-blue-900">Practice!</h1>
-        ) : (
-          <Skeleton className="w-[140px] h-[40px] mb-1 rounded-full bg-blue-900" />
-        )}
-      </div>
+
       <div className="lg:px-16 lg:p-6 px-2">
-        <div className="grid grids-cols-1 md:grid-cols-2 mx-auto md:w-4/5 gap-2 mt-px">
+        <div className="grid grids-cols-1 md:grid-cols-3 mx-auto md:w-4/5 gap-2 mt-px">
           {user != null ? (
             <Option
-              icon={<BookSVG />}
+              icon={<Book />}
               header="Reading & Writing"
               redirect="/reading-writing"
             />
@@ -123,20 +96,17 @@ const Home = () => {
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
           {user != null ? (
-            <Option icon={<MathSVG />} header="Math" redirect="/math" />
+            <Option icon={<EqualApproximately />} header="Math" redirect="/math" />
+          ) : (
+            <Skeleton className="w-full h-[64px] bg-gray-700/60" />
+          )}
+
+          {user != null ? (
+            <Option icon={<Calendar />} header="Study Plan" redirect="/dashboard/study-plan" />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
         </div>
-      </div>
-
-      {/* Stats Header */}
-      <div className="flex items-center pl-5 mt-10">
-        {user != null ? (
-          <h1 className="pl-3.5 font-bold text-4xl text-blue-900">Stats</h1>
-        ) : (
-          <Skeleton className="w-[100px] ml-2 h-[40px] rounded-full bg-blue-900" />
-        )}
       </div>
 
       {/* User Stats */}
@@ -242,26 +212,6 @@ const Home = () => {
           />
         ) : (
           <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
-        )}
-      </div>
-
-      {/* Quote Section */}
-      <div className="mt-4 flex flex-col md:flex-row p-3.5 w-full space-y-3 md:space-y-0 md:space-x-3">
-        {user != null ? (
-          <div className="w-full md:w-1/3 rounded-lg shadow-lg flex items-center justify-center">
-            {isLoadingQuote ? (
-              <Spinner />
-            ) : quote ? (
-              <div className="flex flex-col items-center text-center p-4">
-                <p className="text-xl italic">“{quote.content}”</p>
-                <p className="mt-2 text-sm text-gray-600">- {quote.author}</p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">No quote available.</p>
-            )}
-          </div>
-        ) : (
-          <Skeleton className="md:w-1/3 w-full h-[116px] bg-gray-600/60 " />
         )}
       </div>
     </div>
