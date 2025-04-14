@@ -181,8 +181,6 @@ const Home = () => {
             icon="coin"
             header="DailySAT Coins:"
             number={user?.currency ?? 0}
-            status="upward"
-            percentage={(user?.currency ?? 0) * 100}
           />
         ) : (
           <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
@@ -194,8 +192,6 @@ const Home = () => {
             icon="checked"
             header="Answered Correctly:"
             number={user?.correctAnswered ?? 0}
-            status="upward"
-            percentage={(user?.correctAnswered ?? 0) * 100}
           />
         ) : (
           <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
@@ -207,8 +203,6 @@ const Home = () => {
             icon="cross"
             header="Answered Wrongly:"
             number={user?.wrongAnswered ?? 0}
-            status="upward"
-            percentage={(user?.wrongAnswered ?? 0) * 100}
           />
         ) : (
           <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
