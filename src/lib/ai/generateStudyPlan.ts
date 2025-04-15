@@ -53,7 +53,7 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
           "activities": [
             {
               "topic": "string",
-              "type": "review|practice",
+              "type": "string - only one word",
               "duration": number,
               "description": "string"
             }
