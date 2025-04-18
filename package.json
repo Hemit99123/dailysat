@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "prepare": "husky && husky install",
-    "lint": " eslint \"src/**/*.{ts,tsx}\""
+    "lint": " eslint \"src/**/*.{ts,tsx}\"",
+    "postinstall": "husky install"
   },
   "dependencies": {
     "@ai-sdk/groq": "^1.2.7",
