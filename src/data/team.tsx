@@ -19,19 +19,14 @@ export const teamMember = [
   {
     name: "Wilman Chan",
     linkedIn: "https://www.linkedin.com/in/wilman-chan-03a468286/",
-    designation: <>Chief Marketing Officer&nbsp;&nbsp;&nbsp;&nbsp;</>,
+    designation: "Chief Marketing Officer",
     src: "/people/G10_Yearbook_Picture.png",
-    quote: (
-      <>
-        Hi there, I&apos;m Wilman! I am a student founder passionate about
-        social media marketing & content creation.
-      </>
-    ),
+    quote: "Hi there, I am Wilman! I am a student founder passionate about social media marketing & content creation."
   },
   {
     name: "Gautham Korrapati",
     linkedIn: "https://www.linkedin.com/in/gautham-korrapati-946369272/",
-    designation: "Interim CTO",
+    designation: "Chief Technology Officer",
     src: "/people/gautham.png",
     quote:
       "Hey, I'm Gautham, a current student at COC and I just want to have fun.",
