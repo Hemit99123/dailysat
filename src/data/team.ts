@@ -3,7 +3,7 @@ export const teamMember = [
     name: "Aarush Kute",
     linkedIn: "https://www.linkedin.com/in/aarush-kute-1639a525b/",
     designation: "Chief Executive Officer",
-    src: "/people/aarush.png", // Update with correct src path
+    src: "/people/aarush.png",
     quote:
       "I am passionate about AI and machine learning, with a keen interest in Arduino. In my free time, I enjoy playing the piano and tennis. I am driven by the desire to innovate and create impactful solutions through technology.",
   },
