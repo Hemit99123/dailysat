@@ -11,7 +11,7 @@ export const teamMember = [
   {
     name: "Hemit Patel",
     linkedIn: "https://www.linkedin.com/in/hemit-patel-383ab3271/",
-    designation: "President & Chief Operating Officer",
+    designation: "Chief Operating Officer",
     src: "/people/hemit.png",
     quote:
       "Hi! I'm Hemit! A passionate high school student interested in Computer Science. Specifically, I am interested in AI, which I am currently learning, but I'm also well-versed in web-development.. ",
