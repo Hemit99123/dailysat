@@ -5,7 +5,6 @@ import { teamMember } from "@/data/team";
 
 const About = () => {
   const text = "Our Executives";
-  const subText = "These are the people behind DailySAT!";
   
 
   return (
@@ -22,17 +21,6 @@ const About = () => {
             </span>
           ))}
         </h2>
-        <p className="font-light text-blue-900 sm:text-xl mt-2">
-          {subText.split("").map((char, index) => (
-            <span
-              key={index}
-              className="fade-in-up inline-block"
-              style={{ animationDelay: `${index * 25}ms` }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </span>
-          ))}
-        </p>
       </div>
       <AnimatedTeamCard testimonials={teamMember} />
     </div>
