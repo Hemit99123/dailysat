@@ -49,3 +49,4 @@ Unfortunately, we don't let community developers get access to our official Mong
 - **Upstash Redis** (storage solution for sessions, rate limiting and caching layer)
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
+- **Groq** (used to power the AI study planner)
