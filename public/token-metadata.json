@@ -1,0 +1,17 @@
+{
+  "name": "DailySAT Coin",
+  "symbol": "DSAT",
+  "description": "DailySAT Coin is an educational token for the DailySAT app, rewarding students for completing SAT practice questions and exercises.",
+  "image": "https://raw.githubusercontent.com/solana-developers/assets/main/images/tokens/coin.png",
+  "external_url": "https://dailysat.vercel.app",
+  "properties": {
+    "files": [
+      {
+        "uri": "https://raw.githubusercontent.com/solana-developers/assets/main/images/tokens/coin.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "educational",
+    "creators": []
+  }
+} 

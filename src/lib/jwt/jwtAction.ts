@@ -24,7 +24,7 @@ export const generateJWT = async (payload: object) => {
         const token = jwt.sign(
             JSON.parse(payloadString),
             JWT_SECRET || "",
-            { expiresIn: "3s" }
+            { expiresIn: "5m" }
         );
 
         return token;

@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  email         String       @unique
+  name          String?
+  username      String?      @unique
+  image         String?
+  isReferred    Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  currency      Int          @default(0)
+  correctAnswered Int        @default(0)
+  wrongAnswered  Int         @default(0)
+  plan          String?
+  studyPlans    StudyPlan[]
+}
+
+model StudyPlan {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String   @db.ObjectId
+  currentScore Int
+  targetScore  Int
+  testDate     String
+  planData     Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Unique constraint to ensure one plan per test date per user
+  @@unique([userId, testDate], name: "userId_testDate")
+} 

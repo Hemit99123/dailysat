@@ -3,22 +3,28 @@
 import React, { ReactNode } from 'react'
 import NavBar from './NavBar'
 import { usePathname } from 'next/navigation'
+import { WalletContextProvider } from './WalletContextProvider'
+import { GlobalPowerupProvider } from '../features/layout/GlobalPowerupProvider'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 interface RootProps {
   children: ReactNode
 }
 
 const Root: React.FC<RootProps> = ({ children }) => {
-
   const pathname = usePathname()
 
   return (
-    <div className="layout-container">
-      {pathname !== "/" &&
-        <NavBar />  
-      }
-      {children}  
-    </div>
+    <WalletContextProvider>
+      <GlobalPowerupProvider>
+        <div className="layout-container">
+          {pathname !== "/" && <NavBar />}
+          {children}
+          <ToastContainer position="bottom-right" />
+        </div>
+      </GlobalPowerupProvider>
+    </WalletContextProvider>
   )
 }
 
