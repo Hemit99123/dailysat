@@ -13,6 +13,7 @@ import { ActivePowerup } from '@/types/store';
 import { formatTime } from '@/lib/utils';
 import InventoryList from '@/components/features/Powerups/PowerupInventory';
 import { Copy } from 'lucide-react';
+import { Calendar } from '@/components/features/AI/Calendar';
 
 // Define interface for recently answered questions
 interface RecentQuestion {
@@ -34,6 +35,8 @@ const Home = () => {
   const [activePowerups, setActivePowerups] = useState<ActivePowerup[]>([]);
   const [recentlyAnswered, setRecentlyAnswered] = useState<RecentQuestion[]>([]);
   const [isAddingCoins, setIsAddingCoins] = useState(false);
+  const [studyPlan, setStudyPlan] = useState<any>(null);
+  const [isLoadingStudyPlan, setIsLoadingStudyPlan] = useState(true);
 
   // Function to refresh all user data
   const refreshUserData = async () => {
@@ -72,7 +75,7 @@ const Home = () => {
       if (powerupsResponse.data.success) {
         // Calculate initial remaining time when fetching
         const now = Date.now();
-        const processedPowerups = (powerupsResponse.data.activePowerups || []).map(p => ({
+        const processedPowerups = (powerupsResponse.data.activePowerups || []).map((p: ActivePowerup) => ({
           ...p,
           remainingTime: Math.max(0, (new Date(p.activeUntil).getTime() - now) / 1000) // seconds
         }));
@@ -81,10 +84,19 @@ const Home = () => {
         setActivePowerups([]);
       }
       
+      // Load study plan if user has one
+      if (userResponse.data.user.plan) {
+        setStudyPlan(userResponse.data.user.plan);
+      } else {
+        setStudyPlan(null);
+      }
+      setIsLoadingStudyPlan(false);
+      
     } catch (error) {
       console.error("Error refreshing user data:", error);
       toast.error("Failed to refresh dashboard data");
       setActivePowerups([]);
+      setIsLoadingStudyPlan(false);
     } finally {
       setIsRefreshing(false);
     }
@@ -178,6 +190,65 @@ const Home = () => {
     { title: 'Total Correct', value: stats?.totalCorrect || 0, icon: <BsClockHistory className="text-blue-500" /> },
     { title: 'Total Coins', value: user?.currency || 0, icon: <BsGem className="text-purple-500" /> },
   ];
+
+  // Add this to the dashboard grid section
+  const renderStudyPlanSection = () => {
+    if (isLoadingStudyPlan) {
+      return (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="spinner mb-4"></div>
+            <p>Loading study plan...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!studyPlan) {
+      return (
+        <div className="relative backdrop-blur-sm rounded-xl overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-100/90 to-indigo-100/90 z-10"></div>
+          <div className="relative z-20 flex flex-col items-center justify-center p-10 text-center">
+            <BsCalendar4Week className="text-blue-500 text-4xl mb-4" />
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Create Your Study Plan</h3>
+            <p className="text-gray-600 mb-6 max-w-md">
+              Plan your SAT preparation with a personalized study calendar to reach your target score.
+            </p>
+            <Link 
+              href="/ai" 
+              className="px-5 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+            >
+              Create Study Plan
+            </Link>
+          </div>
+          
+          {/* Blurred image background */}
+          <div className="absolute inset-0 z-0">
+            <div className="w-full h-full bg-cover opacity-30 filter blur-sm" 
+                 style={{ backgroundImage: 'url(/images/calendar-background.svg)' }}>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <Calendar plan={studyPlan} testDate={studyPlan?.testDate ? new Date(studyPlan.testDate) : undefined} />
+        <div className="mt-4 flex justify-end">
+          <Link 
+            href="/dashboard/study-plan" 
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
+          >
+            View full study plan
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -393,6 +464,11 @@ const Home = () => {
                   </div>
                 )}
               </div>
+            </DashboardSection>
+
+            {/* Study Plan Calendar */}
+            <DashboardSection title="Study Calendar" icon="📅">
+              {renderStudyPlanSection()}
             </DashboardSection>
           </div>
 

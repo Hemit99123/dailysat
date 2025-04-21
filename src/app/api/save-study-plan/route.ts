@@ -1,40 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { client } from "@/lib/mongo";
 
 // Define types for the study plan
+interface Activity {
+  topic: string;
+  type: string;
+  duration: number;
+  description: string;
+}
+
 interface StudyDay {
   date: string;
-  activities: Array<{
-    type: string;
-    title: string;
-    description?: string;
-    duration?: number;
-    resources?: Array<{
-      title: string;
-      url?: string;
-    }>;
-  }>;
+  activities: Activity[];
 }
 
 interface StudyPlan {
   days: StudyDay[];
-  topics?: string[];
-  recommendations?: string[];
+  metadata?: {
+    generatedAt: string;
+    currentScore: number;
+    targetScore: number;
+    daysUntilTest: number;
+    totalActivities: number;
+    totalDuration: number;
+    testDate: string;
+  };
 }
 
-// Create storage for study plans
-const studyPlans = [] as Array<{
-  id: string;
-  userId: string;
+interface SaveStudyPlanRequest {
   currentScore: number;
   targetScore: number;
   testDate: string;
   plan: StudyPlan;
-  createdAt: Date;
-  updatedAt: Date;
-}>;
+}
 
 export async function POST(req: NextRequest) {
+  let dbClient;
+  
   try {
     // Get user from session
     const session = await auth();
@@ -47,67 +50,69 @@ export async function POST(req: NextRequest) {
     }
 
     // Get request body
-    const body = await req.json();
+    const body: SaveStudyPlanRequest = await req.json();
     const { currentScore, targetScore, testDate, plan } = body;
 
     // Validate required fields
-    if (!currentScore || !targetScore || !testDate || !plan) {
+    if (!currentScore || !targetScore || !testDate || !plan || !plan.days) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    console.log("Received study plan data:", { currentScore, targetScore, testDate });
+    const userEmail = session.user.email;
     
-    // Check if this user already has a plan for this date
-    const existingPlanIndex = studyPlans.findIndex(
-      p => p.userId === session.user?.id && p.testDate === testDate
-    );
-    
-    let savedPlan;
-    
-    if (existingPlanIndex >= 0) {
-      // Update existing plan
-      studyPlans[existingPlanIndex] = {
-        ...studyPlans[existingPlanIndex],
-        currentScore,
-        targetScore,
-        testDate,
-        plan,
-        updatedAt: new Date()
-      };
-      savedPlan = studyPlans[existingPlanIndex];
-    } else {
-      // Create new plan
-      const newPlan = {
-        id: `plan-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        userId: session.user?.id || "anonymous", // Provide a fallback ID
-        currentScore,
-        targetScore,
-        testDate,
-        plan,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      studyPlans.push(newPlan);
-      savedPlan = newPlan;
+    if (!userEmail) {
+      return NextResponse.json(
+        { error: "User email not found in session" },
+        { status: 401 }
+      );
     }
 
-    // Simulate a network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Connect to MongoDB
+    dbClient = await client.connect();
+    const db = dbClient.db("DailySAT");
+    const usersCollection = db.collection("users");
+    
+    // Update user document with the study plan
+    const result = await usersCollection.updateOne(
+      { email: userEmail },
+      { 
+        $set: { 
+          plan,
+          planMetadata: {
+            currentScore,
+            targetScore,
+            testDate,
+            updatedAt: new Date().toISOString()
+          }
+        } 
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({ 
       success: true, 
-      message: "Study plan saved successfully!", 
-      id: savedPlan.id 
+      message: "Study plan saved successfully to your account!"
     });
     
   } catch (error) {
     console.error("Error saving study plan:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to save study plan" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
+  } finally {
+    if (dbClient) {
+      await dbClient.close();
+    }
   }
 } 

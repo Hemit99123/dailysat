@@ -63,23 +63,31 @@ const AI = () => {
     setIsLoading(true)
 
     try {
-      // Comment out the actual API call to avoid the 401 error
-      // const plan = await generateStudyPlan({
-      //   currentScore: Number(currentScore),
-      //   targetScore: Number(targetScore),
-      //   testDate: new Date(testDate).toISOString(),
-      //   debug: false,
-      //   personalization,
-      // })
+      // Call the API to generate a study plan
+      const response = await axios.post("/api/study-plan", {
+        currentScore: Number(currentScore),
+        targetScore: Number(targetScore),
+        testDate: new Date(testDate).toISOString(),
+        personalization
+      });
 
-      // Use mock data instead
-      const mockPlan = generateMockStudyPlan()
-      setStudyPlan(mockPlan)
+      if (response.data.success && response.data.plan) {
+        setStudyPlan(response.data.plan);
+        setCurrentStep(4); // Move to the viewing step after successful generation
+      } else {
+        setStudyPlan({ 
+          error: response.data.error || "Failed to generate plan", 
+          isError: true 
+        });
+      }
     } catch (error) {
-      console.error("Error generating study plan:", error)
-      setStudyPlan({ error: "Failed to generate plan", isError: true })
+      console.error("Error generating study plan:", error);
+      setStudyPlan({ 
+        error: "An unexpected error occurred. Please try again.", 
+        isError: true 
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -343,25 +351,31 @@ const AI = () => {
 
   // Function to save study plan to database
   const saveStudyPlan = async () => {
-    if (!studyPlan) return
-    
-    setIsSaving(true)
+    if (!studyPlan || "isError" in studyPlan || "isDebug" in studyPlan) {
+      toast.error("Cannot save an invalid study plan");
+      return;
+    }
+
+    setIsSaving(true);
     try {
-      // Call your API endpoint to save the study plan
-      const response = await axios.post('/api/save-study-plan', {
+      const response = await axios.post("/api/save-study-plan", {
         currentScore: Number(currentScore),
         targetScore: Number(targetScore),
         testDate,
         plan: studyPlan
-      })
-      
-      setIsSaved(true)
-      toast.success("Study plan saved successfully!")
+      });
+
+      if (response.data.success) {
+        setIsSaved(true);
+        toast.success("Your study plan has been saved to your account!");
+      } else {
+        toast.error(response.data.error || "Failed to save study plan");
+      }
     } catch (error) {
-      console.error("Error saving study plan:", error)
-      toast.error("Failed to save study plan. Please try again.")
+      console.error("Error saving study plan:", error);
+      toast.error("There was a problem saving your study plan");
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
   }
 
