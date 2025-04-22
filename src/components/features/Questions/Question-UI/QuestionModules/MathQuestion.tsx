@@ -1,86 +1,4 @@
-// import React, { useState, useEffect } from "react";
-// import { Answers } from "@/types/sat-platform/answer";
-// import { useAnswerStore, useAnswerCorrectStore, useQuestionStore } from "@/store/questions";
-// import { CalculatorIcon } from "lucide-react";
-// import { useCalcOptionModalStore } from "@/store/modals";
-// import CalcOption from "../../Modals/CalcOption";
-// import { parseContent } from "@/lib/latex";
-// import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Import the shared UI component
-// import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
-
-// const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
-//   onAnswerSubmit,
-// }) => {
-//   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
-//   const selectedAnswer = useAnswerStore((state) => state.answer);
-//   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
-//   const isAnswerCorrect = useAnswerCorrectStore((state) => state.isAnswerCorrect);
-  
-//   // Remove null from the state type
-//   const [crossOffMode, setCrossOffMode] = useState(false);
-  
-//   useEffect(() => {
-//     if (isAnswerCorrect) {
-//       setSelectedAnswer(null);
-//     }
-//   }, [isAnswerCorrect, setSelectedAnswer]);
-
-//   const handleSubmit = () => {
-//     if (!selectedAnswer) return;
-//     onAnswerSubmit(selectedAnswer);
-//     setSelectedAnswer(null);
-//   };
-
-//   const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
-
-//   if (!randomQuestion) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return (
-//     <div className="flex flex-col items-start px-8 -mt-6">
-//       <div className="flex tems-center mb-2 space-x-4">
-//         <button onClick={handleOpenCalcModal}>
-//           <CalculatorIcon />
-//         </button>
-//         <div className="mt-6">
-//           <QuestionSharedUI
-//             crossOffMode={crossOffMode}
-//             setCrossOffMode={setCrossOffMode}
-//           />
-//         </div>
-
-//       </div>
-
-//       {/* Question Text with LaTeX rendering */}
-//       <p className="mb-5 text-xl relative">
-//         {parseContent(randomQuestion.question || "")}
-//       </p>
-
-//       <span className="mb-3 text-sm font-semibold">Choose 1 answer:</span>
-      
-//       <div className="w-full">
-//         <MultipleChoice 
-//           crossOffMode={crossOffMode}
-//           selectedAnswer={selectedAnswer}
-//           setSelectedAnswer={setSelectedAnswer}
-//         />
-//       </div>
-
-
-//       <button
-//         onClick={handleSubmit}
-//         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-//         disabled={!selectedAnswer}
-//       >
-//         Submit Answer
-//       </button>
-//       <CalcOption />
-//     </div>
-//   );
-// };
-
-// export default MathQuestion;
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { Answers } from "@/types/sat-platform/answer";
@@ -92,6 +10,7 @@ import { parseContent } from "@/lib/latex";
 import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions";
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 import Cookies from "js-cookie";
+import Latex from "react-latex-next";
 
 // Import the JSON file with math problems
 import mathProblemsData from "./cb-digital-questions.json";
@@ -150,7 +69,7 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
   // Custom math problems state
   const [mathProblems, setMathProblems] = useState<MathProblemsData>({});
   const [validProblemKeys, setValidProblemKeys] = useState<string[]>([]);
-  const [currentProblemIndex, setCurrentProblemIndex] = useState(parseInt(Cookies.get('mathProblemIndex') || '0', 10));
+  const [currentProblemIndex, setCurrentProblemIndex] = useState(-1); // Start with -1 to trigger random selection
   const [currentProblem, setCurrentProblem] = useState<MathProblem | null>(null);
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState<{[key: string]: {text: string, state: string}}>({
@@ -187,6 +106,13 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
       });
       
       setValidProblemKeys(validKeys);
+      
+      // Select a random question to start with
+      if (validKeys.length > 0) {
+        const randomIndex = Math.floor(Math.random() * validKeys.length);
+        setCurrentProblemIndex(randomIndex);
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error("Error loading math problems:", error);
@@ -196,12 +122,12 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
 
   // Set current problem when index changes or when toggling to custom problems
   useEffect(() => {
-    if (useCustomMathProblems && validProblemKeys.length > 0) {
+    if (useCustomMathProblems && validProblemKeys.length > 0 && currentProblemIndex >= 0) {
       // Reset UI states when changing problems
       setShowExplanation(false);
       setUserAnswered(false);
       
-      const key = validProblemKeys[currentProblemIndex % validProblemKeys.length];
+      const key = validProblemKeys[currentProblemIndex];
       const problem = mathProblems[key];
       setCurrentProblem(problem);
       
@@ -355,7 +281,7 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
       // Set answer correct state for the app
       setIsAnswerCorrect(isCorrect);
       
-      // Show explanation
+      // Show explanation - only after submitting
       setShowExplanation(true);
     } else {
       // Use original application logic
@@ -371,10 +297,11 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
     setSelectedAnswer(null);
     setIsAnswerCorrect(false);
     
-    // Move to next question
-    const newIndex = currentProblemIndex + 1;
-    setCurrentProblemIndex(newIndex);
-    Cookies.set('mathProblemIndex', newIndex.toString());
+    // Select a random question instead of sequential
+    if (validProblemKeys.length > 0) {
+      const randomIndex = Math.floor(Math.random() * validProblemKeys.length);
+      setCurrentProblemIndex(randomIndex);
+    }
     
     // Reset options state
     const resetOptions = {...options};
@@ -389,6 +316,13 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
     setShowExplanation(false);
     setUserAnswered(false);
     setSelectedAnswer(null);
+    setIsAnswerCorrect(false);
+    
+    // If switching to custom problems, select a random one
+    if (!useCustomMathProblems && validProblemKeys.length > 0) {
+      const randomIndex = Math.floor(Math.random() * validProblemKeys.length);
+      setCurrentProblemIndex(randomIndex);
+    }
   };
 
   if (loading && useCustomMathProblems) {
@@ -436,7 +370,9 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
                            currentProblem.difficulty === "E" ? "Easy" : 
                            currentProblem.difficulty === "H" ? "Hard" : currentProblem.difficulty || "Standard"}
             </span>
-            <span className="text-sm font-semibold">Question #{currentProblemIndex + 1} of {validProblemKeys.length}</span>
+            <span className="text-sm font-semibold">
+              Question #{currentProblemIndex + 1} of {validProblemKeys.length}
+            </span>
           </div>
           
           {/* Custom Math Problem */}
@@ -483,14 +419,16 @@ const MathQuestion: React.FC<{ onAnswerSubmit: (answer: Answers) => void }> = ({
         </>
       )}
 
-      {/* Explanation section */}
-      {showExplanation && (
+      {/* Explanation section - only shown after user submits */}
+      {showExplanation && userAnswered && (
         <div className="mt-4 p-3 bg-gray-100 rounded w-full">
           <h3 className="font-bold text-lg">
             {isAnswerCorrect ? "Correct! ✓" : "Incorrect ✗"}
           </h3>
           <p className="mt-2">
-            {explanation || (randomQuestion?.explanation || "No explanation available.")}
+            <Latex>
+              {explanation || (randomQuestion?.explanation || "No explanation available.")}
+            </Latex>
           </p>
         </div>
       )}

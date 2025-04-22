@@ -29,6 +29,7 @@
     "i": "^0.3.7",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+    "katex": "^0.16.22",
     "lucide-react": "^0.468.0",
     "mongodb": "^6.12.0",
     "motion": "^12.5.0",
