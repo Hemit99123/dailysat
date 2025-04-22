@@ -17,7 +17,7 @@
   <br>
 </div>
 
-📚 To access the API documentation, [click here](https://www.dailysat.org/api-docs)
+📚 To access the API documentation, [click here!](https://www.dailysat.org/api-docs)
 
 ## 🧑‍🤝‍🧑 For open-source contributions:
 Our mission is to build an app that is free and accessible! This means we love input from the DailySAT community :) If you have any suggestions or feedback on our webapp, you can issue a "ticket" for our team to review. Kindly create an Issue within the issues tabs provided by the Github web app.
@@ -49,3 +49,4 @@ Unfortunately, we don't let community developers get access to our official Mong
 - **Upstash Redis** (storage solution for sessions, rate limiting and caching layer)
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
+- **Groq** (used to power the AI study planner)

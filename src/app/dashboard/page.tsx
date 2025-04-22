@@ -246,6 +246,22 @@ const Home = () => {
             </svg>
           </Link>
         </div>
+        {user != null ? (
+          <h1 className="text-xl md:text-4xl font-bold text-gray-800">
+            {greeting
+              ? `${greeting}!`
+              : "Loading greeting..."}
+          </h1>
+        ) : (
+          <Skeleton className="md:w-[400px] w-[250px] md:h-[40px] h-[28px] rounded-full bg-black/60" />
+        )}
+        {user != null ? (
+          <p className="text-xs md:text-base text-gray-600 font-light">
+            Choose what to study and start practicing...
+          </p>
+        ) : (
+          <Skeleton className="md:w-[313px] h-[16px] w-[225px] md:h-[24px] mt-1 rounded-full bg-gray-400" />
+        )}
       </div>
     );
   };
