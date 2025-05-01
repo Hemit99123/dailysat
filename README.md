@@ -1,7 +1,3 @@
-<!-- markdownlint-disable first-line-h1 -->
-<!-- markdownlint-disable html -->
-<!-- markdownlint-disable no-duplicate-header -->
-
 <div align="center">
   <img src="/public/logo/dailysat.png" width="20%" alt="DailySAT" />
 </div>
