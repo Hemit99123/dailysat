@@ -11,7 +11,6 @@ export const handleGetUserCached = async () => {
     if (!email) return false;
 
     const cacheKey = `user:${email}`;
-    console.log(client);
     const cached = await client.get(cacheKey);
 
     if (cached) {
@@ -32,6 +31,6 @@ export const handleGetUserCached = async () => {
         const cacheKey = `user:${email}`;
         await client.set(cacheKey, existingUser, { ex: 600 });
       
-        return existingUser;
+        return existingUser
     }
 };

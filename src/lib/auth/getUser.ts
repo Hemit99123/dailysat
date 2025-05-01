@@ -21,8 +21,8 @@ export const handleGetUser = async (session: Session | null) => {
                 image: session.user.image,
                 id: session.user.id,
                 currency: 0,
-                wrongQuestions: 0,
-                correctQuestions: 0,
+                wrongAnswered: 0,
+                correctAnswered: 0,
                 isReferred: false,
                 itemsBought: []
             };

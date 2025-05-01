@@ -21,12 +21,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import ShopItemDisplay from "@/components/common/ShopItem";
 
 export default function Shop() {
   const { toast } = useToast();
 
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+
   useEffect(() => {
     const handleGetUserAuth = async () => {
       let response = null;
@@ -40,6 +42,7 @@ export default function Shop() {
 
     handleGetUserAuth();
   }, [setUser]);
+  // const [items, setItems] = useState<ShopItem[]>([]);
   return (
     <>
       <div className="px-4">
@@ -66,7 +69,7 @@ export default function Shop() {
               />
             </div>
           ) : (
-            <Skeleton className="lg:w-4/5 w-full h-[200px] rounded-2xl bg-gradient-to-tr from-[#4D68C3] via-[#4D68C3] to-[#9db2f7] "></Skeleton>
+            <Skeleton className="lg:w-3/4 w-full h-[175px] rounded-2xl bg-gradient-to-tr from-[#4D68C3] via-[#4D68C3] to-[#9db2f7] "></Skeleton>
           )}
           {user != null ? (
             <div className="lg:w-1/4 w-full  bg-gradient-to-tr from-[#F5863F] to-[#f5a16d] flex items-center relative h-[175px] rounded-2xl p-8 text-white ">
@@ -86,9 +89,9 @@ export default function Shop() {
                         if (user.itemsBought?.length === 0) {
                           toast({
                             title: "You have no items",
-                            description:
-                              "You cannot view your items if you have none",
-                            className: "bg-[#4D68C3] border-none text-white",
+                            description: "We can't find any items you bought",
+                            className:
+                              "bg-[#4D68C3] border-none text-white font-satoshi",
                           });
                           e.stopPropagation();
                           return;
@@ -158,10 +161,59 @@ export default function Shop() {
               </div>
             </div>
           ) : (
-            <Skeleton className="lg:w-1/5 w-full  bg-gradient-to-tr from-[#F5863F] to-[#f5a16d] h-[200px] rounded-2xl"></Skeleton>
+            <Skeleton className="lg:w-1/4 w-full  bg-gradient-to-tr from-[#F5863F] to-[#f5a16d] h-[175px] rounded-2xl"></Skeleton>
           )}
         </div>
-        <div className="font-satoshi font-bold">DailySAT Shop</div>
+        <div>
+          <div className="font-satoshi  mt-4">
+            <h3 className="font-bold text-3xl">DailySAT Shop</h3>
+            <p className="font-thin">
+              Browse & see what&apos;s interesting to you!{" "}
+            </p>
+          </div>
+          <div className="grid grid-cols-4">
+            <ShopItemDisplay
+              name="Streak freeze"
+              purpose="Freeze your streak for 1 day"
+              price={100}
+              amnt={
+                user?.itemsBought?.filter(
+                  (item) => item.name === "Streak freeze"
+                ).length || 0
+              }
+            ></ShopItemDisplay>
+            <ShopItemDisplay
+              name="Streak freeze"
+              purpose="Freeze your streak for 1 day"
+              price={100}
+              amnt={
+                user?.itemsBought?.filter(
+                  (item) => item.name === "Streak freeze"
+                ).length || 0
+              }
+            ></ShopItemDisplay>
+            <ShopItemDisplay
+              name="Streak freeze"
+              purpose="Freeze your streak for 1 day"
+              price={100}
+              amnt={
+                user?.itemsBought?.filter(
+                  (item) => item.name === "Streak freeze"
+                ).length || 0
+              }
+            ></ShopItemDisplay>
+            <ShopItemDisplay
+              name="Streak freeze"
+              purpose="Freeze your streak for 1 day"
+              price={100}
+              amnt={
+                user?.itemsBought?.filter(
+                  (item) => item.name === "Streak freeze"
+                ).length || 0
+              }
+            ></ShopItemDisplay>
+          </div>
+        </div>
       </div>
     </>
   );
