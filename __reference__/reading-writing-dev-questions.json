@@ -1,0 +1,40 @@
+[
+      {
+          "_id": { "$oid": "676c4726c05d736fa2d6670a" },
+              "question_number": "Question: 1",
+                  "question_text": "Which choice best maintains the tone and style of the passage?\nThe author's use of language evokes a sense of mystery and __________.",
+                      "optionA": "uncertainty",
+                          "optionB": "playfulness",
+                              "optionC": "clarity",
+                                  "optionD": "precision",
+                                      "correct_answer": { "$numberInt": "1" },
+                                          "explanation": "(A)\n'Uncertainty' aligns with 'mystery' in tone.",
+                                              "doc_type": { "$numberInt": "3" }
+                                                },
+                                                  {
+                                                      "_id": { "$oid": "676c4726c05d736fa2d6670b" },
+                                                          "question_number": "Question: 2",
+                                                              "question_text": "Choose the best version: \nThe cat, which was clearly frightened, darted under the table.",
+                                                                  "optionA": "The cat which was clearly frightened darted under the table.",
+                                                                      "optionB": "The cat that was clearly frightened, darted under the table.",
+                                                                          "optionC": "The cat—clearly frightened—darted under the table.",
+                                                                              "optionD": "The cat darted under the table, which was clearly frightened.",
+                                                                                  "correct_answer": { "$numberInt": "3" },
+                                                                                      "explanation": "(C)\nThis version is the most concise and maintains clarity.",
+                                                                                          "doc_type": { "$numberInt": "3" }
+                                                                                            },
+                                                                                              {
+                                                                                                  "_id": { "$oid": "676c4726c05d736fa2d6670c" },
+                                                                                                      "question_number": "Question: 3",
+                                                                                                          "question_text": "Which word most logically completes the sentence?\nUnlike the more _______ tone of the earlier chapters, the final section is solemn and reflective.",
+                                                                                                              "optionA": "serious",
+                                                                                                                  "optionB": "lighthearted",
+                                                                                                                      "optionC": "careful",
+                                                                                                                          "optionD": "technical",
+                                                                                                                              "correct_answer": { "$numberInt": "2" },
+                                                                                                                                  "explanation": "(B)\n'Lighthearted' contrasts logically with 'solemn and reflective.'",
+                                                                                                                                      "doc_type": { "$numberInt": "3" }
+                                                                                                                                        }
+                                                                                                                                        ]
+                                                                                                                                        added
+]
