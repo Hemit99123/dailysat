@@ -11,6 +11,7 @@ export const handleGetUserCached = async () => {
     if (!email) return false;
 
     const cacheKey = `user:${email}`;
+    console.log(client);
     const cached = await client.get(cacheKey);
 
     if (cached) {
@@ -27,12 +28,10 @@ export const handleGetUserCached = async () => {
           return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
       
-        const { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred} = existingUser;
-        const user = { email, name, currency, image, _id, correctAnswered, wrongAnswered, isReferred};
       
         const cacheKey = `user:${email}`;
-        await client.set(cacheKey, user, { ex: 600 });
+        await client.set(cacheKey, existingUser, { ex: 600 });
       
-        return user
+        return existingUser;
     }
 };
