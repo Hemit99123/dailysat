@@ -9,6 +9,7 @@ import { useUserStore } from "@/store/user";
 import Image from "next/image";
 import Option from "../../components/features/Dashboard/Option";
 import { Book, Calendar, EqualApproximately } from "lucide-react";
+import Link from "next/link";
 
 const Home = () => {
   const user = useUserStore((state) => state.user);
@@ -31,9 +32,7 @@ const Home = () => {
       }
     };
 
-    setTimeout(() => {
-      handleGetUser();
-    }, 1000); // 100 seconds
+    handleGetUser();
   }, [setUser]);
 
   useEffect(() => {
@@ -67,9 +66,7 @@ const Home = () => {
         )}
         {user != null ? (
           <h1 className="text-xl md:text-4xl font-bold text-gray-800">
-            {greeting
-              ? `${greeting}!`
-              : "Loading greeting..."}
+            {greeting ? `${greeting}!` : "Loading greeting..."}
           </h1>
         ) : (
           <Skeleton className="md:w-[400px] w-[250px] md:h-[40px] h-[28px] rounded-full bg-black/60" />
@@ -83,7 +80,6 @@ const Home = () => {
         )}
       </div>
 
-
       <div className="lg:px-16 lg:p-6 px-2">
         <div className="grid grids-cols-1 md:grid-cols-3 mx-auto md:w-4/5 gap-2 mt-px">
           {user != null ? (
@@ -96,13 +92,21 @@ const Home = () => {
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
           {user != null ? (
-            <Option icon={<EqualApproximately />} header="Math" redirect="/math" />
+            <Option
+              icon={<EqualApproximately />}
+              header="Math"
+              redirect="/math"
+            />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
 
           {user != null ? (
-            <Option icon={<Calendar />} header="Study Plan" redirect="/dashboard/study-plan" />
+            <Option
+              icon={<Calendar />}
+              header="Study Plan"
+              redirect="/dashboard/study-plan"
+            />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
@@ -171,42 +175,57 @@ const Home = () => {
           </div>
         </div>
       </div>
-
-      {/* Stat Display */}
-      <div className="lg:flex lg:space-x-2 mt-1.5 p-3.5">
-        {user != null ? (
-          <StatDisplay
-            type="coins"
-            color="black"
-            icon="coin"
-            header="DailySAT Coins:"
-            number={user?.currency ?? 0}
-          />
-        ) : (
-          <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
-        )}
-        {user != null ? (
-          <StatDisplay
-            type="attempts"
-            color="green"
-            icon="checked"
-            header="Answered Correctly:"
-            number={user?.correctAnswered ?? 0}
-          />
-        ) : (
-          <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
-        )}
-        {user != null ? (
-          <StatDisplay
-            type="attempts"
-            color="#ff5454"
-            icon="cross"
-            header="Answered Wrongly:"
-            number={user?.wrongAnswered ?? 0}
-          />
-        ) : (
-          <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
-        )}
+      {/* Bottom Container */}
+      <div className="p-3.5">
+        {/* Stat Display */}
+        <div className="lg:flex lg:space-x-2 mt-1.5 mb-4">
+          {user != null ? (
+            <StatDisplay
+              type="coins"
+              color="black"
+              icon="coin"
+              header="DailySAT Coins:"
+              number={user?.currency ?? 0}
+            />
+          ) : (
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+          )}
+          {user != null ? (
+            <StatDisplay
+              type="attempts"
+              color="green"
+              icon="checked"
+              header="Correct Answers:"
+              number={user?.correctAnswered ?? 0}
+            />
+          ) : (
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+          )}
+          {user != null ? (
+            <StatDisplay
+              type="attempts"
+              color="#ff5454"
+              icon="cross"
+              header="Mistakes:"
+              number={user?.wrongAnswered ?? 0}
+            />
+          ) : (
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+          )}
+          {user != null ? (
+            <Link href="/shop" className="w-full">
+              <StatDisplay
+                type="items bought"
+                color="#2563EA"
+                icon="shop"
+                header="Shop:"
+                number={user?.itemsBought?.length || 0}
+              />
+            </Link>
+          ) : (
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+          )}
+        </div>
       </div>
     </div>
   );

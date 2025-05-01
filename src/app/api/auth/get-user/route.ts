@@ -85,12 +85,15 @@ import { NextResponse } from "next/server";
  */
 
 export const GET = async () => {
+    console.log("Fetching user data...");
     const session = await auth();
 
     const success = await handleRatelimitSuccess(session);
     
     if (!success) {
-        const user = await handleGetUserCached()
+        console.log("Rate limit exceeded. Returning cached user data.");
+        const user = await handleGetUser(session)
+        console.log(user)
         return NextResponse.json({user, cached: true})
     }
 ;
@@ -98,6 +101,7 @@ export const GET = async () => {
     
     try {
         const user = await handleGetUser(session);
+
         return NextResponse.json({
             user,
             cached: false
