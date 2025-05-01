@@ -2,8 +2,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
-import { CircleHelp, Store } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Store } from "lucide-react";
+import React, { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -11,7 +11,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -61,7 +60,7 @@ export default function Shop() {
           <img
             src="assets/study-graphic-fin.png"
             className="lg:h-[150px] h-[100px] medium:hidden absolute -bottom-2 right-2 "
-            alt=""
+            alt="Study Graphic"
           />
         </div>
       ) : (
