@@ -243,10 +243,18 @@ export default function Shop() {
         </div>
         <div>
           <div className="font-satoshi  mt-4">
-            <h3 className="font-bold text-3xl">DailySAT Shop</h3>
-            <p className="font-thin">
-              Browse & see what&apos;s interesting to you!{" "}
-            </p>
+            {coins.amnt != -1 && user != null ? (
+              <h3 className="font-bold text-3xl">DailySAT Shop</h3>
+            ) : (
+              <Skeleton className="h-[40px] bg-black/80 rounded-3xl w-[200px]"></Skeleton>
+            )}
+            {coins.amnt != -1 && user != null ? (
+              <p className="font-thin">
+                Browse & see what&apos;s interesting to you!{" "}
+              </p>
+            ) : (
+              <Skeleton className="h-[30px] bg-black/60 rounded-3xl mt-2 w-[300px]"></Skeleton>
+            )}
           </div>
           {coins.amnt != -1 && user != null ? (
             <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
