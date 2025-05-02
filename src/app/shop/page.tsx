@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
 import { Store } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -22,19 +22,77 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import ShopItemDisplay from "@/components/common/ShopItem";
+import { Button } from "@/components/ui/button";
 
 export default function Shop() {
   const { toast } = useToast();
 
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+  const [coins, setCoins] = useState({ amnt: -1 });
+  function reducer(
+    state: typeof initialState,
+    action: { type: string; payload?: string }
+  ) {
+    action.payload = action.payload?.toLowerCase().replace(/\s/g, "");
+    const matchedItem = Items?.find(
+      (item) => item.name.toLowerCase().replace(/\s/g, "") === action.payload
+    );
 
+    switch (action.type) {
+      case "increment":
+        setCoins((prev) => ({
+          amnt: prev["amnt"] - (matchedItem?.price || 0),
+        }));
+        return {
+          ...state,
+          [action.payload as string]: state[action.payload as string] + 1,
+        };
+      case "decrement":
+        setCoins((prev) => ({
+          amnt: prev["amnt"] + (matchedItem?.price || 0),
+        }));
+        return {
+          ...state,
+          [action.payload as string]: Math.max(
+            0,
+            state[action.payload as string] - 1
+          ),
+        };
+      default:
+        return state;
+    }
+  }
+  const Items = [
+    {
+      name: "Coin Investor I",
+      price: 120,
+      purpose: "Gain 5 coins per day",
+    },
+    {
+      name: "Coin Investor II",
+      price: 230,
+      purpose: "Gain 10 coins per day",
+    },
+    {
+      name: "Coin Investor III",
+      price: 350,
+      purpose: "Gain 15 coins per day",
+    },
+    {
+      name: "Coin Investor IV",
+      price: 460,
+      purpose: "Gain 20 coins per day",
+    },
+  ];
   useEffect(() => {
     const handleGetUserAuth = async () => {
       let response = null;
       try {
         response = await axios.get("/api/auth/get-user");
         setUser?.(response?.data?.user);
+        console.log(response.data.user);
+        setCoins({ amnt: response.data.user?.currency });
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -42,12 +100,31 @@ export default function Shop() {
 
     handleGetUserAuth();
   }, [setUser]);
-  // const [items, setItems] = useState<ShopItem[]>([]);
+  const initialState: { [key: string]: number } = {
+    coininvestori: 0,
+    coininvestorii: 0,
+    coininvestoriii: 0,
+    coininvestoriv: 0,
+  };
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   return (
     <>
-      <div className="px-4">
+      <div className="px-4 font-satoshi">
+        <div className="fixed  bg-blue-700 rounded-3xl bottom-2 right-2 ">
+          {user != null && coins.amnt != -1 ? (
+            <div
+              id="usercoins"
+              className=" text-white bg-transparent px-2 py-2 z-10"
+            >
+              {coins["amnt"] || 200} coins
+            </div>
+          ) : (
+            <Skeleton className=" h-[40px] bg-transparent  w-[80px] z-10"></Skeleton>
+          )}
+        </div>
         <div className="flex lg:flex-row flex-col items-center lg:space-y-0 space-y-2 lg:space-x-4">
-          {user != null ? (
+          {user != null && coins.amnt != -1 ? (
             <div className="lg:w-3/4 w-full bg-gradient-to-tr from-[#4D68C3] via-[#4D68C3] to-[#9db2f7] relative medium:h-[200px]  rounded-2xl px-8 py-12 text-white flex items-center">
               <div className="font-bold text-5xl text-white">
                 Welcome,{" "}
@@ -71,7 +148,7 @@ export default function Shop() {
           ) : (
             <Skeleton className="lg:w-3/4 w-full h-[175px] rounded-2xl bg-gradient-to-tr from-[#4D68C3] via-[#4D68C3] to-[#9db2f7] "></Skeleton>
           )}
-          {user != null ? (
+          {user != null && coins.amnt != -1 ? (
             <div className="lg:w-1/4 w-full  bg-gradient-to-tr from-[#F5863F] to-[#f5a16d] flex items-center relative h-[175px] rounded-2xl p-8 text-white ">
               <div>
                 <h1 className="font-bold inline text-7xl text-white">
@@ -171,48 +248,59 @@ export default function Shop() {
               Browse & see what&apos;s interesting to you!{" "}
             </p>
           </div>
-          <div className="grid grid-cols-4">
-            <ShopItemDisplay
-              name="Streak freeze"
-              purpose="Freeze your streak for 1 day"
-              price={100}
-              amnt={
-                user?.itemsBought?.filter(
-                  (item) => item.name === "Streak freeze"
-                ).length || 0
-              }
-            ></ShopItemDisplay>
-            <ShopItemDisplay
-              name="Streak freeze"
-              purpose="Freeze your streak for 1 day"
-              price={100}
-              amnt={
-                user?.itemsBought?.filter(
-                  (item) => item.name === "Streak freeze"
-                ).length || 0
-              }
-            ></ShopItemDisplay>
-            <ShopItemDisplay
-              name="Streak freeze"
-              purpose="Freeze your streak for 1 day"
-              price={100}
-              amnt={
-                user?.itemsBought?.filter(
-                  (item) => item.name === "Streak freeze"
-                ).length || 0
-              }
-            ></ShopItemDisplay>
-            <ShopItemDisplay
-              name="Streak freeze"
-              purpose="Freeze your streak for 1 day"
-              price={100}
-              amnt={
-                user?.itemsBought?.filter(
-                  (item) => item.name === "Streak freeze"
-                ).length || 0
-              }
-            ></ShopItemDisplay>
-          </div>
+          {coins.amnt != -1 && user != null ? (
+            <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
+              {Items.map((item, index) => (
+                <ShopItemDisplay
+                  key={index}
+                  name={item.name}
+                  purpose={item.purpose}
+                  price={item.price}
+                  state={state}
+                  dispatch={dispatch}
+                  coins={coins}
+                ></ShopItemDisplay>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
+              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
+              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
+              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
+              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
+            </div>
+          )}
+        </div>
+        <div>
+          {coins.amnt != -1 && user != null ? (
+            <div>
+              <Button
+                onClick={() => {
+                  if (
+                    Object.keys(state).filter((key) => state[key] !== 0)
+                      .length === 0
+                  ) {
+                    toast({
+                      title: "No items selected",
+                      description: "Please select at least one item to buy",
+                      className:
+                        "bg-[#4D68C3] border-none text-white font-satoshi",
+                    });
+                    return;
+                  }
+                  window.location.href = `/checkout?${Object.keys(state)
+                    .filter((key) => state[key] !== 0)
+                    .map((key) => `${key}=${state[key]}`)
+                    .join("&")}`;
+                }}
+                className="font-bold mt-2 mb-16 flex flex-col font-satoshi hover:bg-[#6986e3] transition-all duration-300 bg-[#4D68C3] rounded-2xl items-center justify-center w-full h-[100px] text-3xl text-white"
+              >
+                Checkout
+              </Button>
+            </div>
+          ) : (
+            <Skeleton className="mt-2 mb-16 flex flex-col font-satoshi bg-[#4D68C3] rounded-2xl items-center justify-center w-full h-[100px] "></Skeleton>
+          )}
         </div>
       </div>
     </>
