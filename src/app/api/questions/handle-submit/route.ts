@@ -3,6 +3,8 @@ import { QUESTION_IS_CORRECT_POINTS } from '@/data/constant';
 import { client } from '@/lib/mongo';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
+import { User } from '@/types/user';
+import { ActivePowerup } from '@/types/store';
 
 /**
  * @swagger
@@ -90,7 +92,7 @@ import { ObjectId } from 'mongodb';
 
 const verifyJWT = (token: string) => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload; // Use type assertion to ensure it's a JwtPayload so that typescript voids errors
+    return jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
   } catch (error) {
     throw new Error(`JWT issue: ${error}`);
   }
@@ -99,69 +101,194 @@ const verifyJWT = (token: string) => {
 export const POST = async (request: Request) => {
   const { jwtToken } = await request.json();
 
-  // Check if the JWT token is provided
   if (!jwtToken) {
-    return Response.json({
-      error: 'JWT token was not specified',
-    }, { status: 400 });
+    return Response.json({ error: 'JWT token was not specified' }, { status: 400 });
   }
+
+  let dbClient;
 
   try {
     // Verify JWT and extract the payload
     const decodedToken = verifyJWT(jwtToken);
-    const { id, attempts, type, answer }= decodedToken;
+    const { id: questionIdString, attempts, type, answer } = decodedToken;
 
-    // Check if the required parameters are valid
-    if (!id || attempts == null || !type) {
-      throw new Error("All params in JWT not found")
+    // Validate JWT payload
+    if (!questionIdString || attempts == null || !type) {
+      throw new Error("Required parameters (id, attempts, type) not found in JWT payload");
     }
 
+    // Authenticate user
     const session = await auth();
-    const email = session?.user?.email;
+    const userEmail = session?.user?.email;
+    const userId = session?.user?.id;
 
-    await client.connect();
+    if (!userEmail || !userId) {
+       throw new Error("User not authenticated or user ID missing from session");
+    }
 
-    const db = client.db('DailySAT');
-    const usersColl = db.collection('users');
+    // Connect to DB
+    dbClient = await client.connect();
+    const db = dbClient.db('DailySAT');
+    const usersColl = db.collection<User>('users');
+    const userQuestionsColl = db.collection('userQuestions');
+    const questionCollName = type === "math" ? "questions-math" : type === "reading-writing" ? "questions-reading" : null;
 
-    const questionCollName = type === "math" ? "questions-math" : type === "reading-writing" ? "questions-reading" : null
+    if (!questionCollName) {
+        throw new Error("Invalid question type specified in JWT");
+    }
+    const questionsColl = db.collection(questionCollName);
+
+    // Fetch Question and User data concurrently
+    const questionObjectId = new ObjectId(questionIdString);
     
-    // default to reading/writing sat bank
-    const questionsColl = db.collection(questionCollName || "questions-reading");
-  
-    // Retrieve the question from the database
-    const question = await questionsColl.findOne({ _id: new ObjectId(id) });
+    // Look up user by email instead of ID since user IDs might be in different formats
+    // between Auth system and MongoDB
+
+    const [question, currentUser] = await Promise.all([
+        questionsColl.findOne({ _id: questionObjectId }),
+        usersColl.findOne({ email: userEmail })
+    ]);
 
     if (!question) {
-      throw new Error("No questions found")
+      throw new Error(`Question not found with ID: ${questionIdString}`);
+    }
+    if (!currentUser) {
+        throw new Error(`User not found with email: ${userEmail}`);
     }
 
     // Check if the answer is correct
     const isCorrect = question.correctAnswer === answer;
+    const now = new Date();
 
-    // Update the user's database with the new information
-    await usersColl.updateOne(
-      { email },
-      {
-        $inc: {
-          currency: isCorrect && attempts === 0 ? QUESTION_IS_CORRECT_POINTS : 0,
-          correctAnswered: isCorrect ? 1 : 0,
-          wrongAnswered: !isCorrect ? 1 : 0,
-        },
-      }
-    );
+    // --- Check if this is the first attempt for this question ---
+    const previousAttempt = await userQuestionsColl.findOne({
+        userId: currentUser._id, // Use the MongoDB _id
+        questionId: questionObjectId
+    });
+    const isFirstAttempt = !previousAttempt;
 
-    client.close();
+    // Check if the user has previously gotten this question correct
+    const previousCorrectAttempt = await userQuestionsColl.findOne({
+        userId: currentUser._id,
+        questionId: questionObjectId,
+        isCorrect: true
+    });
+    const hasAlreadyGottenCorrect = !!previousCorrectAttempt;
+
+    let pointsEarned = 0;
+    let incrementCorrect = 0;
+    let incrementWrong = 0;
+    let streakUpdate = {};
+
+    // --- Logic for first attempt ---
+    if (isFirstAttempt) {
+        if (isCorrect) {
+            // 1. Calculate points with multiplier
+            const activePowerups: ActivePowerup[] = currentUser.activePowerups?.filter(p =>
+                p.isActive &&
+                (p.itemType === 'multiplier' || p.type === 'multiplier') &&
+                new Date(p.activeUntil) > now
+            ) || [];
+
+            let highestMultiplier = 1;
+            if (activePowerups.length > 0) {
+                highestMultiplier = activePowerups.reduce((max, p) => Math.max(max, p.itemValue || p.value || 1), 1);
+            }
+            pointsEarned = QUESTION_IS_CORRECT_POINTS * highestMultiplier;
+
+            // 2. Mark for stat update
+            incrementCorrect = 1;
+
+            // 3. Update streak (simple example: increment current, check against longest)
+            const newStreak = (currentUser.currentStreak || 0) + 1;
+            streakUpdate = {
+                $set: {
+                    currentStreak: newStreak,
+                    longestStreak: Math.max(currentUser.longestStreak || 0, newStreak)
+                }
+            };
+
+        } else {
+            // Incorrect on first attempt
+            incrementWrong = 1;
+            // Reset streak
+            streakUpdate = { $set: { currentStreak: 0 } };
+        }
+    } else {
+        // --- Logic for subsequent attempts ---
+        if (isCorrect && !hasAlreadyGottenCorrect) {
+            // They got it right this time, but it wasn't their first attempt
+            // Award points for correct answer regardless of attempt number
+            const activePowerups: ActivePowerup[] = currentUser.activePowerups?.filter(p =>
+                p.isActive &&
+                (p.itemType === 'multiplier' || p.type === 'multiplier') &&
+                new Date(p.activeUntil) > now
+            ) || [];
+
+            let highestMultiplier = 1;
+            if (activePowerups.length > 0) {
+                highestMultiplier = activePowerups.reduce((max, p) => Math.max(max, p.itemValue || p.value || 1), 1);
+            }
+            pointsEarned = QUESTION_IS_CORRECT_POINTS * highestMultiplier;
+            
+            incrementCorrect = 1;
+        } else if (!isCorrect && !hasAlreadyGottenCorrect) {
+            // They're still getting it wrong and haven't gotten it right before
+            // We don't want to count multiple wrong attempts, so don't increment wrong count again
+            incrementWrong = 0;
+        }
+    }
+
+    // --- Update User Document ---
+    const updateOps: { $inc: Record<string, number>; $set?: Record<string, number> } = { $inc: {} };
+    if (pointsEarned > 0) updateOps.$inc.currency = pointsEarned;
+    if (incrementCorrect > 0) updateOps.$inc.correctAnswered = incrementCorrect;
+    if (incrementWrong > 0) updateOps.$inc.wrongAnswered = incrementWrong;
+    if (Object.keys(streakUpdate).length > 0) {
+        // Merge streak update ($set) with other operations
+        Object.assign(updateOps, streakUpdate);
+    }
+
+    if (Object.keys(updateOps.$inc).length > 0 || Object.keys(streakUpdate).length > 0) {
+        await usersColl.updateOne({ _id: currentUser._id }, updateOps);
+    }
+
+    // --- Record the Answer Attempt ---
+    // Save regardless of attempt number or correctness for history
+    await userQuestionsColl.insertOne({
+        userId: currentUser._id,
+        questionId: questionObjectId,
+        questionText: question.question,
+        section: type,
+        isCorrect: isCorrect,
+        answeredAt: now,
+        attemptNumber: previousAttempt ? (previousAttempt.attemptNumber || 1) + 1 : 1
+    });
 
     // Return a success response
     return Response.json({
       result: 'DONE',
       isCorrect,
+      pointsEarned,
     });
-  } catch (error) {
-    return Response.json({
-      code: 500,
-      error: error,
-    });
+
+  } catch (error: unknown) {
+    // Close the MongoDB connection if it was opened
+    if (dbClient) {
+      await dbClient.close();
+    }
+
+    console.error("Error in POST /api/questions/handle-submit:", error);
+
+    // Safely extract error message
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'Unknown error processing submission';
+
+    return Response.json({ 
+      code: 500, 
+      error: "Internal server error", 
+      errorMsg: errorMessage 
+    }, { status: 500 });
   }
 }

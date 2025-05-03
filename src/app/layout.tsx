@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Analytics } from "@vercel/analytics/next";
-import Root from "@/components/common/Root";
+import ClientRootWrapper from "@/components/common/ClientRootWrapper";
 
 export const metadata: Metadata = {
   title: "DailySAT",
@@ -13,12 +12,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
-      <body className="antialiased vsc-initialized">
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
-        >
-          <Root>{children}</Root>
-        </GoogleOAuthProvider>
+      <body className="antialiased" suppressHydrationWarning>
+        <ClientRootWrapper>{children}</ClientRootWrapper>
         <Analytics />
       </body>
     </html>

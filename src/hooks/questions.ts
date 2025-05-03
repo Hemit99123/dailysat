@@ -1,7 +1,7 @@
 import { generateJWT } from "@/lib/jwt/jwtAction";
 import { useStreakAnnouncerModalStore } from "@/store/modals";
 import { useAnswerCorrectStore, useAnswerStore, useQuestionStore, useTopicStore } from "@/store/questions";
-import { useScoreStore, useAnswerCounterStore } from "@/store/score";
+import { useScoreStore, useAnswerCounterStore, usePointsEarnedStore } from "@/store/score";
 import { Topic } from "@/types/sat-platform/topic";
 import axios from "axios";
 import { useAnswerAttemptsStore } from "@/store/questions"
@@ -18,6 +18,7 @@ const useQuestionHandler = () => {
   const resetCorrectCounter = useAnswerCounterStore((state) => state.resetCount);
   const selectedTopic = useTopicStore((state) => state.selectedTopic);
   const setIsAnswerCorrect = useAnswerCorrectStore((state) => state.setIsAnswerCorrect);
+  const setLastPointsEarned = usePointsEarnedStore((state) => state.setLastPointsEarned);
   const correctCount = useAnswerCounterStore((state) => state.count);
   const openAnnouncerModal = useStreakAnnouncerModalStore((state) => state.openModal);
 
@@ -44,6 +45,7 @@ const useQuestionHandler = () => {
       const questionData = response.data?.doc_array?.[0] ?? null;
       setRandomQuestion(questionData);
       setIsAnswerCorrect("none")
+      setLastPointsEarned(null);
     } catch (error) {
       console.error("Error fetching question:", error);
       setRandomQuestion(null);
@@ -53,12 +55,12 @@ const useQuestionHandler = () => {
   const handleAnswerSubmit = async(
     type: questionType,
   ) : Promise<void> => {
+    setLastPointsEarned(null);
+    
     const isCorrect = answerCorrectRef[answer ?? "A"] === randomQuestion?.correctAnswer;
-
 
     if (isCorrect) {
       increaseCorrectCounter();
-      increaseScore();
       resetAttempts();
     } else {
       resetCorrectCounter();
@@ -67,10 +69,7 @@ const useQuestionHandler = () => {
 
     setIsAnswerCorrect(isCorrect);
 
-    // turn answer into index for the correctAnswer field
     const answerIdx = answerCorrectRef[answer || "A"]
-
-    // making a new token from a server-side action (function that runs on the SEVER!!)
     const token = await generateJWT({
       id: randomQuestion?._id,
       attempts,
@@ -78,15 +77,25 @@ const useQuestionHandler = () => {
       answer: answerIdx
     })
 
-    // Send request to backend
-    await axios.post("/api/questions/handle-submit", {
-          jwtToken: token
-    });
-    
-    if (isCorrect && selectedTopic) {
-      setTimeout(() => {
-        fetchRandomQuestion(type, selectedTopic)
-      }, 1500);
+    try {
+      const response = await axios.post("/api/questions/handle-submit", {
+            jwtToken: token
+      });
+
+      if (isCorrect && response.data.pointsEarned !== undefined) {
+        setLastPointsEarned(response.data.pointsEarned);
+      }
+
+      if (isCorrect && selectedTopic) {
+        setTimeout(() => {
+          fetchRandomQuestion(type, selectedTopic)
+        }, 1000);
+      }
+
+    } catch (error) {
+        console.error("Error submitting answer:", error);
+        setIsAnswerCorrect("none");
+        setLastPointsEarned(null);
     }
   };
 

@@ -1,0 +1,55 @@
+/* Shop page specific styles */
+
+.shop-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shop-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.shop-item-image {
+  height: 180px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.shop-item-price {
+  color: #9333ea; /* Purple color for prices */
+  font-weight: bold;
+}
+
+.powerup-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.shop-section-title {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.shop-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(to right, #6366f1, #8b5cf6);
+  transition: width 0.3s ease;
+}
+
+.shop-section-title:hover::after {
+  width: 150px;
+} 

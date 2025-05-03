@@ -22,58 +22,57 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     const daysUntilTest = Math.ceil((testDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     const maxDays = Math.min(daysUntilTest, 30)
 
-    const systemPrompt = "You are an expert SAT coach and a JSON-only response generator."
+    const systemPrompt = `You are an expert SAT tutor with years of experience helping students achieve their target scores. 
+Your task is to create personalized, effective study plans that break down SAT preparation into manageable daily activities.
+You must respond ONLY with valid JSON in the exact format specified.`
 
-    const prompt = `You are an expert SAT coach and a JSON-only response generator.
+    const prompt = `Create a detailed, day-by-day SAT study plan to help a student improve from ${data.currentScore} to ${data.targetScore} in ${daysUntilTest} days.
 
-    Generate a personalized, detailed SAT study plan using the following inputs:
-    - Current SAT score: ${data.currentScore}
-    - Target SAT score: ${data.targetScore}
-    - Days until test: ${daysUntilTest}
-    
-    Requirements:
-    1. Create a day-by-day schedule from today until the test date (maximum 30 days).
-    2. For each day, include 2–3 unique study activities, each with:
-       - topic (e.g., "Reading: Main Idea Questions", "Math: Quadratic Equations")
-       - type (must be either "review" or "practice")
-       - duration in minutes (integer)
-       - description (50–100 words of specific instructions)
-    
-    3. Ensure that each activity:
-       - Reflects the user's personalization: ${data.personalization}
-       - Includes steps that help achieve their personalization within their prep
-    
-    Format:
-    Return ONLY a valid and complete JSON object in the EXACT structure below — nothing else.
-    
+IMPORTANT SPECIFICATIONS:
+1. Each day should include 2-3 focused activities with:
+   - A clear topic (e.g., "Math: Linear Equations", "Reading: Inference Questions")
+   - Activity type (use only: "review", "practice", or "lecture")
+   - Duration in minutes (realistic: 20-60 minutes per activity)
+   - A concise, specific description limited to ONE paragraph (3-5 sentences max)
+
+2. The plan should:
+   - Build skills progressively from fundamentals to advanced concepts
+   - Balance time between Math, Reading, and Writing sections proportionally
+   - Include regular practice tests and review sessions
+   - Focus on areas where the score improvement is most needed
+   - Incorporate any personalization notes: ${data.personalization || "No specific notes provided"}
+
+3. Activities should be specific and actionable, not generic advice.
+
+4. Format your response as a valid JSON object strictly following this structure:
+{
+  "days": [
     {
-      "days": [
+      "date": "YYYY-MM-DD",
+      "activities": [
         {
-          "date": "YYYY-MM-DD",
-          "activities": [
-            {
-              "topic": "string",
-              "type": "string - only one word",
-              "duration": number,
-              "description": "string"
-            }
-          ]
+          "topic": "specific topic name",
+          "type": "activity type (review/practice/lecture)",
+          "duration": number of minutes,
+          "description": "One clear, specific paragraph describing the activity"
         }
       ]
     }
-    
-    Rules:
-    - Do NOT include any explanation or notes before or after the JSON.
-    - Ensure there are no trailing commas or invalid characters.
-    - Escape all special characters as needed.
-`;
+  ]
+}
 
-    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
+DO NOT include any text outside the JSON structure. Return ONLY the valid JSON object.`;
+
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY || process.env.GROQ_API_KEY
+
+    if (!apiKey) {
+      throw new Error("Groq API key is missing. Please check your environment variables.")
+    }
 
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.3-70b-versatile",
+        model: "llama3-70b-8192",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: prompt }
@@ -123,6 +122,23 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
         activities: Array.isArray(day.activities) ? day.activities : []
       }
     })
+
+    // Calculate success metrics for the plan
+    const totalActivities = plan.days.reduce((count: number, day: any) => count + day.activities.length, 0)
+    const totalDuration = plan.days.reduce((total: number, day: any) => {
+      return total + day.activities.reduce((sum: number, activity: any) => sum + (activity.duration || 0), 0)
+    }, 0)
+    
+    // Add plan metadata
+    plan.metadata = {
+      generatedAt: new Date().toISOString(),
+      currentScore: data.currentScore,
+      targetScore: data.targetScore,
+      daysUntilTest,
+      totalActivities,
+      totalDuration,
+      testDate: testDate.toISOString()
+    }
 
     return plan
     
