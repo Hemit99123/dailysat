@@ -11,7 +11,7 @@ import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions";
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 import Cookies from "js-cookie";
 import axios from "axios";
-import Result from "../Results";
+// import Result from "../Results";
 
 const MathQuestion = ({ onAnswerSubmit }) => {
   const answerComponent = useRef(null);
