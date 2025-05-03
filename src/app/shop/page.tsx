@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import ShopItemDisplay from "@/components/common/ShopItem";
 import { Button } from "@/components/ui/button";
+import { ShopItem } from "@/types/shopitem";
 
 export default function Shop() {
   const { toast } = useToast();
@@ -30,13 +31,17 @@ export default function Shop() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const [coins, setCoins] = useState({ amnt: -1 });
+  const [grid, setGrid] = useState("investor");
   function reducer(
     state: typeof initialState,
     action: { type: string; payload?: string }
   ) {
     action.payload = action.payload?.toLowerCase().replace(/\s/g, "");
-    const matchedItem = Items?.find(
-      (item) => item.name.toLowerCase().replace(/\s/g, "") === action.payload
+    const matchedItem = (Items as { [key: string]: ShopItem[] })[
+      grid as string
+    ]?.find(
+      (item: ShopItem) =>
+        item.name.toLowerCase().replace(/\s/g, "") === action.payload
     );
 
     switch (action.type) {
@@ -63,28 +68,75 @@ export default function Shop() {
         return state;
     }
   }
-  const Items = [
-    {
-      name: "Coin Investor I",
-      price: 120,
-      purpose: "Gain 5 coins per day",
-    },
-    {
-      name: "Coin Investor II",
-      price: 230,
-      purpose: "Gain 10 coins per day",
-    },
-    {
-      name: "Coin Investor III",
-      price: 350,
-      purpose: "Gain 15 coins per day",
-    },
-    {
-      name: "Coin Investor IV",
-      price: 460,
-      purpose: "Gain 20 coins per day",
-    },
-  ];
+  const Items = {
+    investor: [
+      {
+        name: "Coin Investor I",
+        price: 120,
+        purpose: "Gain 5 coins per day",
+      },
+      {
+        name: "Coin Investor II",
+        price: 230,
+        purpose: "Gain 10 coins per day",
+      },
+      {
+        name: "Coin Investor III",
+        price: 350,
+        purpose: "Gain 15 coins per day",
+      },
+      {
+        name: "Coin Investor IV",
+        price: 460,
+        purpose: "Gain 20 coins per day",
+      },
+    ],
+    animal: [
+      {
+        name: "Owl Icon",
+        price: 300,
+        purpose: "Have an owl icon up next to your name on the dashboard!",
+      },
+      {
+        name: "Tiger Icon",
+        price: 400,
+        purpose: "Have an owl icon up next to your name on the dashboard!",
+      },
+      {
+        name: "Shark Icon",
+        price: 350,
+        purpose: "Have an owl icon up next to your name on the dashboard!",
+      },
+      {
+        name: "Cheetah Icon",
+        price: 250,
+        purpose: "Have an owl icon up next to your name on the dashboard!",
+      },
+    ],
+    banners: [
+      {
+        name: "Bronze Banner",
+        price: 1000,
+        purpose: "Have a bronze ribbon up next to your name on the dashboard!",
+      },
+      {
+        name: "Silver Banner",
+        price: 2000,
+        purpose: "Have a silver ribbon up next to your name on the dashboard!",
+      },
+      {
+        name: "Gold Banner",
+        price: 3000,
+        purpose: "Have a gold ribbon up next to your name on the dashboard!",
+      },
+      {
+        name: "Platinum Banner",
+        price: 5000,
+        purpose:
+          "Have a platinum ribbon up next to your name on the dashboard!",
+      },
+    ],
+  };
   useEffect(() => {
     const handleGetUserAuth = async () => {
       let response = null;
@@ -105,6 +157,14 @@ export default function Shop() {
     coininvestorii: 0,
     coininvestoriii: 0,
     coininvestoriv: 0,
+    owlicon: 0,
+    tigericon: 0,
+    sharkicon: 0,
+    cheetahicon: 0,
+    bronzebanner: 0,
+    silverbanner: 0,
+    goldbanner: 0,
+    platinumbanner: 0,
   };
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -117,7 +177,7 @@ export default function Shop() {
               id="usercoins"
               className=" text-white bg-transparent px-2 py-2 z-10"
             >
-              {coins["amnt"] || 200} coins
+              {coins["amnt"] || 0} coins
             </div>
           ) : (
             <Skeleton className=" h-[40px] bg-transparent  w-[80px] z-10"></Skeleton>
@@ -256,13 +316,67 @@ export default function Shop() {
               <Skeleton className="h-[30px] bg-black/60 rounded-3xl mt-2 w-[300px]"></Skeleton>
             )}
           </div>
+          <div className="w-[600px] mx-auto flex items-center">
+            {user != null && coins.amnt != -1 ? (
+              <div className="flex items-center w-1/3 py-6 justify-center space-x-2 mt-4">
+                <Button
+                  onClick={() => {
+                    setGrid("investor");
+                  }}
+                  className={`${
+                    grid != "investor" ? "bg-[#4D68C3] text-white" : ""
+                  } font-satoshi rounded-full px-4 py-2`}
+                >
+                  Investor
+                </Button>
+              </div>
+            ) : (
+              <Skeleton className="h-[40px] w-1/3 bg-[#4D68C3] rounded-full"></Skeleton>
+            )}
+            {user != null && coins.amnt != -1 ? (
+              <div className="flex items-center w-1/3 py-6 justify-center space-x-2 mt-4">
+                <Button
+                  onClick={() => {
+                    setGrid("animal");
+                  }}
+                  className={`${
+                    grid != "animal" ? "bg-[#4D68C3] text-white" : ""
+                  } font-satoshi rounded-full px-4 py-2`}
+                >
+                  Animal Icon
+                </Button>
+              </div>
+            ) : (
+              <Skeleton className="h-[40px] w-1/3 bg-[#4D68C3] rounded-full"></Skeleton>
+            )}
+            {user != null && coins.amnt != -1 ? (
+              <div className="flex items-center w-1/3 py-6 justify-center space-x-2 mt-4">
+                <Button
+                  onClick={() => {
+                    setGrid("banners");
+                  }}
+                  className={`${
+                    grid != "banners" ? "bg-[#4D68C3] text-white" : ""
+                  } font-satoshi rounded-full px-4 py-2`}
+                >
+                  Banners
+                </Button>
+              </div>
+            ) : (
+              <Skeleton className="h-[40px] w-1/3 bg-[#4D68C3] rounded-full"></Skeleton>
+            )}
+          </div>
           {coins.amnt != -1 && user != null ? (
             <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
-              {Items.map((item, index) => (
+              {(
+                Items as {
+                  [key: string]: ShopItem[];
+                }
+              )[grid as string].map((item: ShopItem, index: number) => (
                 <ShopItemDisplay
                   key={index}
-                  name={item.name}
-                  purpose={item.purpose}
+                  name={`${item.name}`}
+                  purpose={`${item.purpose}`}
                   price={item.price}
                   state={state}
                   dispatch={dispatch}

@@ -4,6 +4,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
 import React, { useEffect } from "react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 const Checkout: React.FC = () => {
   const [receipt, setReceipt] = React.useState<{ [key: string]: number }[]>([]);
@@ -12,10 +22,16 @@ const Checkout: React.FC = () => {
     coininvestorii: ["Coin Investor II", 230],
     coininvestoriii: ["Coin Investor III", 350],
     coininvestoriv: ["Coin Investor IV", 460],
+    owlicon: ["Owl Icon", 300],
+    tigericon: ["Tiger Icon", 400],
+    sharkicon: ["Shark Icon", 350],
+    bronzebanner: ["Bronze Banner", 1000],
+    silverbanner: ["Silver Banner", 2000],
+    goldbanner: ["Gold Banner", 3000],
+    platinumbanner: ["Platinum Banner", 5000],
   };
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-  // const [coins, setCoins] = useState(0);
   const getUser = async () => {
     const params = window.location.href.split("?")[1];
     const response = await axios.get("/api/auth/get-user");
@@ -28,14 +44,14 @@ const Checkout: React.FC = () => {
           [decodeURIComponent(key)]: parseInt(decodeURIComponent(value)),
         };
       });
-      const total = receipt.reduce((acc, item) => {
+      const total = newReceipt.reduce((acc, item) => {
         const key = Object.keys(item)[0];
         return acc + item[key] * NamePriceMap[key][1];
       }, 0);
-
-      if (user?.currency && total > response?.data?.user?.currency) {
+      const num_coins = response?.data?.user?.currency;
+      if (total > num_coins) {
         alert(
-          "You do not have enough currency to buy this item. Please buy more currency."
+          "You do not have enough currency to complete this transaction. You will be redirected to the shop."
         );
         window.location.href = "/shop";
       }
@@ -50,7 +66,7 @@ const Checkout: React.FC = () => {
       <div className="flex flex-col items-center justify-center w-full font-satoshi h-[80vh]">
         <h1 className="text-3xl font-bold text-center">Checkout</h1>
         {user != null ? (
-          <div className="w-full max-w-md mt-4 bg-[#4D68C3] max-h-[400px] overflow-scroll  text-white rounded-xl shadow-lg p-6">
+          <div className="md:w-[500px] w-[99%] sm:w-[90%] mt-4 bg-[#4D68C3] max-h-[300px] text-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Receipt</h2>
             <div className="flex justify-between mb-2">
               <span className="font-bold w-2/5 text-left">Item</span>
@@ -84,15 +100,34 @@ const Checkout: React.FC = () => {
             <div className="flex justify-between mb-2">
               <span className="font-bold w-1/2 text-left"></span>
               <span className="font-bold w-1/2 text-right">
-                <Button className="w-full font-bold bg-white hover:bg-[#4D68C3] hover:text-white text-[#4D68C3]">
-                  Buy Now
-                </Button>
+                <Drawer>
+                  <DrawerTrigger className="w-full  font-bold py-2 rounded-lg bg-white hover:bg-[#4D68C3] shadow-lg duration-150 hover:text-white text-[#4D68C3]">
+                    {" "}
+                    Buy Now
+                  </DrawerTrigger>
+                  <DrawerContent className="font-satoshi">
+                    <DrawerHeader>
+                      <DrawerTitle>
+                        Are you sure you want to buy these items?
+                      </DrawerTitle>
+                      <DrawerDescription>
+                        This action cannot be undone.
+                      </DrawerDescription>
+                    </DrawerHeader>
+                    <DrawerFooter>
+                      <Button className="py-8 text-xl rounded-xl">
+                        Buy Items
+                      </Button>
+                      <DrawerClose>Close</DrawerClose>
+                    </DrawerFooter>
+                  </DrawerContent>
+                </Drawer>
               </span>
             </div>
           </div>
         ) : (
           <>
-            <Skeleton className="w-full max-w-md mt-4 bg-[#4D68C3] h-[300px] text-white rounded-lg shadow-lg p-6"></Skeleton>
+            <Skeleton className="md:w-[500px] w-[99%] sm:w-[90%] mt-4 bg-[#4D68C3] h-[300px] text-white rounded-lg shadow-lg p-6"></Skeleton>
           </>
         )}
       </div>
