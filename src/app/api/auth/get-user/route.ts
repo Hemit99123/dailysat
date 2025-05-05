@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
-import { handleGetUserCached } from "@/lib/performance/cache";
-import { handleRatelimitSuccess } from "@/lib/performance/rate-limiter";
+// import { handleGetUserCached } from "@/lib/performance/cache";
+// import { handleRatelimitSuccess } from "@/lib/performance/rate-limiter";
 import { NextResponse } from "next/server";
 
 /**
