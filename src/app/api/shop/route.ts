@@ -1,127 +1,114 @@
+import { ShopItem } from "@/types/shopitem";
 import { client } from "../../../lib/mongo";
-import { Db, ObjectId } from "mongodb";
-import { REFERRAL_BONUS_REFERRED_PERSON, REFERRAL_BONUS_REFERREE } from "@/data/constant";
+import { Db } from "mongodb";
+import { User } from "@/types/user"; // assume you saved the User interface here
 import { auth } from "@/lib/auth";
+import { format } from "date-fns";
 
 /**
- * @swagger
- * /api/referral:
- *   post:
- *     summary: Update referral information
- *     description: Updates the referral information for a referred person and a referee.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email_referred:
- *                 type: string
- *                 description: Email of the referred person
- *               id_referee:
- *                 type: string
- *                 description: ID of the referee
- *     responses:
- *       200:
- *         description: Referral information updated successfully
- *       400:
- *         description: Invalid referral code or error in reading request JSON
- *       500:
- *         description: Error in connecting with the MongoDB client
+ * Appends an array of items to a user's "itemsBought" array.
+ * @param email - The email of the user.
+ * @param items - An array of items to append to the itemsBought array.
  */
-
 export const POST = async (request: Request) => {
-    const body = await request.json();
-    const referralCode = body.referralCode;
+  const { items, coins } = await request.json();
+  console.log(coins);
+  if (!Array.isArray(items)) {
+    return Response.json({
+      result: "Items must be an array",
+    });
+  }
 
-    if (!referralCode) {
-        return Response.json({
-            code: 400,
-            message: "Referral code is required."
-        });
-    }
+  try {
+    console.log("Pinging server");
 
-    // Validate the referral code
-    if (!ObjectId.isValid(referralCode)) {
-        return Response.json({
-            code: 400,
-            message: "Invalid referral code format."
-        });
-    }
+    await client.connect();
+    const db: Db = client.db("DailySAT");
 
+    const users = db.collection<User>("users");
+    // Proceed with the rest of the logic
     const session = await auth();
-    const email = session?.user?.email;
+    console.log("get auth");
+    const userEmail: string | null | undefined = session?.user?.email;
+    if (!userEmail) {
+      console.log("Email not found");
 
-    if (!email) {
-        return Response.json({
-            code: 401,
-            message: "User is not authenticated."
-        });
+      throw new Error("Email not found");
     }
+    console.log(userEmail);
+    const totalCost = items.reduce((sum, item) => {
+      const quantity = item.amnt ?? 1;
+      return sum + item.price * quantity;
+    }, 0);
+    console.log(totalCost);
+    if (coins < totalCost)
+      return Response.json({
+        result: "Cannot complete purchase",
+      });
+    const result = await users.updateOne(
+      { email: userEmail },
+      {
+        $push: {
+          itemsBought: {
+            $each: items,
+          },
+        },
+        $set: {
+          currency: coins - totalCost,
+        },
+      }
+    );
+    let investors = items.filter((elem: ShopItem) =>
+      elem.name.includes("Investor")
+    );
+    if (investors) {
+      const result = format(new Date(), "MM/dd/yyyy");
 
-    try {
-        await client.connect();
-        const db: Db = client.db("DailySAT");
-
-        // Check if the referee exists
-        const referee = await db.collection("users").findOne({ _id: new ObjectId(referralCode) });
-
-        if (!referee) {
-            return Response.json({
-                code: 400,
-                message: "Invalid referral code."
-            });
+      const formattedDate = result;
+      investors = investors.map(
+        (elem: ShopItem) =>
+          (elem = {
+            ...elem,
+            date: formattedDate,
+            reward: elem.name.includes("IV")
+              ? 20
+              : elem.name.includes("III")
+                ? 15
+                : elem.name.includes("II")
+                  ? 10
+                  : 5,
+          })
+      );
+      await users.updateOne(
+        { email: userEmail },
+        {
+          $push: {
+            investors: {
+              $each: investors,
+            },
+          },
         }
-
-        const user = await db.collection("users").findOne({ email });
-
-        if (!user) {
-            return Response.json({
-                code: 404,
-                message: "User not found."
-            });
-        }
-
-        if (user._id.equals(referralCode)) {
-            return Response.json({
-                code: 400,
-                message: "You cannot use your own referral code."
-            });
-        }
-
-        if (user.isReferred) {
-            return Response.json({
-                code: 400,
-                message: "Referral already used. Cannot perform this action twice."
-            });
-        }
-
-        // Update referred person's currency and isReferred status
-        await db.collection("users").findOneAndUpdate(
-            { email },
-            {
-                $inc: { currency: REFERRAL_BONUS_REFERRED_PERSON },
-                $set: { isReferred: true }
-            }
-        );
-
-        // Update referee's currency
-        await db.collection("users").findOneAndUpdate(
-            { _id: new ObjectId(referralCode) },
-            { $inc: { currency: REFERRAL_BONUS_REFERREE } }
-        );
-
-        return Response.json({
-            code: 200,
-            message: "Referral code redeemed successfully."
-        });
-    } catch (error) {
-        return Response.json({
-            code: 500,
-            message: error
-        });
-    } finally {
-        await client.close();
+      );
     }
-}
+    console.log("db updated");
+    if (result.matchedCount === 0) {
+      console.log("unsuccessful");
+      console.log(result);
+      return Response.json({
+        result: "User not found",
+      });
+    }
+    console.log("Items bought");
+    return Response.json({
+      result: "Success - items bought",
+    });
+  } catch (error) {
+    console.error(error);
+    return Response.json({
+      result: "DB Error",
+    });
+    
+  } finally {
+    await client.close();
+  }
+};

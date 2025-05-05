@@ -1,7 +1,10 @@
 export type ShopItem = {
-    [key: string]: string | number;
     price: number;
     name: string;
+    purpose: string;
+    amnt?: number;
+    date?:string;
+    reward?: number;
     // "price": price (number)
     // "amnt": # of specific item the user has (number)
     // "name": name of the item (string)

@@ -1,7 +1,8 @@
 import { Minus, Plus } from "lucide-react";
 import { Button } from "../ui/button";
+import { ShopItem } from "@/types/shopitem";
 
-interface ShopItem {
+interface ComponentShopItem {
   name: string;
   purpose: string;
   price: number;
@@ -10,14 +11,16 @@ interface ShopItem {
     [key: string]: number | string;
   };
   coins: { [key: string]: number };
+  userItemsBought: ShopItem[];
 }
-const ShopItemDisplay: React.FC<ShopItem> = ({
+const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   name,
   purpose,
   price,
   dispatch,
   state,
   coins,
+  userItemsBought,
 }) => {
   return (
     <>
@@ -29,7 +32,7 @@ const ShopItemDisplay: React.FC<ShopItem> = ({
             <p className="mt-1 text-gray-600">
               {purpose || "We couldn't find a purpose"}
             </p>
-            <div className="w-full mt-2 sm:w-1/3 flex flex-row items-center justify-start lg:justify-end">
+            <div className="w-full lg:w-1/2 mt-2 flex flex-row items-center justify-start lg:justify-end">
               <div className="w-1/3 flex justify-center ">
                 <Button
                   onClick={() => {
@@ -49,7 +52,19 @@ const ShopItemDisplay: React.FC<ShopItem> = ({
                   onClick={() => {
                     dispatch?.({ type: "increment", payload: name });
                   }}
-                  disabled={price > coins.amnt}
+                  disabled={
+                    price > coins.amnt ||
+                    (!name
+                      .toLowerCase()
+                      .replace(/\s/g, "")
+                      .includes("investor") &&
+                      userItemsBought.some((item) => item.name === name)) ||
+                    (!name
+                      .toLowerCase()
+                      .replace(/\s/g, "")
+                      .includes("investor") &&
+                      state[name.toLowerCase().replace(/\s/g, "")] === 1)
+                  }
                   className="hover:scale-125 transition-transform duration-300 hover:bg-transparent hover:text-white shadow-lg flex justify-center items-center text-lg font-semibold bg-transparent rounded-full w-[35px] h-[35px] border-black border"
                 >
                   <Plus color="black" />

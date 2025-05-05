@@ -85,29 +85,28 @@ import { NextResponse } from "next/server";
  */
 
 export const GET = async () => {
-    console.log("Fetching user data...");
-    const session = await auth();
+  console.log("Fetching user data...");
+  const session = await auth();
+  // Removing modular caching logic for now
+  //     const success = await handleRatelimitSuccess(session);
 
-    const success = await handleRatelimitSuccess(session);
-    
-    if (!success) {
-        console.log("Rate limit exceeded. Returning cached user data.");
-        const user = await handleGetUserCached()
-        console.log(user)
-        return NextResponse.json({user, cached: true})
-    }
-;
-    
-    
-    try {
-        const user = await handleGetUser(session);
+  //     if (!success) {
+  //         console.log("Rate limit exceeded. Returning cached user data.");
+  //         const user = await handleGetUserCached()
+  //         console.log(user)
+  //         return NextResponse.json({user, cached: true})
+  //     }
+  // ;
 
-        return NextResponse.json({
-            user,
-            cached: false
-        })
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        return NextResponse.json({ message: "An error occurred" });
-    }
-}
+  try {
+    const user = await handleGetUser(session);
+
+    return NextResponse.json({
+      user,
+      cached: false,
+    });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return NextResponse.json({ message: "An error occurred" });
+  }
+};

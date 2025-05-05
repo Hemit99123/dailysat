@@ -17,7 +17,7 @@ const Home = () => {
   const [cached, setCached] = useState(false);
   const [greeting, setGreeting] = useState("");
   const [imageError, setImageError] = useState(false);
-
+  const [userCoins, setUserCoins] = useState<number>(0);
   useEffect(() => {
     const handleGetUser = async () => {
       let response = null;
@@ -26,6 +26,13 @@ const Home = () => {
         setUser?.(response?.data?.user);
         if (response?.data?.cached) {
           setCached(true);
+        }
+        setUserCoins(response?.data?.user.currency);
+        if (response?.data?.user?.investors) {
+          console.log("got user");
+          const result = await axios.post("/api/investor");
+          const { totalQuantity } = result.data;
+          setUserCoins(totalQuantity);
         }
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -185,7 +192,7 @@ const Home = () => {
               color="black"
               icon="coin"
               header="DailySAT Coins:"
-              number={user?.currency ?? 0}
+              number={userCoins ?? 0}
             />
           ) : (
             <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />

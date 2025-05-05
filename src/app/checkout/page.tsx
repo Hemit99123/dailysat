@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -14,7 +14,30 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { ShopItem } from "@/types/shopitem";
+import { toast } from "@/hooks/use-toast";
+import { redirect } from "next/navigation";
+const appendItems = async (items: ShopItem[], coins: number) => {
+  try {
+    const response = await axios.post("/api/shop", {
+      items,
+      coins,
+    });
 
+    console.log("Success:", response.data);
+    toast({
+      title: "Items Successfully Bought!",
+      description: "Your purchase was successful",
+      className: "bg-[#4D68C3] border-none text-white font-satoshi",
+    });
+    setTimeout(() => {
+      redirect("/dashboard");
+    }, 500);
+  } catch (error) {
+    console.error("Error appending items:", (error as Error).message);
+    return { code: 500, message: "Failed to append items" };
+  }
+};
 const Checkout: React.FC = () => {
   const [receipt, setReceipt] = React.useState<{ [key: string]: number }[]>([]);
   const NamePriceMap: { [key: string]: [string, number] } = {
@@ -25,17 +48,23 @@ const Checkout: React.FC = () => {
     owlicon: ["Owl Icon", 300],
     tigericon: ["Tiger Icon", 400],
     sharkicon: ["Shark Icon", 350],
+    cheetahicon: ["Cheetah Icon", 250],
     bronzebanner: ["Bronze Banner", 1000],
     silverbanner: ["Silver Banner", 2000],
-    goldbanner: ["Gold Banner", 3000],
+    emeraldbanner: ["Emerald Banner", 3000],
     platinumbanner: ["Platinum Banner", 5000],
   };
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+  const [yourItems, setYourItems] = useState<ShopItem[]>([]);
   const getUser = async () => {
     const params = window.location.href.split("?")[1];
     const response = await axios.get("/api/auth/get-user");
     setUser?.(response?.data?.user);
+    if (!params) {
+      alert("Please come back once you go to the shop");
+      redirect("/shop");
+    }
     setReceipt(() => {
       const newReceipt = params.split("&").map((item) => {
         const [key, value] = item.split("=");
@@ -49,11 +78,24 @@ const Checkout: React.FC = () => {
         return acc + item[key] * NamePriceMap[key][1];
       }, 0);
       const num_coins = response?.data?.user?.currency;
+      setYourItems(() => {
+        return newReceipt.map((entry) => {
+          const key = Object.keys(entry)[0];
+          const [name, price] = NamePriceMap[key];
+          return {
+            name,
+            price,
+            purpose: "Purchased item", // you can refine this as needed
+            amnt: entry[key],
+          };
+        });
+      });
+
       if (total > num_coins) {
         alert(
           "You do not have enough currency to complete this transaction. You will be redirected to the shop."
         );
-        window.location.href = "/shop";
+        redirect("/shop");
       }
       return newReceipt;
     });
@@ -66,7 +108,7 @@ const Checkout: React.FC = () => {
       <div className="flex flex-col items-center justify-center w-full font-satoshi h-[80vh]">
         <h1 className="text-3xl font-bold text-center">Checkout</h1>
         {user != null ? (
-          <div className="md:w-[500px] w-[99%] sm:w-[90%] mt-4 bg-[#4D68C3] max-h-[300px] text-white rounded-lg shadow-lg p-6">
+          <div className="md:w-[500px] w-[99%] sm:w-[90%] mt-4 bg-[#4D68C3] text-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Receipt</h2>
             <div className="flex justify-between mb-2">
               <span className="font-bold w-2/5 text-left">Item</span>
@@ -115,7 +157,12 @@ const Checkout: React.FC = () => {
                       </DrawerDescription>
                     </DrawerHeader>
                     <DrawerFooter>
-                      <Button className="py-8 text-xl rounded-xl">
+                      <Button
+                        className="py-8 text-xl rounded-xl"
+                        onClick={() => {
+                          appendItems(yourItems, user.currency);
+                        }}
+                      >
                         Buy Items
                       </Button>
                       <DrawerClose>Close</DrawerClose>

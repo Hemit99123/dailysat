@@ -2,6 +2,7 @@
 
 import { StudyPlanProps } from "@/components/features/AI/StudyPlan";
 import { ShopItem } from "./shopitem";
+import { Investor } from "./investor";
 
 export interface User {
     // MongoDB string 
@@ -19,6 +20,6 @@ export interface User {
     wrongAnswered: number;
     // Items bought
     itemsBought: ShopItem[];
-
+    investors?: Investor[];
     plan?: StudyPlanProps
 }

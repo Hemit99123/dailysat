@@ -24,6 +24,7 @@ import {
 import ShopItemDisplay from "@/components/common/ShopItem";
 import { Button } from "@/components/ui/button";
 import { ShopItem } from "@/types/shopitem";
+import { redirect } from "next/navigation";
 
 export default function Shop() {
   const { toast } = useToast();
@@ -68,6 +69,13 @@ export default function Shop() {
         return state;
     }
   }
+  const Notes = {
+    investor: "Go to dashboard to see claim your coins!",
+    animal:
+      "You can only buy one of each. You can't buy one if you already have it. The most expensive one is the one that is shown.",
+    banners:
+      "You can only buy one of each. You can't buy one if you already have it.",
+  };
   const Items = {
     investor: [
       {
@@ -93,47 +101,48 @@ export default function Shop() {
     ],
     animal: [
       {
+        name: "Cheetah Icon",
+        price: 250,
+        purpose: "Have a cheetah icon up next to your name on the dashboard!",
+      },
+      {
         name: "Owl Icon",
         price: 300,
         purpose: "Have an owl icon up next to your name on the dashboard!",
       },
-      {
-        name: "Tiger Icon",
-        price: 400,
-        purpose: "Have an owl icon up next to your name on the dashboard!",
-      },
+
       {
         name: "Shark Icon",
         price: 350,
-        purpose: "Have an owl icon up next to your name on the dashboard!",
+        purpose: "Have a shark icon up next to your name on the dashboard!",
       },
+
       {
-        name: "Cheetah Icon",
-        price: 250,
-        purpose: "Have an owl icon up next to your name on the dashboard!",
+        name: "Tiger Icon",
+        price: 400,
+        purpose: "Have a tiger icon up next to your name on the dashboard!",
       },
     ],
     banners: [
       {
         name: "Bronze Banner",
         price: 1000,
-        purpose: "Have a bronze ribbon up next to your name on the dashboard!",
+        purpose: "Have a bronze ribbon show up dashboard!",
       },
       {
         name: "Silver Banner",
         price: 2000,
-        purpose: "Have a silver ribbon up next to your name on the dashboard!",
+        purpose: "Have a silver ribbon show up dashboard!",
       },
       {
-        name: "Gold Banner",
+        name: "Emerald Banner",
         price: 3000,
-        purpose: "Have a gold ribbon up next to your name on the dashboard!",
+        purpose: "Have an emerald ribbon show up dashboard!",
       },
       {
         name: "Platinum Banner",
         price: 5000,
-        purpose:
-          "Have a platinum ribbon up next to your name on the dashboard!",
+        purpose: "Have a platinum ribbon show up dashboard!",
       },
     ],
   };
@@ -163,7 +172,7 @@ export default function Shop() {
     cheetahicon: 0,
     bronzebanner: 0,
     silverbanner: 0,
-    goldbanner: 0,
+    emeraldbanner: 0,
     platinumbanner: 0,
   };
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -302,7 +311,7 @@ export default function Shop() {
           )}
         </div>
         <div>
-          <div className="font-satoshi  mt-4">
+          <div className="font-satoshi text-center mt-4">
             {coins.amnt != -1 && user != null ? (
               <h3 className="font-bold text-3xl">DailySAT Shop</h3>
             ) : (
@@ -316,7 +325,7 @@ export default function Shop() {
               <Skeleton className="h-[30px] bg-black/60 rounded-3xl mt-2 w-[300px]"></Skeleton>
             )}
           </div>
-          <div className="w-[600px] mx-auto flex items-center">
+          <div className="md:w-[600px] w-[350px] mx-auto h-[80px] flex items-center">
             {user != null && coins.amnt != -1 ? (
               <div className="flex items-center w-1/3 py-6 justify-center space-x-2 mt-4">
                 <Button
@@ -367,23 +376,31 @@ export default function Shop() {
             )}
           </div>
           {coins.amnt != -1 && user != null ? (
-            <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
-              {(
-                Items as {
-                  [key: string]: ShopItem[];
-                }
-              )[grid as string].map((item: ShopItem, index: number) => (
-                <ShopItemDisplay
-                  key={index}
-                  name={`${item.name}`}
-                  purpose={`${item.purpose}`}
-                  price={item.price}
-                  state={state}
-                  dispatch={dispatch}
-                  coins={coins}
-                ></ShopItemDisplay>
-              ))}
-            </div>
+            <>
+              <div>
+                <p className="font-satoshi text-gray-500 text-center mt-2">
+                  {(Notes as { [key: string]: string })[grid as string]}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2">
+                {(
+                  Items as {
+                    [key: string]: ShopItem[];
+                  }
+                )[grid as string].map((item: ShopItem, index: number) => (
+                  <ShopItemDisplay
+                    key={index}
+                    name={`${item.name}`}
+                    purpose={`${item.purpose}`}
+                    price={item.price}
+                    state={state}
+                    dispatch={dispatch}
+                    coins={coins}
+                    userItemsBought={user.itemsBought}
+                  ></ShopItemDisplay>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
               <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
@@ -410,10 +427,12 @@ export default function Shop() {
                     });
                     return;
                   }
-                  window.location.href = `/checkout?${Object.keys(state)
-                    .filter((key) => state[key] !== 0)
-                    .map((key) => `${key}=${state[key]}`)
-                    .join("&")}`;
+                  redirect(
+                    `/checkout?${Object.keys(state)
+                      .filter((key) => state[key] !== 0)
+                      .map((key) => `${key}=${state[key]}`)
+                      .join("&")}`
+                  );
                 }}
                 className="font-bold mt-2 mb-16 flex flex-col font-satoshi hover:bg-[#6986e3] transition-all duration-300 bg-[#4D68C3] rounded-2xl items-center justify-center w-full h-[100px] text-3xl text-white"
               >
