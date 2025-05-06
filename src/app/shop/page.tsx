@@ -130,9 +130,9 @@ export default function Shop() {
         purpose: "Have a bronze ribbon show up dashboard!",
       },
       {
-        name: "Silver Banner",
+        name: "Gold Banner",
         price: 2000,
-        purpose: "Have a silver ribbon show up dashboard!",
+        purpose: "Have a gold ribbon show up dashboard!",
       },
       {
         name: "Emerald Banner",
@@ -140,9 +140,9 @@ export default function Shop() {
         purpose: "Have an emerald ribbon show up dashboard!",
       },
       {
-        name: "Platinum Banner",
+        name: "Diamond Banner",
         price: 5000,
-        purpose: "Have a platinum ribbon show up dashboard!",
+        purpose: "Have a diamond ribbon show up dashboard!",
       },
     ],
   };
@@ -171,20 +171,21 @@ export default function Shop() {
     sharkicon: 0,
     cheetahicon: 0,
     bronzebanner: 0,
-    silverbanner: 0,
+    goldbanner: 0,
     emeraldbanner: 0,
-    platinumbanner: 0,
+    diamondbanner: 0,
   };
+
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <>
       <div className="px-4 font-satoshi">
-        <div className="fixed  bg-blue-700 rounded-3xl bottom-2 right-2 ">
+        <div className="fixed  bg-blue-700 rounded-3xl bottom-2 right-2 z-50">
           {user != null && coins.amnt != -1 ? (
             <div
               id="usercoins"
-              className=" text-white bg-transparent px-2 py-2 z-10"
+              className=" text-white bg-transparent px-2 py-2 "
             >
               {coins["amnt"] || 0} coins
             </div>
