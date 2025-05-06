@@ -51,8 +51,8 @@ const Checkout: React.FC = () => {
     cheetahicon: ["Cheetah Icon", 250],
     bronzebanner: ["Bronze Banner", 1000],
     goldbanner: ["Gold Banner", 2000],
-    emeraldbanner: ["Emerald Banner", 3000],
-    diamondbanner: ["Diamond Banner", 5000],
+    diamondbanner: ["Diamond Banner", 3000],
+    emeraldbanner: ["Emerald Banner", 5000],
   };
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);

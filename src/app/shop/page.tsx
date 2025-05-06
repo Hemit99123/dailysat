@@ -134,15 +134,16 @@ export default function Shop() {
         price: 2000,
         purpose: "Have a gold ribbon show up dashboard!",
       },
-      {
-        name: "Emerald Banner",
-        price: 3000,
-        purpose: "Have an emerald ribbon show up dashboard!",
-      },
+
       {
         name: "Diamond Banner",
-        price: 5000,
+        price: 3000,
         purpose: "Have a diamond ribbon show up dashboard!",
+      },
+      {
+        name: "Emerald Banner",
+        price: 5000,
+        purpose: "Have an emerald ribbon show up dashboard!",
       },
     ],
   };
@@ -271,14 +272,14 @@ export default function Shop() {
                             <br />
                             <span
                               key={index + 0.2}
-                              className="text-center w-1/3"
+                              className="text-center w-1/6"
                             >
                               <b>Amount:</b> {item.amnt}
                             </span>
                             <br />
                             <span
                               key={index + 0.3}
-                              className="text-center w-1/3"
+                              className="text-center w-1/2"
                             >
                               <b>Name:</b> {item.name}
                             </span>
