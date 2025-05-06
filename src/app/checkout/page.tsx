@@ -75,6 +75,9 @@ const Checkout: React.FC = () => {
       });
       const total = newReceipt.reduce((acc, item) => {
         const key = Object.keys(item)[0];
+        if (!(key in NamePriceMap)) {
+          window.location.href = "/shop";
+        }
         return acc + item[key] * NamePriceMap[key][1];
       }, 0);
       const num_coins = response?.data?.user?.currency;
