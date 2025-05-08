@@ -1,10 +1,9 @@
 "use client";
+
+// Core UI Components
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUserStore } from "@/store/user";
-import axios from "axios";
-import { Store } from "lucide-react";
-import React, { useEffect, useReducer, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import ShopItemDisplay from "@/components/common/ShopItem";
 import {
   Tooltip,
   TooltipContent,
@@ -21,18 +20,122 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import ShopItemDisplay from "@/components/common/ShopItem";
-import { Button } from "@/components/ui/button";
-import { ShopItem } from "@/types/shopitem";
+
+// State Management and Utilities
+import { useUserStore } from "@/store/user";
+import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
+import { Store } from "lucide-react";
 import { redirect } from "next/navigation";
+import React, { useEffect, useReducer, useState } from "react";
+import { ShopItem } from "@/types/shopitem";
 
 export default function Shop() {
+  // Hooks and Global State
   const { toast } = useToast();
-
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+
+  // Local State
   const [coins, setCoins] = useState({ amnt: -1 });
   const [grid, setGrid] = useState("investor");
+
+  // Shop Categories Help Text
+  const Notes = {
+    investor: "Go to dashboard to see claim your coins!",
+    animal:
+      "You can only buy one of each. You can't buy one if you already have it. The most expensive one is the one that is shown.",
+    banners:
+      "You can only buy one of each. You can't buy one if you already have it.",
+  };
+
+  // Shop Items Configuration
+  const Items = {
+    investor: [
+      {
+        name: "Coin Investor I",
+        price: 120,
+        purpose: "Gain 5 coins per day",
+      },
+      {
+        name: "Coin Investor II",
+        price: 230,
+        purpose: "Gain 10 coins per day",
+      },
+      {
+        name: "Coin Investor III",
+        price: 350,
+        purpose: "Gain 15 coins per day",
+      },
+      {
+        name: "Coin Investor IV",
+        price: 460,
+        purpose: "Gain 20 coins per day",
+      },
+    ],
+    animal: [
+      {
+        name: "Cheetah Icon",
+        price: 250,
+        purpose: "Have a cheetah icon up next to your name on the dashboard!",
+      },
+      {
+        name: "Owl Icon",
+        price: 300,
+        purpose: "Have an owl icon up next to your name on the dashboard!",
+      },
+      {
+        name: "Shark Icon",
+        price: 350,
+        purpose: "Have a shark icon up next to your name on the dashboard!",
+      },
+      {
+        name: "Tiger Icon",
+        price: 400,
+        purpose: "Have a tiger icon up next to your name on the dashboard!",
+      },
+    ],
+    banners: [
+      {
+        name: "Bronze Banner",
+        price: 1000,
+        purpose: "Have a bronze ribbon show up dashboard!",
+      },
+      {
+        name: "Gold Banner",
+        price: 2000,
+        purpose: "Have a gold ribbon show up dashboard!",
+      },
+      {
+        name: "Diamond Banner",
+        price: 3000,
+        purpose: "Have a diamond ribbon show up dashboard!",
+      },
+      {
+        name: "Emerald Banner",
+        price: 5000,
+        purpose: "Have an emerald ribbon show up dashboard!",
+      },
+    ],
+  };
+
+  // Shopping Cart Initial State
+  const initialState: { [key: string]: number } = {
+    coininvestori: 0,
+    coininvestorii: 0,
+    coininvestoriii: 0,
+    coininvestoriv: 0,
+    owlicon: 0,
+    tigericon: 0,
+    sharkicon: 0,
+    cheetahicon: 0,
+    bronzebanner: 0,
+    goldbanner: 0,
+    emeraldbanner: 0,
+    diamondbanner: 0,
+  };
+
+  // Shopping Cart Reducer
   function reducer(
     state: typeof initialState,
     action: { type: string; payload?: string }
@@ -69,91 +172,16 @@ export default function Shop() {
         return state;
     }
   }
-  const Notes = {
-    investor: "Go to dashboard to see claim your coins!",
-    animal:
-      "You can only buy one of each. You can't buy one if you already have it. The most expensive one is the one that is shown.",
-    banners:
-      "You can only buy one of each. You can't buy one if you already have it.",
-  };
-  const Items = {
-    investor: [
-      {
-        name: "Coin Investor I",
-        price: 120,
-        purpose: "Gain 5 coins per day",
-      },
-      {
-        name: "Coin Investor II",
-        price: 230,
-        purpose: "Gain 10 coins per day",
-      },
-      {
-        name: "Coin Investor III",
-        price: 350,
-        purpose: "Gain 15 coins per day",
-      },
-      {
-        name: "Coin Investor IV",
-        price: 460,
-        purpose: "Gain 20 coins per day",
-      },
-    ],
-    animal: [
-      {
-        name: "Cheetah Icon",
-        price: 250,
-        purpose: "Have a cheetah icon up next to your name on the dashboard!",
-      },
-      {
-        name: "Owl Icon",
-        price: 300,
-        purpose: "Have an owl icon up next to your name on the dashboard!",
-      },
 
-      {
-        name: "Shark Icon",
-        price: 350,
-        purpose: "Have a shark icon up next to your name on the dashboard!",
-      },
+  // Initialize Shopping Cart State
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-      {
-        name: "Tiger Icon",
-        price: 400,
-        purpose: "Have a tiger icon up next to your name on the dashboard!",
-      },
-    ],
-    banners: [
-      {
-        name: "Bronze Banner",
-        price: 1000,
-        purpose: "Have a bronze ribbon show up dashboard!",
-      },
-      {
-        name: "Gold Banner",
-        price: 2000,
-        purpose: "Have a gold ribbon show up dashboard!",
-      },
-
-      {
-        name: "Diamond Banner",
-        price: 3000,
-        purpose: "Have a diamond ribbon show up dashboard!",
-      },
-      {
-        name: "Emerald Banner",
-        price: 5000,
-        purpose: "Have an emerald ribbon show up dashboard!",
-      },
-    ],
-  };
+  // Effect: Fetch User Data
   useEffect(() => {
     const handleGetUserAuth = async () => {
-      let response = null;
       try {
-        response = await axios.get("/api/auth/get-user");
+        const response = await axios.get("/api/auth/get-user");
         setUser?.(response?.data?.user);
-        console.log(response.data.user);
         setCoins({ amnt: response.data.user?.currency });
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -162,23 +190,6 @@ export default function Shop() {
 
     handleGetUserAuth();
   }, [setUser]);
-  const initialState: { [key: string]: number } = {
-    coininvestori: 0,
-    coininvestorii: 0,
-    coininvestoriii: 0,
-    coininvestoriv: 0,
-    owlicon: 0,
-    tigericon: 0,
-    sharkicon: 0,
-    cheetahicon: 0,
-    bronzebanner: 0,
-    goldbanner: 0,
-    emeraldbanner: 0,
-    diamondbanner: 0,
-  };
-
-  const [state, dispatch] = useReducer(reducer, initialState);
-
   return (
     <>
       <div className="px-4 font-satoshi">

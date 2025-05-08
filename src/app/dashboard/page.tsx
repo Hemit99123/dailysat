@@ -1,22 +1,22 @@
 "use client";
 
+// Core React and UI Components
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import StatDisplay from "@/components/features/Dashboard/StatDisplay";
-import axios from "axios";
-import { useUserStore } from "@/store/user";
-import Image from "next/image";
 import Option from "../../components/features/Dashboard/Option";
-import { Book, Calendar, EqualApproximately } from "lucide-react";
+import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
+import { Book, Calendar, EqualApproximately } from "lucide-react";
+import { useUserStore } from "@/store/user";
 import { ShopItem } from "@/types/shopitem";
 import { User } from "@/types/user";
 import { DisplayBanner } from "@/types/dashboard/banner";
 
 const Home = () => {
+  // Local State Management
   const [icon, setIcon] = useState("");
-
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
   const [cached, setCached] = useState(false);
@@ -28,6 +28,7 @@ const Home = () => {
     content: "",
   });
 
+  // Helper function to get user's highest value icon
   const getIcon = (userData: User) => {
     const icons = userData.itemsBought.filter((item: ShopItem) =>
       item.name.includes("Icon")
@@ -39,6 +40,8 @@ const Home = () => {
 
     setIcon(mostExpensiveIcon.name.toLowerCase().replace(/\s/g, ""));
   };
+
+  // Helper function to get and set user's banner
   const getBanner = (userData: User) => {
     const banners = userData.itemsBought.filter((item: ShopItem) =>
       item.name.includes("Banner")
@@ -74,6 +77,8 @@ const Home = () => {
     );
     return;
   };
+
+  // Effect: Fetch user data and handle initial setup
   useEffect(() => {
     const handleGetUser = async () => {
       let response = null;
@@ -100,6 +105,7 @@ const Home = () => {
     handleGetUser();
   }, [setUser]);
 
+  // Effect: Set time-based greeting
   useEffect(() => {
     const getGreeting = () => {
       const hours = new Date().getHours();
@@ -111,6 +117,7 @@ const Home = () => {
     setGreeting(getGreeting());
   }, []);
 
+  // Event Handlers
   const handleCopyReferral = async () => {
     const referralCode = user?._id ?? "";
     await navigator.clipboard.writeText(referralCode);
@@ -145,6 +152,7 @@ const Home = () => {
         )}
       </div>
 
+      {/* Study Options Grid */}
       <div className="lg:px-16 lg:p-6 px-2">
         <div className="grid grids-cols-1 md:grid-cols-3 mx-auto md:w-4/5 gap-2 mt-px">
           {user != null ? (
@@ -165,7 +173,6 @@ const Home = () => {
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
-
           {user != null ? (
             <Option
               icon={<Calendar />}
@@ -178,7 +185,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* User Stats */}
+      {/* User Profile Section */}
       <div className="lg:flex lg:space-x-2 mt-1.5 p-3.5">
         <div className="shadow-lg rounded-lg w-full bg-white p-4 flex lg:items-center flex-col lg:flex-row lg:justify-between">
           <div className="flex items-center mb-3 ">
@@ -210,9 +217,7 @@ const Home = () => {
                     className="absolute -right-6 -top-6"
                   />
                 </>
-              ) : (
-                <></>
-              )}
+              ) : null}
             </div>
             <div className="ml-6">
               {user == null ? (
@@ -223,7 +228,7 @@ const Home = () => {
               {user != null ? (
                 <p>Email: {user?.email}</p>
               ) : (
-                <Skeleton className="w-[200px] h-[24px]  mt-4 rounded-full bg-gray-400" />
+                <Skeleton className="w-[200px] h-[24px] mt-4 rounded-full bg-gray-400" />
               )}
             </div>
           </div>
@@ -238,7 +243,7 @@ const Home = () => {
             )}
             {user != null ? (
               <>
-                <p className="text-gray-700 flex items-center   ">
+                <p className="text-gray-700 flex items-center">
                   <button onClick={handleCopyReferral}>
                     <Image
                       src="/icons/copy.png"
@@ -257,9 +262,9 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {/* Bottom Container */}
+
+      {/* Statistics Section */}
       <div className="p-3.5">
-        {/* Stat Display */}
         <div className="lg:flex lg:space-x-2 mt-1.5 mb-4">
           {user != null ? (
             <StatDisplay
@@ -270,7 +275,7 @@ const Home = () => {
               number={userCoins ?? 0}
             />
           ) : (
-            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
           )}
           {user != null ? (
             <StatDisplay
@@ -281,7 +286,7 @@ const Home = () => {
               number={user?.correctAnswered ?? 0}
             />
           ) : (
-            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
           )}
           {user != null ? (
             <StatDisplay
@@ -292,7 +297,7 @@ const Home = () => {
               number={user?.wrongAnswered ?? 0}
             />
           ) : (
-            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
           )}
           {user != null ? (
             <Link href="/shop" className="w-full">
@@ -305,9 +310,11 @@ const Home = () => {
               />
             </Link>
           ) : (
-            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60 " />
+            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
           )}
         </div>
+
+        {/* Achievement Banner */}
         {user != null &&
         user.itemsBought &&
         user.itemsBought.find((elem: ShopItem) =>
@@ -317,9 +324,7 @@ const Home = () => {
           <div className={banner.style}>
             <p>{`${banner.content}${user != null ? `, ${user?.name.split(" ")[0]}!` : "!"}`}</p>
           </div>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </div>
     </div>
   );

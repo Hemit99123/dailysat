@@ -30,17 +30,17 @@ export const POST = async (request: Request) => {
     const session = await auth();
     console.log("get auth");
     const userEmail: string | null | undefined = session?.user?.email;
+    // If email isn't found, throw an error
     if (!userEmail) {
       console.log("Email not found");
 
       throw new Error("Email not found");
     }
-    console.log(userEmail);
+    // Get totalCost
     const totalCost = items.reduce((sum, item) => {
       const quantity = item.amnt ?? 1;
       return sum + item.price * quantity;
     }, 0);
-    console.log(totalCost);
     if (coins < totalCost)
       return Response.json({
         result: "Cannot complete purchase",
@@ -61,6 +61,7 @@ export const POST = async (request: Request) => {
     let investors = items.filter((elem: ShopItem) =>
       elem.name.includes("Investor")
     );
+    // If there are investor items, log them intok the DB
     if (investors) {
       const result = format(new Date(), "MM/dd/yyyy");
 

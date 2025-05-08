@@ -1,8 +1,12 @@
+// UI Components and Icons
 import { Minus, Plus } from "lucide-react";
 import { Button } from "../ui/button";
+
+// Types
 import { ShopItem } from "@/types/shopitem";
 import { DisplayBanner } from "@/types/dashboard/banner";
 
+// Component Props Interface
 interface ComponentShopItem {
   name: string;
   purpose: string;
@@ -14,6 +18,11 @@ interface ComponentShopItem {
   coins: { [key: string]: number };
   userItemsBought: ShopItem[];
 }
+
+/**
+ * ShopItemDisplay Component
+ * Renders a shop item with purchase controls and visual customizations
+ */
 const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   name,
   purpose,
@@ -23,6 +32,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   coins,
   userItemsBought,
 }) => {
+  // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
     diamondbanner: {
       style:
@@ -45,9 +55,12 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
       content: `Congratulations on your Bronze Banner`,
     },
   };
+
   return (
     <>
+      {/* Shop Item Container */}
       <div className="flex flex-col relative z-10 font-satoshi items-center justify-center w-full h-full ">
+        {/* Icon Display */}
         {name.includes("Icon") ? (
           <img
             src={`/icons/rewards/${name.toLowerCase().replace(/\s/g, "")}.png`}
@@ -59,6 +72,8 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
         ) : (
           <></>
         )}
+
+        {/* Banner Display */}
         {name.includes("Banner") ? (
           <div
             className={bannerMap[name.toLowerCase().replace(/\s/g, "")].style}
@@ -66,6 +81,8 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
         ) : (
           <></>
         )}
+
+        {/* Item Details Card */}
         <div className="w-full bg-white rounded-lg border-gray-300 border ">
           <div className="p-4">
             <h2 className="text-2xl font-bold">{name}</h2>
@@ -73,7 +90,10 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
             <p className="mt-1 text-gray-600">
               {purpose || "We couldn't find a purpose"}
             </p>
+
+            {/* Quantity Controls */}
             <div className="w-full lg:w-1/2 mt-2 flex flex-row items-center justify-start lg:justify-end">
+              {/* Decrement Button */}
               <div className="w-1/3 flex justify-center ">
                 <Button
                   onClick={() => {
@@ -85,9 +105,13 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                   <Minus color="black" />
                 </Button>
               </div>
+
+              {/* Quantity Display */}
               <div className="w-1/3 flex justify-center font-satoshi items-center my-1 font-bold text-5xl">
                 <span>{state[name.toLowerCase().replace(/\s/g, "")]}</span>
               </div>
+
+              {/* Increment Button */}
               <div className="w-1/3 h-full flex justify-center items-center">
                 <Button
                   onClick={() => {

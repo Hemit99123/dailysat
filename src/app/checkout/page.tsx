@@ -1,4 +1,6 @@
 "use client";
+
+// Import necessary dependencies and components
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
@@ -17,6 +19,8 @@ import {
 import { ShopItem } from "@/types/shopitem";
 import { toast } from "@/hooks/use-toast";
 import { redirect } from "next/navigation";
+
+// Helper function to process purchase and append items to user's inventory
 const appendItems = async (items: ShopItem[], coins: number) => {
   try {
     const response = await axios.post("/api/shop", {
@@ -30,6 +34,8 @@ const appendItems = async (items: ShopItem[], coins: number) => {
       description: "Your purchase was successful",
       className: "bg-[#4D68C3] border-none text-white font-satoshi",
     });
+
+    // Redirect to dashboard after successful purchase
     setTimeout(() => {
       redirect("/dashboard");
     }, 500);
@@ -38,8 +44,17 @@ const appendItems = async (items: ShopItem[], coins: number) => {
     return { code: 500, message: "Failed to append items" };
   }
 };
+
 const Checkout: React.FC = () => {
+  // State management
   const [receipt, setReceipt] = React.useState<{ [key: string]: number }[]>([]);
+  const [yourItems, setYourItems] = useState<ShopItem[]>([]);
+
+  // User state from global store
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+
+  // Map of item IDs to their names and prices
   const NamePriceMap: { [key: string]: [string, number] } = {
     coininvestori: ["Coin Investor I", 120],
     coininvestorii: ["Coin Investor II", 230],
@@ -54,25 +69,33 @@ const Checkout: React.FC = () => {
     diamondbanner: ["Diamond Banner", 3000],
     emeraldbanner: ["Emerald Banner", 5000],
   };
-  const user = useUserStore((state) => state.user);
-  const setUser = useUserStore((state) => state.setUser);
-  const [yourItems, setYourItems] = useState<ShopItem[]>([]);
+
+  // Function to fetch user data and process URL parameters
   const getUser = async () => {
+    // Get URL parameters
     const params = window.location.href.split("?")[1];
+
+    // Fetch user data
     const response = await axios.get("/api/auth/get-user");
     setUser?.(response?.data?.user);
+
+    // Validate URL parameters
     if (!params) {
       alert("Please come back once you go to the shop");
       redirect("/shop");
     }
+
+    // Process receipt from URL parameters
     setReceipt(() => {
+      // Parse URL parameters into receipt items
       const newReceipt = params.split("&").map((item) => {
         const [key, value] = item.split("=");
-        console.log(item);
         return {
           [decodeURIComponent(key)]: parseInt(decodeURIComponent(value)),
         };
       });
+
+      // Calculate total cost
       const total = newReceipt.reduce((acc, item) => {
         const key = Object.keys(item)[0];
         if (!(key in NamePriceMap)) {
@@ -80,7 +103,11 @@ const Checkout: React.FC = () => {
         }
         return acc + item[key] * NamePriceMap[key][1];
       }, 0);
+
+      // Check if user has enough coins
       const num_coins = response?.data?.user?.currency;
+
+      // Create shop items array from receipt
       setYourItems(() => {
         return newReceipt.map((entry) => {
           const key = Object.keys(entry)[0];
@@ -88,12 +115,13 @@ const Checkout: React.FC = () => {
           return {
             name,
             price,
-            purpose: "Purchased item", // you can refine this as needed
+            purpose: "Purchased item",
             amnt: entry[key],
           };
         });
       });
 
+      // Validate user has enough currency
       if (total > num_coins) {
         alert(
           "You do not have enough currency to complete this transaction. You will be redirected to the shop."
@@ -103,21 +131,30 @@ const Checkout: React.FC = () => {
       return newReceipt;
     });
   };
+
+  // Fetch user data on component mount
   useEffect(() => {
     getUser();
   }, []);
+
+  // Render checkout interface
   return (
     <>
       <div className="flex flex-col items-center justify-center w-full font-satoshi h-[80vh]">
         <h1 className="text-3xl font-bold text-center">Checkout</h1>
+        {/* Show receipt if user is loaded, otherwise show skeleton */}
         {user != null ? (
+          // Receipt card
           <div className="md:w-[500px] w-[99%] sm:w-[90%] mt-4 bg-[#4D68C3] text-white rounded-lg shadow-lg p-6">
+            {/* Receipt header */}
             <h2 className="text-2xl font-semibold mb-4">Receipt</h2>
+            {/* Column headers */}
             <div className="flex justify-between mb-2">
               <span className="font-bold w-2/5 text-left">Item</span>
               <span className="font-bold w-1/3 text-right">Amount</span>
               <span className="font-bold w-1/3 text-right">Price</span>
             </div>
+            {/* Receipt items */}
             {receipt.map((item, index) => {
               const key = Object.keys(item)[0];
               return (
@@ -132,6 +169,7 @@ const Checkout: React.FC = () => {
                 </div>
               );
             })}
+            {/* Total amount */}
             <div className="flex justify-between mb-2">
               <span className="font-bold w-1/2 text-left"></span>
               <span className="font-bold w-1/3 text-right">Total:</span>
@@ -142,12 +180,12 @@ const Checkout: React.FC = () => {
                 }, 0)}
               </span>
             </div>
+            {/* Purchase confirmation drawer */}
             <div className="flex justify-between mb-2">
               <span className="font-bold w-1/2 text-left"></span>
               <span className="font-bold w-1/2 text-right">
                 <Drawer>
-                  <DrawerTrigger className="w-full  font-bold py-2 rounded-lg bg-white hover:bg-[#4D68C3] shadow-lg duration-150 hover:text-white text-[#4D68C3]">
-                    {" "}
+                  <DrawerTrigger className="w-full font-bold py-2 rounded-lg bg-white hover:bg-[#4D68C3] shadow-lg duration-150 hover:text-white text-[#4D68C3]">
                     Buy Now
                   </DrawerTrigger>
                   <DrawerContent className="font-satoshi">
@@ -176,6 +214,7 @@ const Checkout: React.FC = () => {
             </div>
           </div>
         ) : (
+          // Loading skeleton
           <>
             <Skeleton className="md:w-[500px] w-[99%] sm:w-[90%] mt-4 bg-[#4D68C3] h-[300px] text-white rounded-lg shadow-lg p-6"></Skeleton>
           </>
@@ -184,4 +223,5 @@ const Checkout: React.FC = () => {
     </>
   );
 };
+
 export default Checkout;
