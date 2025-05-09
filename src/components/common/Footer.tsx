@@ -132,6 +132,9 @@ export default function Footer() {
                   Blog
                 </Link>
               </li>
+              <li>
+                <Link href="/tutor" className="text-gray-600 hover:text-blue-600 transition-all duration-200 hover:translate-x-1 inline-block">Tutor</Link>
+              </li>
             </ul>
           </motion.div>
 
