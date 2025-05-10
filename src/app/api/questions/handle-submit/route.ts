@@ -121,10 +121,10 @@ export const POST = async (request: Request) => {
 
     await client.connect();
 
-    const db = client.db('DailySAT');
+    const db = client.db("DailySAT");
     const usersColl = db.collection('users');
 
-    const questionCollName = type === "math" ? "questions-math" : type === "reading-writing" ? "questions-reading" : null
+    const questionCollName   = type === "math" ? "questions-math" : type === "reading-writing" ? "questions-reading" : null
     
     // default to reading/writing sat bank
     const questionsColl = db.collection(questionCollName || "questions-reading");

@@ -1,21 +1,27 @@
-import { cn } from "@/lib/utils"
-import { Card } from "../../common/Card"
+import { cn } from "@/lib/utils";
+import { Card } from "../../common/Card";
 
 interface FeatureCard3DProps {
-  icon: React.ReactNode
-  title: string
-  description: string
-  color?: "blue" | "purple" | "green" | "orange"
-  className?: string
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  color?: "blue" | "purple" | "green" | "orange";
+  className?: string;
 }
 
-export function FeatureCard3D({ icon, title, description, color = "blue", className }: FeatureCard3DProps) {
+export function FeatureCard3D({
+  icon,
+  title,
+  description,
+  color = "blue",
+  className,
+}: FeatureCard3DProps) {
   const colorClasses = {
     blue: "from-blue-500/20 to-blue-600/20",
     purple: "from-purple-500/20 to-purple-600/20",
     green: "from-green-500/20 to-green-600/20",
     orange: "from-orange-500/20 to-orange-600/20",
-  }
+  };
 
   return (
     <Card
@@ -34,5 +40,5 @@ export function FeatureCard3D({ icon, title, description, color = "blue", classN
         <p className="text-sm">{description}</p>
       </div>
     </Card>
-  )
-} 
+  );
+}
