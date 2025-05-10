@@ -63,7 +63,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
         {/* Icon Display */}
         {name.includes("Icon") ? (
           <img
-            src={`/icons/rewards/${name.toLowerCase().replace(/\s/g, "")}.png`}
+            src={`/icons/rewards/${name.toLowerCase().split(" ").join("-")}.png`}
             alt="Icon"
             width={50}
             height={50}
