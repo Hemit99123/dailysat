@@ -17,7 +17,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ShopItem } from "@/types/shopitem";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { redirect } from "next/navigation";
 
 // Helper function to process purchase and append items to user's inventory

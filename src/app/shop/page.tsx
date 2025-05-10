@@ -23,7 +23,7 @@ import {
 
 // State Management and Utilities
 import { useUserStore } from "@/store/user";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 import axios from "axios";
 import { Store } from "lucide-react";
 import { redirect } from "next/navigation";
