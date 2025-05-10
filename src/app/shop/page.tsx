@@ -222,7 +222,7 @@ export default function Shop() {
                 </p>
               </div>
               <img
-                src="assets/study-graphic-fin.png"
+                src="assets/shop-graphic.png"
                 className="lg:h-[150px] h-[100px] medium:hidden absolute -bottom-2 right-2 "
                 alt="Study Graphic"
               />
