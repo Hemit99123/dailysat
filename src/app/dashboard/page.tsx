@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import StatDisplay from "@/components/features/Dashboard/StatDisplay";
-import Option from "../../components/features/Dashboard/Option";
+import Option from "@/components/features/Dashboard/Option";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,7 +37,6 @@ const Home = () => {
     const mostExpensiveIcon = icons?.reduce((max: ShopItem, item: ShopItem) =>
       item.price > max.price ? item : max
     );
-    console.log(mostExpensiveIcon.name.split(" ").join("-").toLowerCase());
     setIcon(mostExpensiveIcon.name.split(" ").join("-").toLowerCase());
   };
 
@@ -89,7 +88,6 @@ const Home = () => {
         }
         setUserCoins(response?.data?.user.currency);
         if (response?.data?.user?.investors) {
-          console.log("got user");
           const result = await axios.post("/api/investor");
           const { totalQuantity } = result.data;
           setUserCoins(totalQuantity);

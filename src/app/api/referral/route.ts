@@ -1,4 +1,4 @@
-import { client } from "../../../lib/mongo";
+import { client } from "@/lib/mongo";
 import { Db, ObjectId } from "mongodb";
 import { REFERRAL_BONUS_REFERRED_PERSON, REFERRAL_BONUS_REFERREE } from "@/data/constant";
 import { auth } from "@/lib/auth";

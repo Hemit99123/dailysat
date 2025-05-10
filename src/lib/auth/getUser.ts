@@ -31,7 +31,6 @@ export const handleGetUser = async (session: Session | null) => {
             // Retrieve the newly created user for returning
             existingUser = await usersCollection.findOne({ _id: result.insertedId });
         }
-        console.log(existingUser);
         return existingUser;
     } catch (error) {
         throw new Error(`An unexpected error occurred: ${error}`);

@@ -85,7 +85,6 @@ import { NextResponse } from "next/server";
  */
 
 export const GET = async () => {
-  console.log("Fetching user data...");
   const session = await auth();
   // Removing modular caching logic for now
   //     const success = await handleRatelimitSuccess(session);

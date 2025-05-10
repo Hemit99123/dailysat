@@ -1,4 +1,4 @@
-import {client} from "../../../../lib/mongo";
+import {client} from "@/lib/mongo";
 import { Collection, Db, Document, InsertOneResult } from "mongodb";
 
 /**

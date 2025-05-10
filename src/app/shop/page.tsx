@@ -254,7 +254,6 @@ export default function Shop() {
                           e.stopPropagation();
                           return;
                         } else {
-                          console.log(user.itemsBought);
                         }
                       }}
                       className="absolute bg-white p-2 rounded-full bottom-1 left-1"

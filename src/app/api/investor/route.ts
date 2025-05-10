@@ -1,5 +1,5 @@
 // Database and Authentication
-import { client } from "../../../lib/mongo";
+import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 import { auth } from "@/lib/auth";
 

@@ -23,12 +23,11 @@ import { redirect } from "next/navigation";
 // Helper function to process purchase and append items to user's inventory
 const appendItems = async (items: ShopItem[], coins: number) => {
   try {
-    const response = await axios.post("/api/shop", {
+    await axios.post("/api/shop", {
       items,
       coins,
     });
 
-    console.log("Success:", response.data);
     toast({
       title: "Items Successfully Bought!",
       description: "Your purchase was successful",
@@ -55,7 +54,7 @@ const Checkout: React.FC = () => {
   const setUser = useUserStore((state) => state.setUser);
 
   // Map of item IDs to their names and prices
-  const NamePriceMap: { [key: string]: [string, number] } = {
+  const namePriceMap: { [key: string]: [string, number] } = {
     coininvestori: ["Coin Investor I", 120],
     coininvestorii: ["Coin Investor II", 230],
     coininvestoriii: ["Coin Investor III", 350],
@@ -98,10 +97,10 @@ const Checkout: React.FC = () => {
       // Calculate total cost
       const total = newReceipt.reduce((acc, item) => {
         const key = Object.keys(item)[0];
-        if (!(key in NamePriceMap)) {
+        if (!(key in namePriceMap)) {
           window.location.href = "/shop";
         }
-        return acc + item[key] * NamePriceMap[key][1];
+        return acc + item[key] * namePriceMap[key][1];
       }, 0);
 
       // Check if user has enough coins
@@ -111,7 +110,7 @@ const Checkout: React.FC = () => {
       setYourItems(() => {
         return newReceipt.map((entry) => {
           const key = Object.keys(entry)[0];
-          const [name, price] = NamePriceMap[key];
+          const [name, price] = namePriceMap[key];
           return {
             name,
             price,
@@ -160,11 +159,11 @@ const Checkout: React.FC = () => {
               return (
                 <div key={index} className="flex justify-between w-full mb-2">
                   <span className="w-1/3 md:text-lg text-sm max-w-[150px] overflow-hidden">
-                    {NamePriceMap[key][0]}
+                    {namePriceMap[key][0]}
                   </span>
                   <span className="w-1/3 text-right">{[item[key]]}</span>
                   <span className="w-1/3 text-right">
-                    {NamePriceMap[key][1]}
+                    {namePriceMap[key][1]}
                   </span>
                 </div>
               );
@@ -176,7 +175,7 @@ const Checkout: React.FC = () => {
               <span className="w-1/6 text-right">
                 {receipt.reduce((acc, item) => {
                   const key = Object.keys(item)[0];
-                  return acc + item[key] * NamePriceMap[key][1];
+                  return acc + item[key] * namePriceMap[key][1];
                 }, 0)}
               </span>
             </div>

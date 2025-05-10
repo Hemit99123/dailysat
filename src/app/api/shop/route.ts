@@ -1,5 +1,5 @@
 import { ShopItem } from "@/types/shopitem";
-import { client } from "../../../lib/mongo";
+import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 import { User } from "@/types/user"; // assume you saved the User interface here
 import { auth } from "@/lib/auth";
@@ -12,7 +12,6 @@ import { format } from "date-fns";
  */
 export const POST = async (request: Request) => {
   const { items, coins } = await request.json();
-  console.log(coins);
   if (!Array.isArray(items)) {
     return Response.json({
       result: "Items must be an array",
@@ -20,20 +19,15 @@ export const POST = async (request: Request) => {
   }
 
   try {
-    console.log("Pinging server");
-
     await client.connect();
     const db: Db = client.db("DailySAT");
 
     const users = db.collection<User>("users");
     // Proceed with the rest of the logic
     const session = await auth();
-    console.log("get auth");
     const userEmail: string | null | undefined = session?.user?.email;
     // If email isn't found, throw an error
     if (!userEmail) {
-      console.log("Email not found");
-
       throw new Error("Email not found");
     }
     // Get totalCost
@@ -58,6 +52,7 @@ export const POST = async (request: Request) => {
         },
       }
     );
+
     let investors = items.filter((elem: ShopItem) =>
       elem.name.includes("Investor")
     );
@@ -80,6 +75,7 @@ export const POST = async (request: Request) => {
                   : 5,
           })
       );
+
       await users.updateOne(
         { email: userEmail },
         {
@@ -91,15 +87,13 @@ export const POST = async (request: Request) => {
         }
       );
     }
-    console.log("db updated");
+
     if (result.matchedCount === 0) {
-      console.log("unsuccessful");
-      console.log(result);
       return Response.json({
         result: "User not found",
       });
     }
-    console.log("Items bought");
+
     return Response.json({
       result: "Success - items bought",
     });
@@ -108,7 +102,6 @@ export const POST = async (request: Request) => {
     return Response.json({
       result: "DB Error",
     });
-    
   } finally {
     await client.close();
   }
