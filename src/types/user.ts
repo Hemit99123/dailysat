@@ -2,7 +2,7 @@
 
 import { StudyPlanProps } from "@/components/features/AI/StudyPlan";
 import { ShopItem } from "./shopitem";
-import { Investor } from "./investor";
+import { Investor } from "./shop/investor";
 
 export interface User {
     // MongoDB string 

@@ -32,7 +32,7 @@ const appendItems = async (items: ShopItem[], coins: number) => {
     toast({
       title: "Items Successfully Bought!",
       description: "Your purchase was successful",
-      className: "bg-[#4D68C3] border-none text-white font-satoshi",
+      className: "bg-[#4D68C3] border-none text-white  ",
     });
 
     // Redirect to dashboard after successful purchase
@@ -140,7 +140,7 @@ const Checkout: React.FC = () => {
   // Render checkout interface
   return (
     <>
-      <div className="flex flex-col items-center justify-center w-full font-satoshi h-[80vh]">
+      <div className="flex flex-col items-center justify-center w-full   h-[80vh]">
         <h1 className="text-3xl font-bold text-center">Checkout</h1>
         {/* Show receipt if user is loaded, otherwise show skeleton */}
         {user != null ? (
@@ -188,7 +188,7 @@ const Checkout: React.FC = () => {
                   <DrawerTrigger className="w-full font-bold py-2 rounded-lg bg-white hover:bg-[#4D68C3] shadow-lg duration-150 hover:text-white text-[#4D68C3]">
                     Buy Now
                   </DrawerTrigger>
-                  <DrawerContent className="font-satoshi">
+                  <DrawerContent className=" ">
                     <DrawerHeader>
                       <DrawerTitle>
                         Are you sure you want to buy these items?

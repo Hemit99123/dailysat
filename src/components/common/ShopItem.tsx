@@ -36,22 +36,22 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   const bannerMap: { [key: string]: DisplayBanner } = {
     diamondbanner: {
       style:
-        "bg-[#00d3f2] p-1 flex items-center justify-center font-bold text-white shadow-lg font-satoshi border-[4px] text-center border-[#a2f4fd] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
+        "bg-[#00d3f2] p-1 flex items-center justify-center font-bold text-white shadow-lg   border-[4px] text-center border-[#a2f4fd] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
       content: `Congratulations on your Diamond Banner`,
     },
     emeraldbanner: {
       style:
-        "bg-[#009966] p-1 flex items-center justify-center font-bold text-white shadow-lg font-satoshi border-[4px] text-center border-[#5ee9b5] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
+        "bg-[#009966] p-1 flex items-center justify-center font-bold text-white shadow-lg   border-[4px] text-center border-[#5ee9b5] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
       content: `Congratulations on your Emerald Banner`,
     },
     goldbanner: {
       style:
-        "bg-[#FFD700] p-1 flex items-center justify-center font-bold text-white shadow-lg font-satoshi border-[4px] text-center border-[#fff085] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
+        "bg-[#FFD700] p-1 flex items-center justify-center font-bold text-white shadow-lg   border-[4px] text-center border-[#fff085] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
       content: `Congratulations on your Gold Banner`,
     },
     bronzebanner: {
       style:
-        "bg-[#9E5E23] p-1 flex items-center justify-center font-bold text-white shadow-lg font-satoshi border-[4px] text-center border-[#E0AF7D] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
+        "bg-[#9E5E23] p-1 flex items-center justify-center font-bold text-white shadow-lg   border-[4px] text-center border-[#E0AF7D] w-[80px] h-[30px] absolute top-0 right-0 rounded-xl",
       content: `Congratulations on your Bronze Banner`,
     },
   };
@@ -59,7 +59,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   return (
     <>
       {/* Shop Item Container */}
-      <div className="flex flex-col relative z-10 font-satoshi items-center justify-center w-full h-full ">
+      <div className="flex flex-col relative z-10   items-center justify-center w-full h-full ">
         {/* Icon Display */}
         {name.includes("Icon") ? (
           <img
@@ -107,7 +107,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
               </div>
 
               {/* Quantity Display */}
-              <div className="w-1/3 flex justify-center font-satoshi items-center my-1 font-bold text-5xl">
+              <div className="w-1/3 flex justify-center   items-center my-1 font-bold text-5xl">
                 <span>{state[name.toLowerCase().replace(/\s/g, "")]}</span>
               </div>
 

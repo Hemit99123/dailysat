@@ -37,8 +37,8 @@ const Home = () => {
     const mostExpensiveIcon = icons?.reduce((max: ShopItem, item: ShopItem) =>
       item.price > max.price ? item : max
     );
-
-    setIcon(mostExpensiveIcon.name.toLowerCase().replace(/\s/g, ""));
+    console.log(mostExpensiveIcon.name.split(" ").join("-").toLowerCase());
+    setIcon(mostExpensiveIcon.name.split(" ").join("-").toLowerCase());
   };
 
   // Helper function to get and set user's banner
@@ -53,22 +53,22 @@ const Home = () => {
     const bannerMap: { [key: string]: DisplayBanner } = {
       diamondbanner: {
         style:
-          "bg-[#00d3f2] p-4 flex items-center justify-center font-bold text-white shadow-lg font-satoshi text-2xl border-[10px] text-center border-[#a2f4fd] h-[150px] w-full rounded-xl",
+          "bg-[#00d3f2] p-4 flex items-center justify-center font-bold text-white shadow-lg   text-2xl border-[10px] text-center border-[#a2f4fd] h-[150px] w-full rounded-xl",
         content: `Congratulations on your Diamond Banner`,
       },
       emeraldbanner: {
         style:
-          "bg-[#009966] p-4 flex items-center justify-center font-bold text-white shadow-lg font-satoshi text-2xl border-[10px] text-center border-[#5ee9b5] h-[150px] w-full rounded-xl",
+          "bg-[#009966] p-4 flex items-center justify-center font-bold text-white shadow-lg   text-2xl border-[10px] text-center border-[#5ee9b5] h-[150px] w-full rounded-xl",
         content: `Congratulations on your Emerald Banner`,
       },
       goldbanner: {
         style:
-          "bg-[#FFD700] p-4 flex items-center justify-center font-bold text-white shadow-lg font-satoshi text-2xl border-[10px] text-center border-[#fff085] h-[150px] w-full rounded-xl",
+          "bg-[#FFD700] p-4 flex items-center justify-center font-bold text-white shadow-lg   text-2xl border-[10px] text-center border-[#fff085] h-[150px] w-full rounded-xl",
         content: `Congratulations on your Gold Banner`,
       },
       bronzebanner: {
         style:
-          "bg-[#9E5E23] p-4 flex items-center justify-center font-bold text-white shadow-lg font-satoshi text-2xl border-[10px] text-center border-[#E0AF7D] h-[150px] w-full rounded-xl",
+          "bg-[#9E5E23] p-4 flex items-center justify-center font-bold text-white shadow-lg   text-2xl border-[10px] text-center border-[#E0AF7D] h-[150px] w-full rounded-xl",
         content: `Congratulations on your Bronze Banner`,
       },
     };

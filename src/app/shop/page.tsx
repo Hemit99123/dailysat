@@ -192,7 +192,7 @@ export default function Shop() {
   }, [setUser]);
   return (
     <>
-      <div className="px-4 font-satoshi">
+      <div className="px-4  ">
         <div className="fixed  bg-blue-700 rounded-3xl bottom-2 right-2 z-50">
           {user != null && coins.amnt != -1 ? (
             <div
@@ -216,7 +216,7 @@ export default function Shop() {
                     : user?.name}
                   !
                 </span>
-                <p className="text-xs font-light font-satoshi mt-4">
+                <p className="text-xs font-light   mt-4">
                   Welcome to the shop! Here you can buy items to help you study
                   and improve your SAT score.
                 </p>
@@ -236,7 +236,7 @@ export default function Shop() {
                 <h1 className="font-bold inline text-7xl text-white">
                   {user.itemsBought?.length | 0}
                 </h1>
-                <span className="font-satoshi ">
+                <span className="  ">
                   &nbsp;{user.itemsBought?.length === 1 ? "Item" : "Items"}{" "}
                   Bought
                 </span>
@@ -249,8 +249,7 @@ export default function Shop() {
                           toast({
                             title: "You have no items",
                             description: "We can't find any items you bought",
-                            className:
-                              "bg-[#4D68C3] border-none text-white font-satoshi",
+                            className: "bg-[#4D68C3] border-none text-white  ",
                           });
                           e.stopPropagation();
                           return;
@@ -264,7 +263,7 @@ export default function Shop() {
                     </div>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
-                    <AlertDialogHeader className="font-satoshi">
+                    <AlertDialogHeader className=" ">
                       <AlertDialogTitle className="text-center text-2xl">
                         Your Items
                       </AlertDialogTitle>
@@ -298,7 +297,7 @@ export default function Shop() {
                               <Tooltip key={index + 0.5}>
                                 <TooltipTrigger
                                   key={index + 0.6}
-                                  className="absolute bottom-0 left-0 font-satoshi rounded-full p-1"
+                                  className="absolute bottom-0 left-0   rounded-full p-1"
                                 >
                                   ?
                                 </TooltipTrigger>
@@ -324,7 +323,7 @@ export default function Shop() {
           )}
         </div>
         <div>
-          <div className="font-satoshi text-center mt-4">
+          <div className="  text-center mt-4">
             {coins.amnt != -1 && user != null ? (
               <h3 className="font-bold text-3xl">DailySAT Shop</h3>
             ) : (
@@ -347,7 +346,7 @@ export default function Shop() {
                   }}
                   className={`${
                     grid != "investor" ? "bg-[#4D68C3] text-white" : ""
-                  } font-satoshi rounded-full px-4 py-2`}
+                  }   rounded-full px-4 py-2`}
                 >
                   Investor
                 </Button>
@@ -363,7 +362,7 @@ export default function Shop() {
                   }}
                   className={`${
                     grid != "animal" ? "bg-[#4D68C3] text-white" : ""
-                  } font-satoshi rounded-full px-4 py-2`}
+                  }   rounded-full px-4 py-2`}
                 >
                   Animal Icon
                 </Button>
@@ -379,7 +378,7 @@ export default function Shop() {
                   }}
                   className={`${
                     grid != "banners" ? "bg-[#4D68C3] text-white" : ""
-                  } font-satoshi rounded-full px-4 py-2`}
+                  }   rounded-full px-4 py-2`}
                 >
                   Banners
                 </Button>
@@ -391,7 +390,7 @@ export default function Shop() {
           {coins.amnt != -1 && user != null ? (
             <>
               <div>
-                <p className="font-satoshi text-gray-500 text-center mt-2">
+                <p className="  text-gray-500 text-center mt-2">
                   {(Notes as { [key: string]: string })[grid as string]}
                 </p>
               </div>
@@ -416,10 +415,10 @@ export default function Shop() {
             </>
           ) : (
             <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
-              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
-              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
-              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
-              <Skeleton className="flex flex-col font-satoshi items-center justify-center w-full h-[200px]"></Skeleton>
+              <Skeleton className="flex flex-col   items-center justify-center w-full h-[200px]"></Skeleton>
+              <Skeleton className="flex flex-col   items-center justify-center w-full h-[200px]"></Skeleton>
+              <Skeleton className="flex flex-col   items-center justify-center w-full h-[200px]"></Skeleton>
+              <Skeleton className="flex flex-col   items-center justify-center w-full h-[200px]"></Skeleton>
             </div>
           )}
         </div>
@@ -435,8 +434,7 @@ export default function Shop() {
                     toast({
                       title: "No items selected",
                       description: "Please select at least one item to buy",
-                      className:
-                        "bg-[#4D68C3] border-none text-white font-satoshi",
+                      className: "bg-[#4D68C3] border-none text-white  ",
                     });
                     return;
                   }
@@ -447,13 +445,13 @@ export default function Shop() {
                       .join("&")}`
                   );
                 }}
-                className="font-bold mt-2 mb-16 flex flex-col font-satoshi hover:bg-[#6986e3] transition-all duration-300 bg-[#4D68C3] rounded-2xl items-center justify-center w-full h-[100px] text-3xl text-white"
+                className="font-bold mt-2 mb-16 flex flex-col   hover:bg-[#6986e3] transition-all duration-300 bg-[#4D68C3] rounded-2xl items-center justify-center w-full h-[100px] text-3xl text-white"
               >
                 Checkout
               </Button>
             </div>
           ) : (
-            <Skeleton className="mt-2 mb-16 flex flex-col font-satoshi bg-[#4D68C3] rounded-2xl items-center justify-center w-full h-[100px] "></Skeleton>
+            <Skeleton className="mt-2 mb-16 flex flex-col   bg-[#4D68C3] rounded-2xl items-center justify-center w-full h-[100px] "></Skeleton>
           )}
         </div>
       </div>
