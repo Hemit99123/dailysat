@@ -68,7 +68,7 @@ const Home = () => {
         {user != null ? (
           <h1 className="text-xl md:text-4xl font-bold text-gray-800">
             {greeting
-              ? `${greeting}, ${user?.name || "User"}`
+              ? `${greeting}!`
               : "Loading greeting..."}
           </h1>
         ) : (

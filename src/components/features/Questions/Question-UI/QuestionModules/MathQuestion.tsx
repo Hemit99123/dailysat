@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Answers } from "@/types/sat-platform/answer";
 import { useAnswerStore, useAnswerCorrectStore, useQuestionStore } from "@/store/questions";
 import { CalculatorIcon, BookmarkIcon } from "lucide-react";
@@ -11,10 +11,24 @@ import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions";
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 import Cookies from "js-cookie";
 import axios from "axios";
-// import Result from "../Results";
 
-const MathQuestion = ({ onAnswerSubmit }) => {
-  const answerComponent = useRef(null);
+interface OptionState {
+  text: string;
+  state: "n" | "c" | "i"; // n = normal, c = correct, i = incorrect
+}
+
+interface Options {
+  A: OptionState;
+  B: OptionState;
+  C: OptionState;
+  D: OptionState;
+}
+
+interface MathQuestionProps {
+  onAnswerSubmit: (answer: Answers) => void;
+}
+
+const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
   const setRandomQuestion = useQuestionStore((state) => state.setRandomQuestion);
   const selectedAnswer = useAnswerStore((state) => state.answer);
@@ -32,80 +46,67 @@ const MathQuestion = ({ onAnswerSubmit }) => {
   const [questionIndex, setQuestionIndex] = useState(parseInt(Cookies.get('questionIndex') || '0', 10));
   const [correctCount, setCorrectCount] = useState(parseInt(Cookies.get('correctCount') || '0', 10));
   const [streak, setStreak] = useState(parseInt(Cookies.get('streak') || '0', 10));
-  const [difficulty, setDifficulty] = useState('Standard');
-  const [options, setOptions] = useState({
+  const [difficulty, setDifficulty] = useState<string>('Standard');
+  const [options, setOptions] = useState<Options>({
     A: { text: "Option A", state: "n" },
     B: { text: "Option B", state: "n" },
     C: { text: "Option C", state: "n" },
     D: { text: "Option D", state: "n" }
   });
   
-  // States for custom math problems
-  const [currentProblem, setCurrentProblem] = useState(null);
-  
   // State for explanation display
   const [showExplanation, setShowExplanation] = useState(false);
   const [explanation, setExplanation] = useState("");
   const [userAnswered, setUserAnswered] = useState(false);
-  const [correctAnswer, setCorrectAnswer] = useState("");
+  const [correctAnswer, setCorrectAnswer] = useState<string>("");
   const [stimulus, setStimulus] = useState("");
   const [questionStem, setQuestionStem] = useState("");
   const [questionPrompt, setQuestionPrompt] = useState("");
 
   // API function to get a new question
-  const getNewQuestion = async () => {
+  const getNewQuestion = useCallback(async () => {
     try {
       setLoading(true);
       
-      // First request: Get the list of questions
       const questionListResponse = await axios.post(
         'https://qbank-api.collegeboard.org/msreportingquestionbank-prod/questionbank/digital/get-questions',
         JSON.stringify({
           "asmtEventId": 100,
           "test": 1,
-          // "domain": "INI,CAS,EOI,SEC"
           "domain": "H, P, Q, S"
         }),
         {
           headers: {
             'Content-Type': 'application/json',
-            // You may need to handle authentication/cookies here
           },
           maxBodyLength: Infinity
         }
       );
 
-      // Get the questions list
       const questionList = questionListResponse.data;
       
       if (questionList.length === 0) {
-        console.log("No questions available.");
         setLoading(false);
         return;
       }
       
-      // Get the question at current index
       const externalId = questionList[questionIndex].external_id;
       setDifficulty(questionList[questionIndex].difficulty || "Standard");
       
-      // Second request: Get the full question details using external_id
       const questionDetailResponse = await axios.post(
         'https://qbank-api.collegeboard.org/msreportingquestionbank-prod/questionbank/digital/get-question',
         JSON.stringify({ "external_id": externalId }),
         {
           headers: {
             'Content-Type': 'application/json',
-            // You may need to handle authentication/cookies here
           },
           maxBodyLength: Infinity
         }
       );
 
-      // Populate UI with question details
       const questionData = questionDetailResponse.data;
       setStimulus(questionData.stimulus || "");
       
-      // Split the question into main content and prompt
       const fullQuestion = questionData.stem || "";
       const splitPoint = fullQuestion.lastIndexOf("<br>");
       
@@ -113,13 +114,11 @@ const MathQuestion = ({ onAnswerSubmit }) => {
         setQuestionStem(fullQuestion.substring(0, splitPoint));
         setQuestionPrompt(fullQuestion.substring(splitPoint + 4));
       } else {
-        // If no suitable split point, use the whole question as the stem
         setQuestionStem(fullQuestion);
         setQuestionPrompt("");
       }
       
-      // Create new options with proper formatting
-      const newOptions = {
+      const newOptions: Options = {
         A: { text: questionData.answerOptions[0].content, state: "n" },
         B: { text: questionData.answerOptions[1].content, state: "n" },
         C: { text: questionData.answerOptions[2].content, state: "n" },
@@ -127,12 +126,11 @@ const MathQuestion = ({ onAnswerSubmit }) => {
       };
       
       setOptions(newOptions);
-      setCorrectAnswer(questionData.correct_answer[0]); // Store the correct answer
+      setCorrectAnswer(questionData.correct_answer[0]);
       setExplanation(questionData.rationale || "Explanation not available");
       
-      // Format the question for the app's state management
       const formattedQuestion = {
-        id: externalId,
+        _id: externalId,
         question: questionData.stem || "",
         stimulus: questionData.stimulus || "",
         options: {
@@ -149,26 +147,21 @@ const MathQuestion = ({ onAnswerSubmit }) => {
       setLoading(false);
       
     } catch (error) {
-      console.error("Error fetching question:", error);
       setLoading(false);
     }
-  };
+  }, [questionIndex, setRandomQuestion]);
 
-  // Load API questions when switching to API mode or changing question index
   useEffect(() => {
     if (useApiProblems) {
-      // Reset UI states
       setShowExplanation(false);
       setUserAnswered(false);
       setSelectedAnswer(null);
       setMarkedForReview(false);
       
-      // Get a new question from the API
       getNewQuestion();
     }
-  }, [questionIndex, useApiProblems]);
+  }, [questionIndex, useApiProblems, getNewQuestion, setSelectedAnswer]);
 
-  // Reset selected answer when changing questions
   useEffect(() => {
     if (isAnswerCorrect) {
       setSelectedAnswer(null);
@@ -183,18 +176,14 @@ const MathQuestion = ({ onAnswerSubmit }) => {
     setUserAnswered(true);
     
     if (useApiProblems) {
-      // Mark the selected answer
       const newOptions = {...options};
       
-      // Check if the selected answer is correct
       const isCorrect = selectedAnswer === correctAnswer;
       
-      // Mark selected answer as correct or incorrect
       newOptions[selectedAnswer].state = isCorrect ? "c" : "i";
       
-      // If incorrect, mark the correct answer
       if (!isCorrect) {
-        newOptions[correctAnswer].state = "c";
+        newOptions[correctAnswer as keyof Options].state = "c";
       }
       
       setOptions(newOptions);
@@ -212,37 +201,12 @@ const MathQuestion = ({ onAnswerSubmit }) => {
         Cookies.set('streak', '0');
       }
       
-      // Set answer correct state for the app
-      setIsAnswerCorrect(isCorrect ? true : false);
-      
-      // Show explanation - only after submitting
-      setShowExplanation(true);
-    } else if (useCustomMathProblems && currentProblem) {
-      // Handle custom math problems
-      const newOptions = {...options};
-      
-      // Check if the selected answer is correct
-      const isCorrect = selectedAnswer === correctAnswer;
-      
-      // Mark selected answer as correct or incorrect
-      newOptions[selectedAnswer].state = isCorrect ? "c" : "i";
-      
-      // If incorrect, mark the correct answer
-      if (!isCorrect) {
-        newOptions[correctAnswer].state = "c";
-      }
-      
-      setOptions(newOptions);
-      
-      // Set answer correct state for the app
       setIsAnswerCorrect(isCorrect);
       
-      // Show explanation - only after submitting
       setShowExplanation(true);
     } else {
-      // Use original application logic
       onAnswerSubmit(selectedAnswer);
-      setShowExplanation(true); // Show explanation for original app questions too
+      setShowExplanation(true); 
     }
   };
 
@@ -255,23 +219,19 @@ const MathQuestion = ({ onAnswerSubmit }) => {
     setMarkedForReview(false);
     
     if (useApiProblems) {
-      // Update question index and cookie
       const newIndex = questionIndex + 1;
       setQuestionIndex(newIndex);
       Cookies.set('questionIndex', newIndex.toString());
       
-      // Reset options state
       const resetOptions = {...options};
-      Object.keys(resetOptions).forEach(key => {
-        resetOptions[key].state = "n";
+      Object.keys(resetOptions).forEach((key) => {
+        resetOptions[key as keyof Options].state = "n";
       });
       setOptions(resetOptions);
     } else {
-      // Handle other question types (custom or app questions)
-      // Reset options state
       const resetOptions = {...options};
-      Object.keys(resetOptions).forEach(key => {
-        resetOptions[key].state = "n";
+      Object.keys(resetOptions).forEach((key) => {
+        resetOptions[key as keyof Options].state = "n";
       });
       setOptions(resetOptions);
     }
@@ -326,9 +286,7 @@ const MathQuestion = ({ onAnswerSubmit }) => {
         </button>
       </div>
 
-      {/* Main content area with two-column layout */}
       <div className="w-full flex flex-row">
-        {/* Left column - question content */}
         <div className="w-3/5 p-6 border-r border-gray-300 min-h-screen">
           {useApiProblems ? (
             <>
@@ -356,8 +314,8 @@ const MathQuestion = ({ onAnswerSubmit }) => {
               {/* Question stem */}
               <div 
                 className="mb-5 text-lg question" 
-                dangerouslySetInnerHTML={{__html: questionStem || ""}}
-              />
+                  dangerouslySetInnerHTML={{__html: questionStem || ""}}
+                />
               
               {/* Explanation appears below the question after submission */}
               {showExplanation && (
@@ -385,9 +343,7 @@ const MathQuestion = ({ onAnswerSubmit }) => {
           )}
         </div>
         
-        {/* Right column - question prompt and answers */}
         <div className="w-2/5 p-6">
-          {/* Question counter and Mark for Review button */}
           <div className={`mb-4 p-3 rounded-md flex justify-between items-center ${markedForReview ? 'bg-yellow-100' : 'bg-gray-100'}`}>
             <span className="font-bold">Question #{questionIndex + 1}</span>
             <span className="font-medium">Streak: {streak}</span>
@@ -429,7 +385,6 @@ const MathQuestion = ({ onAnswerSubmit }) => {
                 </button>
               ))
             ) : (
-              // Original app answers
               <MultipleChoice 
                 crossOffMode={crossOffMode}
                 selectedAnswer={selectedAnswer}

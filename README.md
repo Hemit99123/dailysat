@@ -1,7 +1,3 @@
-<!-- markdownlint-disable first-line-h1 -->
-<!-- markdownlint-disable html -->
-<!-- markdownlint-disable no-duplicate-header -->
-
 <div align="center">
   <img src="/public/logo/dailysat.png" width="20%" alt="DailySAT" />
 </div>
@@ -17,7 +13,7 @@
   <br>
 </div>
 
-📚 To access the API documentation, [click here](https://www.dailysat.org/api-docs)
+📚 To access the API documentation, [click here!](https://www.dailysat.org/api-docs)
 
 ## 🧑‍🤝‍🧑 For open-source contributions:
 Our mission is to build an app that is free and accessible! This means we love input from the DailySAT community :) If you have any suggestions or feedback on our webapp, you can issue a "ticket" for our team to review. Kindly create an Issue within the issues tabs provided by the Github web app.
@@ -35,12 +31,12 @@ Our mission is to build an app that is free and accessible! This means we love i
 - fix: (for a fix in wrongful behaviour and bugs)
 - chore: (for mudane tasks such as updating documentation + refactors of code)
 
-## 🔐 How our authentication works ##
+## 🔐 How our authentication works
 
 Unlike the admin platform, the regular DailySAT platform's auth is handled by the AuthJS lib. It features simple Google SSO and its contents are saved onto a MongoDB collection called "users." This is then used to populate the dashboard with user information. We also employed a rate limiter to regulate the amount of DB calls. This way there is less burden on our MongoDB server. During the times when the API is restircted, we use a caching layer to populate the information
 
 ## 📊 How to create a mock database
-Unfortunately, we don't let community developers get access to our official MongoDB database. However, you can easily create a mock MongoDB server on your local machine. First, install Docker and MongoDB Compass. Then, run "docker pull mongo" in your terminal (the directory doesn't matter). Next, find out your mongo url, which would likely be "mongodb://localhost:27017/". After, navigate to Google Cloud and make a project. Once you have done that, go to MongoDB Compass and make a database called SATDaily. Finally, once you have ran the docker image (from "docker pull mongo") and connected to it via Compass, run "redis-server" in the terminal (pathname is irrelevant) to start Redis (install it if not already). You should be all good to go after this.
+Unfortunately, we don't let community developers get access to our official MongoDB database. However, you can easily create a mock MongoDB server on your local machine. First, install Docker and MongoDB Compass. Then, run "docker pull mongo" in your terminal (the directory doesn't matter). Next, find out your mongo url, which would likely be "mongodb://localhost:27017/". After, navigate to Google Cloud and make a project. Once you have done that, go to MongoDB Compass and make a database called SATDaily. Finally, once you have ran the docker image (from "docker pull mongo") and connected to it via Compass, run "redis-server" in the terminal (pathname is irrelevant) to start Redis (install it if not already). 
 
 ## 💻 Technology Stack:
 - **NextJS** (frontend and backend, good for SEO)
@@ -49,3 +45,4 @@ Unfortunately, we don't let community developers get access to our official Mong
 - **Upstash Redis** (storage solution for sessions, rate limiting and caching layer)
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
+- **Groq** (used to power the AI study planner)
