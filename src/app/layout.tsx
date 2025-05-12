@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   description:
     "DailySAT is an online SAT question bank that students can use to practice for the SAT.",
 };
-import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
@@ -21,7 +20,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <Root>{children}</Root>
         </GoogleOAuthProvider>
         <Analytics />
-        <Toaster />
       </body>
     </html>
   );

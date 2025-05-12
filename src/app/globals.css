@@ -91,10 +91,3 @@
   white-space: pre-wrap;
 }
 
-@font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi_Complete/Fonts/OTF/Satoshi-Medium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-

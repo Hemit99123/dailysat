@@ -44,7 +44,7 @@ const appendItems = async (items: ShopItem[], coins: number) => {
   }
 };
 
-const Checkout: React.FC = () => {
+const Checkout = () => {
   // State management
   const [receipt, setReceipt] = React.useState<{ [key: string]: number }[]>([]);
   const [yourItems, setYourItems] = useState<ShopItem[]>([]);
@@ -85,8 +85,20 @@ const Checkout: React.FC = () => {
     }
 
     // Process receipt from URL parameters
-    setReceipt(() => {
-      // Parse URL parameters into receipt items
+  };
+  useEffect(() => {
+    const fetchUserAndReceipt = async () => {
+      const params = window.location.href.split("?")[1];
+      if (!params) {
+        alert("Please come back once you go to the shop");
+        redirect("/shop");
+      }
+
+      // Get data
+      const response = await axios.get("/api/auth/get-user");
+      setUser?.(response?.data?.user);
+
+      // Get the newReceipt from the URL Search parms
       const newReceipt = params.split("&").map((item) => {
         const [key, value] = item.split("=");
         return {
@@ -94,7 +106,7 @@ const Checkout: React.FC = () => {
         };
       });
 
-      // Calculate total cost
+      // Find the total by doing the appropriate calculations
       const total = newReceipt.reduce((acc, item) => {
         const key = Object.keys(item)[0];
         if (!(key in namePriceMap)) {
@@ -103,35 +115,37 @@ const Checkout: React.FC = () => {
         return acc + item[key] * namePriceMap[key][1];
       }, 0);
 
-      // Check if user has enough coins
       const num_coins = response?.data?.user?.currency;
-
-      // Create shop items array from receipt
-      setYourItems(() => {
-        return newReceipt.map((entry) => {
-          const key = Object.keys(entry)[0];
-          const [name, price] = namePriceMap[key];
-          return {
-            name,
-            price,
-            purpose: "Purchased item",
-            amnt: entry[key],
-          };
-        });
-      });
-
-      // Validate user has enough currency
+      // Check if user has enough coins
       if (total > num_coins) {
-        alert(
-          "You do not have enough currency to complete this transaction. You will be redirected to the shop."
-        );
+        toast({
+          title:
+            "You do not have enough currency to complete this transaction.",
+          description: "You will be redirected to the shop.",
+          className: "bg-[#4D68C3] border-none text-white",
+        });
         redirect("/shop");
       }
-      return newReceipt;
-    });
-  };
 
-  // Fetch user data on component mount
+      setReceipt(newReceipt);
+
+      const items = newReceipt.map((entry) => {
+        const key = Object.keys(entry)[0];
+        const [name, price] = namePriceMap[key];
+        return {
+          name,
+          price,
+          purpose: "Purchased item",
+          amnt: entry[key],
+        };
+      });
+
+      setYourItems(items);
+    };
+
+    fetchUserAndReceipt();
+  }, []);
+
   useEffect(() => {
     getUser();
   }, []);

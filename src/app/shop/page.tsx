@@ -283,7 +283,7 @@ export default function Shop() {
                               key={index + 0.2}
                               className="text-center w-1/6"
                             >
-                              <b>Amount:</b> {item.amnt}
+                              <b>Amnt:</b> {item.amnt}
                             </span>
                             <br />
                             <span

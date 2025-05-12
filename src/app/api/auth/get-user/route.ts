@@ -1,7 +1,5 @@
 import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
-// import { handleGetUserCached } from "@/lib/performance/cache";
-// import { handleRatelimitSuccess } from "@/lib/performance/rate-limiter";
 import { NextResponse } from "next/server";
 
 /**
@@ -86,16 +84,6 @@ import { NextResponse } from "next/server";
 
 export const GET = async () => {
   const session = await auth();
-  // Removing modular caching logic for now
-  //     const success = await handleRatelimitSuccess(session);
-
-  //     if (!success) {
-  //         console.log("Rate limit exceeded. Returning cached user data.");
-  //         const user = await handleGetUserCached()
-  //         console.log(user)
-  //         return NextResponse.json({user, cached: true})
-  //     }
-  // ;
 
   try {
     const user = await handleGetUser(session);

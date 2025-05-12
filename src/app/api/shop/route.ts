@@ -56,6 +56,7 @@ export const POST = async (request: Request) => {
     let investors = items.filter((elem: ShopItem) =>
       elem.name.includes("Investor")
     );
+
     // If there are investor items, log them intok the DB
     if (investors) {
       const result = format(new Date(), "MM/dd/yyyy");
