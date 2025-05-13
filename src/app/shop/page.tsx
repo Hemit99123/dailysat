@@ -2,14 +2,9 @@
 
 // Core UI Components
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/common/Button";
+
 import ShopItemDisplay from "@/components/common/ShopItem";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -20,19 +15,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
 // State Management and Utilities
 import { useUserStore } from "@/store/user";
-import { useToast } from "@/hooks/useToast";
 import axios from "axios";
 import { Store } from "lucide-react";
 import { redirect } from "next/navigation";
 import React, { useEffect, useReducer, useState } from "react";
 import { ShopItem } from "@/types/shopitem";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Shop() {
   // Hooks and Global State
-  const { toast } = useToast();
+
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
 
@@ -192,6 +186,8 @@ export default function Shop() {
   }, [setUser]);
   return (
     <>
+      <ToastContainer></ToastContainer>
+
       <div className="px-4  ">
         <div className="fixed  bg-blue-700 rounded-3xl bottom-2 right-2 z-50">
           {user != null && coins.amnt != -1 ? (
@@ -240,20 +236,21 @@ export default function Shop() {
                   &nbsp;{user.itemsBought?.length === 1 ? "Item" : "Items"}{" "}
                   Bought
                 </span>
-
                 <AlertDialog>
                   <AlertDialogTrigger>
                     <div
                       onClick={(e) => {
-                        if (user.itemsBought?.length === 0) {
-                          toast({
-                            title: "You have no items",
-                            description: "We can't find any items you bought",
-                            className: "bg-[#4D68C3] border-none text-white  ",
-                          });
+                        if (
+                          !user.itemsBought ||
+                          user.itemsBought?.length === 0
+                        ) {
                           e.stopPropagation();
+                          toast.error("You don't have any items to display", {
+                            position: "bottom-right",
+                            pauseOnHover: false,
+                          });
+
                           return;
-                        } else {
                         }
                       }}
                       className="absolute bg-white p-2 rounded-full bottom-1 left-1"
@@ -292,20 +289,6 @@ export default function Shop() {
                             >
                               <b>Name:</b> {item.name}
                             </span>
-                            <TooltipProvider key={index + 0.4}>
-                              <Tooltip key={index + 0.5}>
-                                <TooltipTrigger
-                                  key={index + 0.6}
-                                  className="absolute bottom-0 left-0   rounded-full p-1"
-                                >
-                                  ?
-                                </TooltipTrigger>
-                                <TooltipContent key={index + 0.7}>
-                                  {item.purpose ||
-                                    "Item does not have a purpose"}
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
                           </span>
                         ))}
                       </AlertDialogDescription>
@@ -430,10 +413,10 @@ export default function Shop() {
                     Object.keys(state).filter((key) => state[key] !== 0)
                       .length === 0
                   ) {
-                    toast({
-                      title: "No items selected",
-                      description: "Please select at least one item to buy",
-                      className: "bg-[#4D68C3] border-none text-white  ",
+                    // toast("You don't have any items");
+                    toast.error("Please buy items before you continue.", {
+                      position: "bottom-right",
+                      pauseOnHover: false,
                     });
                     return;
                   }

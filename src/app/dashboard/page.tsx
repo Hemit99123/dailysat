@@ -30,6 +30,7 @@ const Home = () => {
 
   // Helper function to get user's highest value icon
   const getIcon = (userData: User) => {
+    if (!userData.itemsBought) return;
     const icons = userData.itemsBought.filter((item: ShopItem) =>
       item.name.includes("Icon")
     );
@@ -42,6 +43,8 @@ const Home = () => {
 
   // Helper function to get and set user's banner
   const getBanner = (userData: User) => {
+    if (!userData.itemsBought) return;
+
     const banners = userData.itemsBought.filter((item: ShopItem) =>
       item.name.includes("Banner")
     );

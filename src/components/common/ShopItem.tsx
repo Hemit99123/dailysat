@@ -1,10 +1,10 @@
 // UI Components and Icons
 import { Minus, Plus } from "lucide-react";
-import { Button } from "../ui/button";
 
 // Types
 import { ShopItem } from "@/types/shopitem";
 import { DisplayBanner } from "@/types/dashboard/banner";
+import Image from "next/image";
 
 // Component Props Interface
 interface ComponentShopItem {
@@ -62,7 +62,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
       <div className="flex flex-col relative z-10   items-center justify-center w-full h-full ">
         {/* Icon Display */}
         {name.includes("Icon") ? (
-          <img
+          <Image
             src={`/icons/rewards/${name.toLowerCase().split(" ").join("-")}.png`}
             alt="Icon"
             width={50}
@@ -95,15 +95,28 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
             <div className="w-full lg:w-1/2 mt-2 flex flex-row items-center justify-start lg:justify-end">
               {/* Decrement Button */}
               <div className="w-1/3 flex justify-center ">
-                <Button
+                <button
                   onClick={() => {
+                    if (state[name.toLowerCase().replace(/\s/g, "")] === 0)
+                      return;
                     dispatch?.({ type: "decrement", payload: name });
                   }}
                   disabled={state[name.toLowerCase().replace(/\s/g, "")] === 0}
-                  className="hover:scale-125 transition-transform duration-300 hover:bg-transparent hover:text-white shadow-lg flex justify-center items-center text-lg font-semibold bg-transparent rounded-full w-[35px] h-[35px] border-black border"
+                  className={
+                    state[name.toLowerCase().replace(/\s/g, "")] != 0
+                      ? "hover:scale-125  transition-transform duration-300 hover:bg-transparent hover:text-white shadow-lg flex justify-center items-center text-lg font-semibold bg-transparent rounded-full w-[35px] h-[35px] border-black border"
+                      : "hover:bg-transparent hover:text-white shadow-lg flex justify-center items-center text-lg font-semibold bg-transparent rounded-full w-[35px] h-[35px] border-gray-400 border"
+                  }
                 >
-                  <Minus color="black" />
-                </Button>
+                  <Minus
+                    color={
+                      state[name.toLowerCase().replace(/\s/g, "")] != 0
+                        ? "black"
+                        : "gray"
+                    }
+                    size={18}
+                  />
+                </button>
               </div>
 
               {/* Quantity Display */}
@@ -113,11 +126,26 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
 
               {/* Increment Button */}
               <div className="w-1/3 h-full flex justify-center items-center">
-                <Button
+                <button
                   onClick={() => {
+                    if (
+                      price > coins.amnt ||
+                      (!name
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes("investor") &&
+                        userItemsBought &&
+                        userItemsBought.some((item) => item.name === name)) ||
+                      (!name
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes("investor") &&
+                        state[name.toLowerCase().replace(/\s/g, "")] === 1)
+                    )
+                      return;
                     dispatch?.({ type: "increment", payload: name });
                   }}
-                  disabled={
+                  className={
                     price > coins.amnt ||
                     (!name
                       .toLowerCase()
@@ -130,11 +158,30 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                       .replace(/\s/g, "")
                       .includes("investor") &&
                       state[name.toLowerCase().replace(/\s/g, "")] === 1)
+                      ? "hover:bg-transparent hover:text-white shadow-lg flex justify-center items-center text-lg font-semibold bg-transparent rounded-full w-[35px] h-[35px] border-gray-400 border"
+                      : "hover:scale-125 transition-transform duration-300 hover:bg-transparent hover:text-white shadow-lg flex justify-center items-center text-lg font-semibold bg-transparent rounded-full w-[35px] h-[35px] border-black border"
                   }
-                  className="hover:scale-125 transition-transform duration-300 hover:bg-transparent hover:text-white shadow-lg flex justify-center items-center text-lg font-semibold bg-transparent rounded-full w-[35px] h-[35px] border-black border"
                 >
-                  <Plus color="black" />
-                </Button>
+                  <Plus
+                    color={
+                      price > coins.amnt ||
+                      (!name
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes("investor") &&
+                        userItemsBought &&
+                        userItemsBought.some((item) => item.name === name)) ||
+                      (!name
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .includes("investor") &&
+                        state[name.toLowerCase().replace(/\s/g, "")] === 1)
+                        ? "gray"
+                        : "black"
+                    }
+                    size={18}
+                  />
+                </button>
               </div>
             </div>
           </div>
