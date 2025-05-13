@@ -1,40 +1,40 @@
 import { useEffect, useState } from "react";
-import { handleSignOut } from "../../lib/auth/authAction";
+import { handleSignOut } from "@/lib/auth/authAction";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 
-  
 const AuthButton = () => {
-  const [status, setStatus] = useState<boolean | null>(null)
+  const [status, setStatus] = useState<boolean | null>(null);
 
   useEffect(() => {
     const handleGetAuthStatus = async () => {
-      const status = await determineAuthStatus()
-      setStatus(status)
-    }
+      const status = await determineAuthStatus();
+      setStatus(status);
+    };
 
     handleGetAuthStatus();
-  }, [])
-
+  }, []);
 
   const handleToggleStatus = () => {
-    setStatus((prevStatus) => !prevStatus)
-  }
+    setStatus((prevStatus) => !prevStatus);
+  };
 
-
-    return (
-      <>
+  return (
+    <>
       {status && (
         <div>
-            <button
-              onClick={() => { handleSignOut(); handleToggleStatus(); }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-              Sign out
-            </button>
+          <button
+            onClick={() => {
+              handleSignOut();
+              handleToggleStatus();
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Sign out
+          </button>
         </div>
       )}
-      </>
-    )
-}
+    </>
+  );
+};
 
-export default AuthButton
+export default AuthButton;

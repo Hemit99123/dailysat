@@ -133,7 +133,8 @@ export const GET = async (request: Request) => {
             _id: existingUser?._id as unknown as string,
             correctAnswered: existingUser?.correctAnswered,
             wrongAnswered: existingUser?.wrongAnswered,
-            isReferred: true
+            isReferred: true,
+            itemsBought: []
         };
 
         const cache = await cacheClient.get(userEmail || "")
