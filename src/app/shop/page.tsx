@@ -178,7 +178,7 @@ export default function Shop() {
         setUser?.(response?.data?.user);
         setCoins({ amnt: response.data.user?.currency });
       } catch (error) {
-        console.error("Error fetching user:", error);
+        return `Error fetching user: ${(error as Error).message}`;
       }
     };
 
@@ -411,7 +411,6 @@ export default function Shop() {
                     Object.keys(state).filter((key) => state[key] !== 0)
                       .length === 0
                   ) {
-                    // toast("You don't have any items");
                     toast.error("Please buy items before you continue.", {
                       position: "bottom-right",
                       pauseOnHover: false,

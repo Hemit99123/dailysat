@@ -32,13 +32,14 @@ const appendItems = async (items: ShopItem[], coins: number) => {
       pauseOnHover: false,
       autoClose: 1000,
     });
-    // toast("Items were successfully purchased!");
     setTimeout(() => {
       redirect("/dashboard");
     }, 1000);
   } catch (error) {
-    console.error("Error appending items:", (error as Error).message);
-    return { code: 500, message: "Failed to append items" };
+    return {
+      code: 500,
+      message: `Failed to append items, ${(error as Error).message}`,
+    };
   }
 };
 

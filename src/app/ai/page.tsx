@@ -5,6 +5,7 @@ import { useState } from "react";
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan";
 import { StudyPlan } from "@/components/features/AI/StudyPlan";
 import { Button } from "@/components/common/Button";
+import Error from "next/error";
 
 interface Activity {
   topic: string;
@@ -83,7 +84,9 @@ const AI = () => {
             setStudyPlan(plan);
           }
         } catch (err) {
+          // You need to use the variable, and the only wait to do so is to use console.error
           console.error("Parsing error:", err);
+
           setStudyPlan(plan);
         }
       } else {
@@ -92,8 +95,10 @@ const AI = () => {
 
       setStep(2);
     } catch (error) {
-      console.error("Error generating study plan:", error);
-      setStudyPlan({ error: "Failed to generate plan", isError: true });
+      setStudyPlan({
+        error: `Failed to generate plan. Error message: ${error as Error}`,
+        isError: true,
+      });
       setStep(2);
     } finally {
       setIsLoading(false);
