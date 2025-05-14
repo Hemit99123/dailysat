@@ -59,7 +59,7 @@ const AI = () => {
             setStudyPlan(plan);
           }
         } catch (err) {
-          // You need to use the variable, and the only wait to do so is to use console.error
+          // You need to use the variable, and the only way to do so is to use console.error
           console.error("Parsing error:", err);
 
           setStudyPlan(plan);
