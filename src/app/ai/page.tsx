@@ -6,35 +6,10 @@ import { generateStudyPlan } from "@/lib/ai/generateStudyPlan";
 import { StudyPlan } from "@/components/features/AI/StudyPlan";
 import { Button } from "@/components/common/Button";
 import Error from "next/error";
-
-interface Activity {
-  topic: string;
-  description: string;
-  duration: number;
-  type: "review" | "practice" | "lecture" | string;
-}
-
-interface StudyDay {
-  date?: string;
-  activities: Activity[];
-}
-
-interface ValidPlan {
-  isDebug?: false;
-  isError?: false;
-  days: StudyDay[];
-}
-
-interface DebugPlan {
-  isDebug: true;
-  rawResponse: string;
-}
-
-interface ErrorPlan {
-  isError: true;
-  error: string;
-  rawResponse?: string;
-}
+import { ValidPlan } from "@/types/validPlan";
+import { DebugPlan } from "@/types/debugPlan";
+import { ErrorPlan } from "@/types/errorPlan";
+import { StudyDay } from "@/types/studyday";
 
 type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan;
 

@@ -307,14 +307,14 @@ export default function Shop() {
             {coins.amnt != -1 && user != null ? (
               <h3 className="font-bold text-3xl">DailySAT Shop</h3>
             ) : (
-              <Skeleton className="h-[40px] bg-black/80 rounded-3xl w-[200px]"></Skeleton>
+              <Skeleton className="h-[40px] mx-auto bg-black/80 rounded-3xl w-[200px]"></Skeleton>
             )}
             {coins.amnt != -1 && user != null ? (
               <p className="font-thin">
                 Browse & see what&apos;s interesting to you!{" "}
               </p>
             ) : (
-              <Skeleton className="h-[30px] bg-black/60 rounded-3xl mt-2 w-[300px]"></Skeleton>
+              <Skeleton className="h-[30px] mx-auto bg-black/60 rounded-3xl mt-2 w-[300px]"></Skeleton>
             )}
           </div>
           <div className="md:w-[600px] w-[350px] mx-auto h-[80px] flex items-center">

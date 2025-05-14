@@ -1,6 +1,5 @@
 "use client";
 
-// Import necessary dependencies and components
 import { Button } from "@/components/common/Button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";

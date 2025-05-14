@@ -91,7 +91,6 @@ const AlertDialogContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   );
 };
 
-// Header section
 const AlertDialogHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -123,7 +122,10 @@ const AlertDialogFooter = React.forwardRef<
 ));
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
-// Title component
+// This component defines a reusable AlertDialogTitle using React.forwardRef.
+// It forwards a ref to an <h2> element and uses className which the user defines.
+// The component allows styling w/ Tailwind CSS and supports external ref forwarding,
+// making it usable in modals or dialog headers where accessibility and focus control matter.
 const AlertDialogTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
