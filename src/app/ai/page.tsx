@@ -5,6 +5,7 @@ import { useState } from "react"
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
 import { StudyPlan } from "@/components/features/AI/StudyPlan"
 
+// ADD THIS INTO TYPES FILE
 interface Activity {
   topic: string
   description: string
