@@ -33,7 +33,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100">
-      {" "}
       {/* Adjusted padding-top to fit navbar */}
       <div className="w-full">
         <NavBar />
