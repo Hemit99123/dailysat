@@ -19,8 +19,6 @@ const Sidebar: React.FC<SideBarProps> = ({ svg, title, topics, handleTopicClick}
   const selectedTopic = useTopicStore((state) => state.selectedTopic)
   const score = useScoreStore((state) => state.score);
   const streak = useAnswerCounterStore((state) => state.count)
-
-
   
   return (
     <div className="w-full md:w-96 p-5 md:p-10 flex-shrink-0">
