@@ -1,4 +1,4 @@
-import { StudyDay } from "./studyday";
+import { StudyDay } from "./studyDay";
 
 export interface ValidPlan {
   isDebug?: false;
