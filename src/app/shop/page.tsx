@@ -22,7 +22,7 @@ import { Store } from "lucide-react";
 import { redirect } from "next/navigation";
 import React, { useEffect, useReducer, useState } from "react";
 import { ShopItem } from "@/types/shopitem";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function Shop() {
   // Hooks and Global State
@@ -186,8 +186,6 @@ export default function Shop() {
   }, [setUser]);
   return (
     <>
-      <ToastContainer></ToastContainer>
-
       <div className="px-4  ">
         <div className="fixed  bg-blue-700 rounded-3xl bottom-2 right-2 z-50">
           {user != null && coins.amnt != -1 ? (

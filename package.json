@@ -52,7 +52,7 @@
     "react-katex": "^3.0.1",
     "react-latex-next": "^3.0.0",
     "react-resizable": "^3.0.5",
-    "react-toastify": "^10.0.6",
+    "react-toastify": "^11.0.5",
     "redis": "^4.7.0",
     "swagger-ui-react": "^5.21.0",
     "tailwind-merge": "^3.0.2",

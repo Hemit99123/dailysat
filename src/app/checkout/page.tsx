@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {
   Drawer,
   DrawerClose,
@@ -151,7 +151,6 @@ const Checkout = () => {
   // Render checkout interface
   return (
     <>
-      <ToastContainer></ToastContainer>
       <div className="flex flex-col items-center justify-center w-full   h-[80vh]">
         <h1 className="text-3xl font-bold text-center">Checkout</h1>
         {/* Show receipt if user is loaded, otherwise show skeleton */}
