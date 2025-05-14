@@ -9,7 +9,7 @@ import Error from "next/error";
 import { ValidPlan } from "@/types/validPlan";
 import { DebugPlan } from "@/types/debugPlan";
 import { ErrorPlan } from "@/types/errorPlan";
-import { StudyDay } from "@/types/studyday";
+import { StudyDay } from "@/types/studyDay";
 
 type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan;
 
