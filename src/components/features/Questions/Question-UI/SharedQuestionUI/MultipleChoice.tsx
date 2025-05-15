@@ -12,7 +12,7 @@ interface MultipleChoiceProps {
   correctAnswer: number | undefined;
 }
 
-const MultipleChoice: React.FC<MultipleChoiceProps> = ({ crossOffMode, selectedAnswer, setSelectedAnswer, disabled, correctAnswer }) => {
+const MultipleChoice: React.FC<MultipleChoiceProps> = ({ crossOffMode, selectedAnswer, setSelectedAnswer }) => {
     
     const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers>>(new Set());
     const randomQuestion = useQuestionStore((state) => state.randomQuestion);

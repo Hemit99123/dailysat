@@ -44,7 +44,11 @@ const ReadingQuestion: React.FC<ReadingQuestionProps> = ({
       const range = selection.getRangeAt(0);
       const selectedText = range.toString().trim();
       if (selectedText) {
-        mode === "highlight" ? highlightRange(range) : clearRange(range);
+        if (mode === "highlight") {
+          highlightRange(range);
+        } else {
+          clearRange(range);
+        }        
         selection.removeAllRanges();
       }
     }

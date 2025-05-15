@@ -11,7 +11,6 @@ import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions";
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { answerCorrectRef } from "@/lib/questions/answer";
 
 interface OptionState {
   text: string;
@@ -147,8 +146,10 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
       setLoading(false);
       
     } catch (error) {
+      alert(error)
       setLoading(false);
     }
+    
   }, [questionIndex, setRandomQuestion]);
 
   useEffect(() => {
