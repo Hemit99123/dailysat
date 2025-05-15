@@ -100,7 +100,7 @@ Rules:
       return plan
     } catch (error) {
       retries++
-      if (retries > MAX_RETRIES) throw new Error("Failed to generate a valid plan after multiple retries.")
+      if (retries > MAX_RETRIES) throw new Error("Failed to generate valid plan after backup retries. Error:" + error)
     }
   }
 }
