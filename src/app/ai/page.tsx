@@ -28,7 +28,7 @@ const AI = () => {
     try {
       let retries = 0
       const maxRetries = MAX_RETRIES
-      let plan: any = null
+      let plan = null
   
       while (retries < maxRetries) {
         plan = await generateStudyPlan({
