@@ -51,7 +51,7 @@ Return ONLY a valid and complete JSON object in the EXACT structure below — no
 Rules:
 - Do NOT include any explanation or notes before or after the JSON.
 - Ensure there are no trailing commas or invalid characters.
-- Escape all special characters as needed.
+- The response should be proper JSON that can be parsed by Javascript later on
 `;
 
   const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
