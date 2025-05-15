@@ -27,7 +27,7 @@ const Home = () => {
   });
 
   const getIcon = (userData: User) => {
-    if (!userData.itemsBought || !Array.isArray(userData.itemsBought)) return;
+    if (!userData.itemsBought) return;
     const icons = userData.itemsBought.filter((item: ShopItem) =>
       item.name.includes("Icon")
     );
@@ -39,7 +39,7 @@ const Home = () => {
   };
 
   const getBanner = (userData: User) => {
-    if (!userData.itemsBought || !Array.isArray(userData.itemsBought)) return;
+    if (!userData.itemsBought) return;
     const banners = userData.itemsBought.filter((item: ShopItem) =>
       item.name.includes("Banner")
     );
