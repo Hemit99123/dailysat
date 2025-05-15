@@ -178,7 +178,7 @@ const Tutor = () => {
               Meet Our Top Tutors
             </p>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-              Join these successful tutors who are making a difference in students' lives.
+              Join these successful tutors who are making a difference in student&apos; lives.
             </p>
           </div>
 
@@ -252,7 +252,7 @@ const Tutor = () => {
               </div>
               <div className="text-center">
                 <h3 className="text-lg font-medium text-gray-900">Set Your Schedule</h3>
-                <p className="mt-2 text-base text-gray-500">Define when you're available to teach and what subjects you cover.</p>
+                <p className="mt-2 text-base text-gray-500">Define when you&apos;re available to teach and what subjects you cover.</p>
               </div>
               <div className="text-center">
                 <h3 className="text-lg font-medium text-gray-900">Connect With Students</h3>
