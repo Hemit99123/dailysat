@@ -1,18 +1,14 @@
 "use client";
 
-import type React from "react";
-import { useState } from "react";
-import { generateStudyPlan } from "@/lib/ai/generateStudyPlan";
-import { StudyPlan } from "@/components/features/AI/StudyPlan";
-import { Button } from "@/components/common/Button";
-import Error from "next/error";
-import { ValidPlan } from "@/types/validPlan";
-import { DebugPlan } from "@/types/debugPlan";
-import { ErrorPlan } from "@/types/errorPlan";
-import { StudyDay } from "@/types/studyDay";
-import { toast } from "react-toastify";
 
-type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan;
+import type React from "react"
+import { useState } from "react"
+import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
+import { StudyPlan } from "@/components/features/AI/StudyPlan"
+import { ValidPlan, DebugPlan, ErrorPlan, StudyDay } from "@/types/ai"
+
+
+type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan
 
 const AI = () => {
   const [currentScore, setCurrentScore] = useState("");
