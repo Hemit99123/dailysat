@@ -4,7 +4,6 @@ import type React from "react"
 import { useState } from "react"
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
 import { StudyPlan } from "@/components/features/AI/StudyPlan"
-import { toast } from "@/hooks/useToast"
 import { MAX_RETRIES } from "@/data/constant"
 
 // ADD THIS INTO TYPES FILE
