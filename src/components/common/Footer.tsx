@@ -1,20 +1,8 @@
 import Link from "next/link"
-import { Github, Linkedin, Twitter, ArrowRight } from "lucide-react"
+import { Github, Linkedin, Twitter } from "lucide-react"
 import { motion } from "framer-motion"
-import { useState } from "react"
 
 export default function Footer() {
-  const [email, setEmail] = useState("")
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Put newsletter logic here or something
-    setIsSubmitted(true)
-    setTimeout(() => setIsSubmitted(false), 3000)
-    setEmail("")
-  }
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -95,74 +83,25 @@ export default function Footer() {
           </ul>
         </motion.div>
 
-          {/* Links to all the other stuff */}
-          <motion.div variants={itemVariants} className="space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900">Resources</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/dashboard" className="text-gray-600 hover:text-blue-600 transition-all duration-200 hover:translate-x-1 inline-block">
-                  Dashboard
+        {/* Resources Links */}
+        <motion.div variants={itemVariants} className="space-y-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-800">Resources</h3>
+          <ul className="space-y-2">
+            {[
+              { href: "/dashboard", label: "Dashboard" },
+              { href: "/about", label: "About Us" },
+              { href: "/team", label: "Our Team" },
+              { href: "/blog", label: "Blog" },
+            ].map(({ href, label }) => (
+              <li key={href}>
+                <Link href={href} className="text-gray-600 hover:text-blue-600 transition-transform duration-200 hover:translate-x-1 inline-block">
+                  {label}
                 </Link>
               </li>
-              <li>
-                <Link href="/about" className="text-gray-600 hover:text-blue-600 transition-all duration-200 hover:translate-x-1 inline-block">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/team" className="text-gray-600 hover:text-blue-600 transition-all duration-200 hover:translate-x-1 inline-block">
-                  Our Team
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-gray-600 hover:text-blue-600 transition-all duration-200 hover:translate-x-1 inline-block">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/tutor" className="text-gray-600 hover:text-blue-600 transition-all duration-200 hover:translate-x-1 inline-block">Tutor</Link>
-              </li>
-            </ul>
-          </motion.div>
-
-          {/* Newsletter signup portion. It can be repurposed for other stuff */}
-          <motion.div variants={itemVariants} className="space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900">Stay Updated</h3>
-            <p className="text-sm text-gray-600">
-              Subscribe to our newsletter for tips and updates.
-            </p>
-            <form onSubmit={handleSubmit} className="mt-2">
-              <div className="flex max-w-md">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="px-4 py-2 w-full rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <motion.button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-r-md transition-colors flex items-center"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ArrowRight size={16} />
-                </motion.button>
-              </div>
-              {isSubmitted && (
-                <motion.p 
-                  className="text-green-600 text-sm mt-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                >
-                  Thanks for subscribing!
-                </motion.p>
-              )}
-            </form>
-          </motion.div>
+            ))}
+          </ul>
         </motion.div>
+      </motion.div>
 
       {/* Legal/Footer Note */}
       <motion.div 
