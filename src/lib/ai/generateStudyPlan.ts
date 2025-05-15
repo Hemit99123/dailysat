@@ -74,6 +74,9 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
     let retries = 0
     let plan;
 
+    // Groq is called in a loop in case it does not give us proper JSON data. 
+    // The  loop will be run over and over (5x) 
+    
     while (retries <= MAX_RETRIES) {
       const response = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
