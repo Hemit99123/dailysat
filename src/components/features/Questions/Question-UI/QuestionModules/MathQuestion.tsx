@@ -1,13 +1,11 @@
-"use client";
-
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Answers } from "@/types/sat-platform/answer";
 import { useAnswerStore, useAnswerCorrectStore, useQuestionStore } from "@/store/questions";
-import { CalculatorIcon, BookmarkIcon } from "lucide-react";
+import { CalculatorIcon } from "lucide-react";
 import { useCalcOptionModalStore } from "@/store/modals";
 import CalcOption from "../../Modals/CalcOption";
 import { parseContent } from "@/lib/latex";
-import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions";
+import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Import the shared UI component
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -30,12 +28,11 @@ interface MathQuestionProps {
 
 const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
-  const setRandomQuestion = useQuestionStore((state) => state.setRandomQuestion);
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
   const isAnswerCorrect = useAnswerCorrectStore((state) => state.isAnswerCorrect);
-  const setIsAnswerCorrect = useAnswerCorrectStore((state) => state.setIsAnswerCorrect);
   
+  // Remove null from the state type
   const [crossOffMode, setCrossOffMode] = useState(false);
   const [useCustomMathProblems, setUseCustomMathProblems] = useState(false);
   const [useApiProblems, setUseApiProblems] = useState(false);
@@ -169,8 +166,6 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
     }
   }, [isAnswerCorrect, setSelectedAnswer]);
 
-  const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
-
   const handleSubmit = () => {
     if (!selectedAnswer) return;
     
@@ -211,75 +206,27 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
     setShowExplanation(false);
     setUserAnswered(false);
     setSelectedAnswer(null);
-    setIsAnswerCorrect(false);
-    setMarkedForReview(false);
-    
-    if (useApiProblems) {
-      const newIndex = questionIndex + 1;
-      setQuestionIndex(newIndex);
-      Cookies.set('questionIndex', newIndex.toString());
-      
-      const resetOptions = {...options};
-      Object.keys(resetOptions).forEach((key) => {
-        resetOptions[key as keyof Options].state = "n";
-      });
-      setOptions(resetOptions);
-    } else {
-      const resetOptions = {...options};
-      Object.keys(resetOptions).forEach((key) => {
-        resetOptions[key as keyof Options].state = "n";
-      });
-      setOptions(resetOptions);
-    }
   };
 
-  const toggleQuestionSource = () => {
-    if (!useApiProblems) {
-      setUseCustomMathProblems(false);
-      setUseApiProblems(true);
-    } else {
-      setUseApiProblems(false);
-      setUseCustomMathProblems(false);
-    }
-    
-    setShowExplanation(false);
-    setUserAnswered(false);
-    setSelectedAnswer(null);
-    setIsAnswerCorrect(false);
-    setMarkedForReview(false);
-  };
+  const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
 
-  const toggleMarkForReview = () => {
-    setMarkedForReview(!markedForReview);
-  };
-
-  if (loading && useApiProblems) {
-    return <div className="flex justify-center items-center h-64">Loading questions from API...</div>;
-  }
-
-  if (!randomQuestion && !useApiProblems && !useCustomMathProblems) {
+  if (!randomQuestion) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="flex flex-col items-start">
-      {/* Top toolbar */}
-      <div className="w-full flex justify-between items-center px-4 py-3 bg-gray-100 border-b border-gray-300">
-        <div className="flex items-center space-x-4">
-          <button onClick={handleOpenCalcModal} className="p-2 hover:bg-gray-200 rounded">
-            <CalculatorIcon size={20} />
-          </button>
+    <div className="flex flex-col items-start px-8 -mt-6">
+      <div className="flex tems-center mb-2 space-x-4">
+        <button onClick={handleOpenCalcModal}>
+          <CalculatorIcon />
+        </button>
+        <div className="mt-6">
           <QuestionSharedUI
             crossOffMode={crossOffMode}
             setCrossOffMode={setCrossOffMode}
           />
         </div>
-        <button 
-          onClick={toggleQuestionSource}
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm"
-        >
-          {useApiProblems ? "Use App Questions" : "Use API Questions"}
-        </button>
+
       </div>
 
       <div className="w-full flex flex-row">
