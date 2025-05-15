@@ -10,6 +10,7 @@ import { ValidPlan } from "@/types/validPlan";
 import { DebugPlan } from "@/types/debugPlan";
 import { ErrorPlan } from "@/types/errorPlan";
 import { StudyDay } from "@/types/studyDay";
+import { toast } from "react-toastify";
 
 type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan;
 
@@ -60,7 +61,7 @@ const AI = () => {
           }
         } catch (err) {
           // You need to use the variable, and the only way to do so is to use console.error
-          console.error("Parsing error:", err);
+          toast.error(`Sorry, it looks like there is an error: ${err}`);
 
           setStudyPlan(plan);
         }
