@@ -3,6 +3,7 @@ import "./globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Analytics } from "@vercel/analytics/next";
 import Root from "@/components/common/Root";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "DailySAT",
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <Root>{children}</Root>
         </GoogleOAuthProvider>
         <Analytics />
+        <ToastContainer></ToastContainer>
       </body>
     </html>
   );

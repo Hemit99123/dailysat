@@ -1,11 +1,11 @@
 "use client";
 
-// Import necessary dependencies and components
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/common/Button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   Drawer,
   DrawerClose,
@@ -17,7 +17,6 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ShopItem } from "@/types/shopitem";
-import { toast } from "@/hooks/useToast";
 import { redirect } from "next/navigation";
 
 // Helper function to process purchase and append items to user's inventory
@@ -27,20 +26,19 @@ const appendItems = async (items: ShopItem[], coins: number) => {
       items,
       coins,
     });
-
-    toast({
-      title: "Items Successfully Bought!",
-      description: "Your purchase was successful",
-      className: "bg-[#4D68C3] border-none text-white  ",
+    toast.success("Your purchase was successful!", {
+      position: "bottom-right",
+      pauseOnHover: false,
+      autoClose: 1000,
     });
-
-    // Redirect to dashboard after successful purchase
     setTimeout(() => {
       redirect("/dashboard");
-    }, 500);
+    }, 1000);
   } catch (error) {
-    console.error("Error appending items:", (error as Error).message);
-    return { code: 500, message: "Failed to append items" };
+    return {
+      code: 500,
+      message: `Failed to append items, ${(error as Error).message}`,
+    };
   }
 };
 
@@ -70,33 +68,22 @@ const Checkout = () => {
   };
 
   // Function to fetch user data and process URL parameters
-  const getUser = async () => {
-    // Get URL parameters
-    const params = window.location.href.split("?")[1];
-
-    // Fetch user data
-    const response = await axios.get("/api/auth/get-user");
-    setUser?.(response?.data?.user);
-
-    // Validate URL parameters
-    if (!params) {
-      alert("Please come back once you go to the shop");
-      redirect("/shop");
-    }
-
-    // Process receipt from URL parameters
-  };
   useEffect(() => {
     const fetchUserAndReceipt = async () => {
       const params = window.location.href.split("?")[1];
       if (!params) {
-        alert("Please come back once you go to the shop");
-        redirect("/shop");
+        toast.error("Come back once you have gone to the shop", {
+          position: "bottom-right",
+          pauseOnHover: false,
+          autoClose: 1000,
+        });
+
+        setTimeout(() => {
+          redirect("/shop");
+        }, 2000);
       }
 
       // Get data
-      const response = await axios.get("/api/auth/get-user");
-      setUser?.(response?.data?.user);
 
       // Get the newReceipt from the URL Search parms
       const newReceipt = params.split("&").map((item) => {
@@ -110,21 +97,32 @@ const Checkout = () => {
       const total = newReceipt.reduce((acc, item) => {
         const key = Object.keys(item)[0];
         if (!(key in namePriceMap)) {
-          window.location.href = "/shop";
+          redirect("/shop");
+        }
+        if (key.includes("banner") && item[key] > 1) {
+          redirect("/shop");
         }
         return acc + item[key] * namePriceMap[key][1];
       }, 0);
-
+      const response = await axios.get("/api/auth/get-user");
       const num_coins = response?.data?.user?.currency;
       // Check if user has enough coins
       if (total > num_coins) {
-        toast({
-          title:
-            "You do not have enough currency to complete this transaction.",
-          description: "You will be redirected to the shop.",
-          className: "bg-[#4D68C3] border-none text-white",
-        });
-        redirect("/shop");
+        toast.error(
+          "You don't have enough coins to complete this transaction",
+          {
+            position: "bottom-right",
+            pauseOnHover: false,
+            autoClose: 1000,
+          }
+        );
+
+        setTimeout(() => {
+          redirect("/shop");
+        }, 2000);
+        return;
+      } else {
+        setUser?.(response?.data?.user);
       }
 
       setReceipt(newReceipt);
@@ -146,9 +144,9 @@ const Checkout = () => {
     fetchUserAndReceipt();
   }, []);
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  // useEffect(() => {
+  //   getUser();
+  // }, []);
 
   // Render checkout interface
   return (
@@ -227,7 +225,6 @@ const Checkout = () => {
             </div>
           </div>
         ) : (
-          // Loading skeleton
           <>
             <Skeleton className="md:w-[500px] w-[99%] sm:w-[90%] mt-4 bg-[#4D68C3] h-[300px] text-white rounded-lg shadow-lg p-6"></Skeleton>
           </>

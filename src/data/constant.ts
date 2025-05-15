@@ -9,3 +9,6 @@ export const QUESTION_IS_CORRECT_POINTS : number = 50
 
 // First 250
 export const FIRST_250_BONUS : number = 20
+
+// Retries for AI model
+export const MAX_RETRIES = 5
