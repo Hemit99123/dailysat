@@ -4,6 +4,8 @@ import type React from "react"
 import { useState } from "react"
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
 import { StudyPlan } from "@/components/features/AI/StudyPlan"
+import { toast } from "@/hooks/useToast"
+import { MAX_RETRIES } from "@/data/constant"
 
 // ADD THIS INTO TYPES FILE
 interface Activity {
@@ -49,27 +51,31 @@ const AI = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!currentScore || !targetScore || !testDate) return
-
+  
     setIsLoading(true)
-
+  
     try {
-      const plan = await generateStudyPlan({
-        currentScore: Number(currentScore),
-        targetScore: Number(targetScore),
-        testDate: new Date(testDate).toISOString(),
-        debug: false,
-        personalization,
-      })
-
-      if (plan?.isDebug && "rawResponse" in plan) {
-        try {
+      let retries = 0
+      const maxRetries = MAX_RETRIES
+      let plan: any = null
+  
+      while (retries < maxRetries) {
+        plan = await generateStudyPlan({
+          currentScore: Number(currentScore),
+          targetScore: Number(targetScore),
+          testDate: new Date(testDate).toISOString(),
+          debug: false,
+          personalization,
+        })
+  
+        if (plan?.isDebug && "rawResponse" in plan) {
           const jsonMatch = plan.rawResponse.match(/\{[\s\S]*\}/)
           if (jsonMatch) {
             const parsedPlan = JSON.parse(jsonMatch[0])
             const currentDate = new Date()
-            parsedPlan.days = parsedPlan.days.map((day: StudyDay, index: number) => {
+            parsedPlan.days = parsedPlan.days.map((day: StudyDay, i: number) => {
               const date = new Date(currentDate)
-              date.setDate(currentDate.getDate() + index)
+              date.setDate(currentDate.getDate() + i)
               return { ...day, date: date.toISOString().split("T")[0] }
             })
             setStudyPlan({
@@ -77,26 +83,28 @@ const AI = () => {
               rawResponse: plan.rawResponse,
               isDebug: true,
             } as DebugPlan & ValidPlan)
-          } else {
-            setStudyPlan(plan)
+            break // exit loop on success
           }
-        } catch (err) {
-          console.error("Parsing error:", err)
-          setStudyPlan(plan)
         }
-      } else {
-        setStudyPlan(plan)
+  
+        retries++
+        alert(`AI response invalid. Retrying ${retries} of ${maxRetries}...`)
       }
-
+  
+      if (retries === maxRetries) {
+        setStudyPlan({ error: "Failed to generate valid plan after multiple tries", isError: true })
+      }
+  
       setStep(2)
-    } catch (error) {
-      console.error("Error generating study plan:", error)
+    } catch {
       setStudyPlan({ error: "Failed to generate plan", isError: true })
       setStep(2)
     } finally {
       setIsLoading(false)
     }
   }
+  
+  
 
   const resetForm = () => {
     setCurrentScore("")
