@@ -1,6 +1,5 @@
 import { NavItem } from "@/types/navbar";
 
-// Define the menu items for navigation
 export const menuItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Shop", href: "/shop" },
