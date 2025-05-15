@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { ChevronDown, Check, X, Search } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { handleSignIn } from "@/lib/auth/authAction";
 
 const Tutor = () => {
