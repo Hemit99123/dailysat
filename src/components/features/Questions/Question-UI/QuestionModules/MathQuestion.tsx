@@ -383,7 +383,10 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
               <MultipleChoice 
                   crossOffMode={crossOffMode}
                   selectedAnswer={selectedAnswer}
-                  setSelectedAnswer={!userAnswered ? setSelectedAnswer : () => { } } disabled={false} correctAnswer={undefined}              />
+                  setSelectedAnswer={!userAnswered ? setSelectedAnswer : () => { } } 
+                  disabled={false} 
+                  correctAnswer={undefined}              
+              />
             )}
           </div>
           
