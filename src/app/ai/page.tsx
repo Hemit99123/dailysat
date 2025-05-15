@@ -5,36 +5,8 @@ import { useState } from "react"
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
 import { StudyPlan } from "@/components/features/AI/StudyPlan"
 import { MAX_RETRIES } from "@/data/constant"
+import { ValidPlan, DebugPlan, ErrorPlan, StudyDay } from "@/types/ai"
 
-// ADD THIS INTO TYPES FILE
-interface Activity {
-  topic: string
-  description: string
-  duration: number
-  type: "review" | "practice" | "lecture" | string
-}
-
-interface StudyDay {
-  date?: string
-  activities: Activity[]
-}
-
-interface ValidPlan {
-  isDebug?: false
-  isError?: false
-  days: StudyDay[]
-}
-
-interface DebugPlan {
-  isDebug: true
-  rawResponse: string
-}
-
-interface ErrorPlan {
-  isError: true
-  error: string
-  rawResponse?: string
-}
 
 type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan
 
