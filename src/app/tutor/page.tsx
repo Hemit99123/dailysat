@@ -5,9 +5,9 @@ import { ChevronDown, X } from 'lucide-react';
 import { handleSignIn } from "@/lib/auth/authAction";
 
 const Tutor = () => {
-  const [activeFaq, setActiveFaq] = useState(null);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
-  const toggleFaq = (index: any) => {
+  const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
