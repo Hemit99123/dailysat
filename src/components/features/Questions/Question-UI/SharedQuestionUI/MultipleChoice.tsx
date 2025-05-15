@@ -8,9 +8,11 @@ interface MultipleChoiceProps {
   crossOffMode: boolean;
   selectedAnswer: Answers | null;
   setSelectedAnswer: (answer: Answers | null) => void;
+  disabled: boolean;
+  correctAnswer: number | undefined;
 }
 
-const MultipleChoice: React.FC<MultipleChoiceProps> = ({ crossOffMode, selectedAnswer, setSelectedAnswer }) => {
+const MultipleChoice: React.FC<MultipleChoiceProps> = ({ crossOffMode, selectedAnswer, setSelectedAnswer, disabled, correctAnswer }) => {
     
     const [crossedOffOptions, setCrossedOffOptions] = useState<Set<Answers>>(new Set());
     const randomQuestion = useQuestionStore((state) => state.randomQuestion);

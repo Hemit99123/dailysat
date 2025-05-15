@@ -11,6 +11,7 @@ import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions";
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { answerCorrectRef } from "@/lib/questions/answer";
 
 interface OptionState {
   text: string;
@@ -18,10 +19,10 @@ interface OptionState {
 }
 
 interface Options {
-  A: OptionState;
-  B: OptionState;
-  C: OptionState;
-  D: OptionState;
+  optionA: OptionState;
+  optionB: OptionState;
+  optionC: OptionState;
+  optionD: OptionState;
 }
 
 interface MathQuestionProps {
@@ -48,10 +49,10 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
   const [streak, setStreak] = useState(parseInt(Cookies.get('streak') || '0', 10));
   const [difficulty, setDifficulty] = useState<string>('Standard');
   const [options, setOptions] = useState<Options>({
-    A: { text: "Option A", state: "n" },
-    B: { text: "Option B", state: "n" },
-    C: { text: "Option C", state: "n" },
-    D: { text: "Option D", state: "n" }
+    optionA: { text: "Option A", state: "n" },
+    optionB: { text: "Option B", state: "n" },
+    optionC: { text: "Option C", state: "n" },
+    optionD: { text: "Option D", state: "n" }
   });
   
   // State for explanation display
@@ -119,10 +120,10 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
       }
       
       const newOptions: Options = {
-        A: { text: questionData.answerOptions[0].content, state: "n" },
-        B: { text: questionData.answerOptions[1].content, state: "n" },
-        C: { text: questionData.answerOptions[2].content, state: "n" },
-        D: { text: questionData.answerOptions[3].content, state: "n" }
+        optionA: { text: questionData.answerOptions[0].content, state: "n" },
+        optionB: { text: questionData.answerOptions[1].content, state: "n" },
+        optionC: { text: questionData.answerOptions[2].content, state: "n" },
+        optionD: { text: questionData.answerOptions[3].content, state: "n" }
       };
       
       setOptions(newOptions);
@@ -133,14 +134,13 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
         _id: externalId,
         question: questionData.stem || "",
         stimulus: questionData.stimulus || "",
-        options: {
-          A: questionData.answerOptions[0].content,
-          B: questionData.answerOptions[1].content,
-          C: questionData.answerOptions[2].content,
-          D: questionData.answerOptions[3].content
-        },
-        correctAnswer: questionData.correct_answer[0] as Answers,
-        explanation: questionData.rationale || "Explanation not available"
+        optionA: questionData.answerOptions[0].content,
+        optionB: questionData.answerOptions[1].content,
+        optionC: questionData.answerOptions[2].content,
+        optionD: questionData.answerOptions[3].content,
+        correctAnswer: questionData.correct_answer[0],
+        explanation: questionData.rationale || "Explanation not available",
+        skill: ""
       };
       
       setRandomQuestion(formattedQuestion);
@@ -180,11 +180,6 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
       
       const isCorrect = selectedAnswer === correctAnswer;
       
-      newOptions[selectedAnswer].state = isCorrect ? "c" : "i";
-      
-      if (!isCorrect) {
-        newOptions[correctAnswer as keyof Options].state = "c";
-      }
       
       setOptions(newOptions);
       
@@ -386,10 +381,9 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
               ))
             ) : (
               <MultipleChoice 
-                crossOffMode={crossOffMode}
-                selectedAnswer={selectedAnswer}
-                setSelectedAnswer={!userAnswered ? setSelectedAnswer : () => {}}
-              />
+                  crossOffMode={crossOffMode}
+                  selectedAnswer={selectedAnswer}
+                  setSelectedAnswer={!userAnswered ? setSelectedAnswer : () => { } } disabled={false} correctAnswer={undefined}              />
             )}
           </div>
           

@@ -5,6 +5,7 @@ import { useAnswerStore, useQuestionStore } from "@/store/questions";
 import { BookmarkIcon, Highlighter, Eraser } from "lucide-react";
 import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions";
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
+import { answerCorrectRef } from "@/lib/questions/answer";
 
 interface ReadingQuestionProps {
   onAnswerSubmit: (isCorrect: boolean) => void;
@@ -68,7 +69,7 @@ const ReadingQuestion: React.FC<ReadingQuestionProps> = ({
   const handleSubmit = () => {
     if (!selectedAnswer || !randomQuestion) return;
     
-    const correct = selectedAnswer === randomQuestion.correctAnswer;
+    const correct = answerCorrectRef[selectedAnswer] === randomQuestion.correctAnswer;
     setIsCorrect(correct);
     setUserAnswered(true);
     onAnswerSubmit(correct);
