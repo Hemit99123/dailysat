@@ -37,7 +37,7 @@ const ReadingQuestion: React.FC<ReadingQuestionProps> = ({
     setMode((prevMode) => (prevMode === newMode ? null : newMode));
   };
 
-  const handleSelection = (event: React.MouseEvent) => {
+  const handleSelection = () => {
     if (!mode || !textRef.current) return;
     const selection = window.getSelection();
     if (selection?.rangeCount) {
