@@ -1,3 +1,4 @@
+import { MAX_RETRIES } from "@/data/constant"
 import axios from "axios"
 
 interface StudyPlanRequest {
@@ -70,46 +71,49 @@ export async function generateStudyPlan(data: StudyPlanRequest) {
 
     const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
 
-    const response = await axios.post(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.7,
-        stream: false
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`
+    let retries = 0
+    let plan;
+
+    while (retries <= MAX_RETRIES) {
+      const response = await axios.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.7,
+          stream: false
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`
+          }
         }
+      )
+  
+      const text = response.data?.choices?.[0]?.message?.content ?? ""
+      
+      // Find a JSON result
+      const jsonMatch = text.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) {
+        throw new Error("No JSON object found in the response")
       }
-    )
-
-    const text = response.data?.choices?.[0]?.message?.content ?? ""
-    
-    // Find a JSON result
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      throw new Error("No JSON object found in the response")
-    }
-
-    const planText = jsonMatch[0]
-    let plan
-    
-    try {
+  
+      const planText = jsonMatch[0]
       plan = JSON.parse(planText)
-    } catch (parseError) {
-      console.error("JSON parse error:", parseError)
-      throw new Error("Failed to parse JSON response")
+  
+  
+      if (!plan || !plan.days || !Array.isArray(plan.days)) {
+        alert("Retrying")
+        retries++
+      } else {
+        break; // leave loop, got proper response so no need for a retry
+      }
     }
 
-    if (!plan.days || !Array.isArray(plan.days)) {
-      throw new Error("Invalid plan structure: 'days' array is missing")
-    }
 
     const currentDate = new Date()
     
