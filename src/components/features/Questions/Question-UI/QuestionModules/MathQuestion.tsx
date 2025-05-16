@@ -34,7 +34,6 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
   
   // Remove null from the state type
   const [crossOffMode, setCrossOffMode] = useState(false);
-  const [useCustomMathProblems, setUseCustomMathProblems] = useState(false);
   const [useApiProblems, setUseApiProblems] = useState(false);
   const [markedForReview, setMarkedForReview] = useState(false);
   
