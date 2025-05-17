@@ -46,3 +46,4 @@ Unfortunately, we don't let community developers get access to our official Mong
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
 - **Groq** (used to power the AI study planner)
+- **Better Auth** (abstracts the authentication logic)
