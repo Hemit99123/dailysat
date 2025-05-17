@@ -2,8 +2,8 @@ import { ShopItem } from "@/types/shopitem";
 import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 import { User } from "@/types/user"; // assume you saved the User interface here
-import { auth } from "@/lib/auth";
 import { format } from "date-fns";
+import { handleGetSession } from "@/lib/auth/authActions";
 
 /**
  * Appends an array of items to a user's "itemsBought" array.
@@ -24,7 +24,7 @@ export const POST = async (request: Request) => {
 
     const users = db.collection<User>("users");
     // Proceed with the rest of the logic
-    const session = await auth();
+    const session = await handleGetSession();
     const userEmail: string | null | undefined = session?.user?.email;
     // If email isn't found, throw an error
     if (!userEmail) {
