@@ -8,9 +8,5 @@ export const determineAuthStatus = async () => {
         headers: await headers() // you need to pass the headers object.
     })
 
-    if (session) {
-        return true
-    } else {
-        return false
-    }
+    return session !== null
 }
