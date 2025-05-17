@@ -11,11 +11,8 @@ const PaymentSuccess = () => {
         </svg>
         <div className="text-center">
           <h3 className="md:text-2xl text-base text-gray-900 font-semibold text-center">
-            Authentication was successful!
+            Operation was successful!
           </h3>
-          <p className="text-gray-600 my-2">
-            You can now use all of the application and even earn points! Enjoy!
-          </p>
           <p className="text-sm text-gray-600">Have a great day!</p>
           <div className="py-10 text-center">
             <a href="/" className="px-14 py-3 rounded-lg text-xl bg-black hover:bg-gray-800 duration-300 text-white font-semibold ">

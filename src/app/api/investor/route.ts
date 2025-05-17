@@ -1,13 +1,13 @@
 // Database and Authentication
 import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
-import { auth } from "@/lib/auth";
 
 // Types
 import { User } from "@/types/user";
 
 // Date Utilities
 import { parse, differenceInDays, format } from "date-fns";
+import { handleGetSession } from "@/lib/auth/authActions";
 
 /**
  * POST Handler for Investor Calculations
@@ -21,7 +21,7 @@ export const POST = async () => {
     const users = db.collection<User>("users");
 
     // Authenticate user
-    const session = await auth();
+    const session = await handleGetSession();
     const userEmail = session?.user?.email;
 
     if (!userEmail) {

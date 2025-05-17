@@ -69,3 +69,4 @@ This setup will allow you to simulate the production environment and continue de
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
 - **Groq** (used to power the AI study planner)
+- **Better Auth** (abstracts the authentication logic)

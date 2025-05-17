@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
@@ -8,7 +8,7 @@ export const POST = async (request: Request) => {
     const { plan } = await request.json()
 
     try {
-        const session = await auth()
+        const session = await handleGetSession()
         const email = session?.user?.email
     
         if (!email) {
@@ -39,7 +39,7 @@ export const POST = async (request: Request) => {
 
 export const GET = async () => {
     try {
-        const session = await auth()
+        const session = await handleGetSession()
         const email = session?.user?.email
     
         if (!email) {
