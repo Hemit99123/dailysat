@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
-import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client as cacheClient } from "@/lib/performance/cache/redis";
 import { User } from "@/types/user";
-import { headers } from "next/headers";
 import { handleGetSession } from "@/lib/auth/authActions";
 
 /**

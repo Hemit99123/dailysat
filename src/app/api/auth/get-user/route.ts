@@ -1,7 +1,5 @@
-import { auth } from "@/lib/auth";
 import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 /**
