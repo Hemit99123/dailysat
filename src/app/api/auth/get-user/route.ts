@@ -94,7 +94,6 @@ export const GET = async () => {
       user
     });
   } catch (error) {
-    console.error("Error fetching user data:", error);
-    return NextResponse.json({ message: "An error occurred" });
+    return NextResponse.json({ message: "An error occurred:" + error });
   }
 };
