@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { menuItems } from "@/data/navbar";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 import { useEffect, useState } from "react";
-import { handleSignIn, handleSignOut } from "@/lib/auth/authAction";
+import { handleSignIn, handleSignOut } from "@/lib/auth/authActions";
 import { Menu, X } from "lucide-react";
 
 const NavBar = () => {

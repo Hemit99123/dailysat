@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth";
+import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 /**
@@ -83,14 +85,13 @@ import { NextResponse } from "next/server";
  */
 
 export const GET = async () => {
-  const session = await auth();
+  const session = await handleGetSession()
 
   try {
     const user = await handleGetUser(session);
 
     return NextResponse.json({
-      user,
-      cached: false,
+      user
     });
   } catch (error) {
     console.error("Error fetching user data:", error);

@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client as cacheClient } from "@/lib/performance/cache/redis";
 import { User } from "@/types/user";
+import { headers } from "next/headers";
+import { handleGetSession } from "@/lib/auth/authActions";
 
 /**
  * @swagger
@@ -119,8 +121,7 @@ export const GET = async (request: Request) => {
         }
 
         // Proceed with the rest of the logic
-        const session = await auth();
-
+        const session = await handleGetSession()
         const userEmail: string | null | undefined = session?.user?.email;
         const existingUser = await handleGetUser(session);
 

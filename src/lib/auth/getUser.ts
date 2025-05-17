@@ -1,7 +1,6 @@
 import { client } from "../mongo";
-import { Session } from "next-auth";
 
-export const handleGetUser = async (session: Session | null) => {
+export const handleGetUser = async (session: any | null) => {
     try {
         if (!session || !session.user?.email) {
             throw new Error("Session is invalid or user email is missing.");
