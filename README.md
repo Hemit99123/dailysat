@@ -11,7 +11,7 @@
 </div>
 
 <br>
-📚 To access the API documentation, [click here!](https://www.dailysat.org/api-docs)
+📚 To access the API documentation, <a href="https://www.dailysat.org/api-docs">click here!</a>
 <br>
 
 ## 🧑‍🤝‍🧑 Open Source Contributions
