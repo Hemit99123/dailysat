@@ -7,9 +7,10 @@ const db = client.db();
 export const auth = betterAuth({
   socialProviders: {
     google: {
-      clientId: process.env.AUTH_GOOGLE_ID as string,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET as string,
+      clientId: process.env.NEXT_PUBLIC_AUTH_GOOGLE_ID as string,
+      clientSecret: process.env.NEXT_PUBLIC_AUTH_GOOGLE_SECRET as string,
     },
   },
   database: mongodbAdapter(db),
 });
+

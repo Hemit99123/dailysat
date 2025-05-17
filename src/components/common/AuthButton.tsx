@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { handleSignOut } from "@/lib/auth/authActions";
+import { signOut } from "@/lib/auth/authClient";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 
 const AuthButton = () => {
@@ -24,7 +24,7 @@ const AuthButton = () => {
         <div>
           <button
             onClick={() => {
-              handleSignOut();
+              signOut();
               handleToggleStatus();
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
