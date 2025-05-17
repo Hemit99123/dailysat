@@ -32,7 +32,6 @@ const NavBar = () => {
 
     if (auth) {
       await signOut();
-      alert("yoyo")
       router.push('/auth/success');
     } else {
       await signIn.social({
