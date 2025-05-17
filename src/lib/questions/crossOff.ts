@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 
 import { Answers } from '@/types/sat-platform/answer';
 import React from 'react';

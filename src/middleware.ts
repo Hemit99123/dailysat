@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import handleUserRoutes from '@/lib/middleware/auth/user';
-import handleSignInRoutes from './lib/middleware/auth/signin';
+import {handleProtectedRoutes, handleSignInRoutes} from './lib/middleware/auth/protectedRoute';
+import protectedLoginRoutes from './data/protected-routes/protectedLoginRoutes';
+import protectedUserRoutes from './data/protected-routes/protectedUserRoutes';
 
 export const middleware = async (request: NextRequest) => {
-  const userResponse = await handleUserRoutes(request);
+  const userResponse = await handleProtectedRoutes(request, protectedUserRoutes);
   if (userResponse) return userResponse;
+  
 
-  const signinResponse = await handleSignInRoutes(request);
+  const signinResponse = await handleSignInRoutes(request, protectedLoginRoutes);
   if (signinResponse) return signinResponse;
+  
 
-  // If none of the pre-checks match, move to the request
   return NextResponse.next();
 };

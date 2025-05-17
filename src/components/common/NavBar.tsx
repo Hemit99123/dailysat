@@ -7,10 +7,12 @@ import { cn } from "@/lib/utils";
 import { menuItems } from "@/data/navbar";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 import { useEffect, useState } from "react";
-import { handleSignIn, handleSignOut } from "@/lib/auth/authAction";
+import { signIn, signOut } from "@/lib/auth/authClient";
 import { Menu, X } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 const NavBar = () => {
+  const router = useRouter();
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 100], [0, -50]);
   const opacity = useTransform(scrollY, [0, 100], [1, 0]);
@@ -25,13 +27,16 @@ const NavBar = () => {
     handleAuthStatus();
   }, []);
 
-  const handleAuthClick = () => {
+  const handleAuthClick = async () => {
     setMenuOpen(false);
 
     if (auth) {
-      handleSignOut();
+      await signOut();
+      router.push('/auth/success');
     } else {
-      handleSignIn();
+      await signIn.social({
+        provider: "google", 
+      });
     }
   };
 
@@ -71,7 +76,7 @@ const NavBar = () => {
             <Skeleton className="bg-blue-600 w-[82px] h-[35px] rounded-full" />
           ) : (
             <button
-              onClick={auth ? handleSignOut : handleSignIn}
+              onClick={handleAuthClick}
               className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
             >
               {auth ? "Log out" : "Sign in"}

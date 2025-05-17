@@ -1,8 +1,8 @@
-import { auth } from '@/lib/auth';
 import { QUESTION_IS_CORRECT_POINTS } from '@/data/constant';
 import { client } from '@/lib/mongo';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
+import { handleGetSession } from '@/lib/auth/authActions';
 
 /**
  * @swagger
@@ -116,7 +116,7 @@ export const POST = async (request: Request) => {
       throw new Error("All params in JWT not found")
     }
 
-    const session = await auth();
+    const session = await handleGetSession();
     const email = session?.user?.email;
 
     await client.connect();

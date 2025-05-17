@@ -36,7 +36,30 @@ Our mission is to build an app that is free and accessible! This means we love i
 Unlike the admin platform, the regular DailySAT platform's auth is handled by the AuthJS lib. It features simple Google SSO and its contents are saved onto a MongoDB collection called "users." This is then used to populate the dashboard with user information. We also employed a rate limiter to regulate the amount of DB calls. This way there is less burden on our MongoDB server. During the times when the API is restircted, we use a caching layer to populate the information
 
 ## 📊 How to create a mock database
-Unfortunately, we don't let community developers get access to our official MongoDB database. However, you can easily create a mock MongoDB server on your local machine. First, install Docker and MongoDB Compass. Then, run "docker pull mongo" in your terminal (the directory doesn't matter). Next, find out your mongo url, which would likely be "mongodb://localhost:27017/". After, navigate to Google Cloud and make a project. Once you have done that, go to MongoDB Compass and make a database called SATDaily. Finally, once you have ran the docker image (from "docker pull mongo") and connected to it via Compass, run "redis-server" in the terminal (pathname is irrelevant) to start Redis (install it if not already). 
+Unfortunately, we don't allow community developers direct access to our official MongoDB database. However, you can easily set up a mock MongoDB environment on your local machine. Here’s how:
+
+1. **Install Docker** and **MongoDB Compass** if you haven’t already.
+2. Open your terminal (any directory works) and run:
+
+   ```
+   docker pull mongo
+   ```
+3. Your local MongoDB URL will likely be:
+
+   ```
+   mongodb://localhost:27017/
+   ```
+4. Head over to **Google Cloud** and create a new project.
+5. In **MongoDB Compass**, connect using the local Mongo URL and create a new database named **SATDaily**.
+6. After running the MongoDB Docker container, start Redis by running:
+
+   ```
+   redis-server
+   ```
+
+   (If you don’t have Redis installed, install it first.)
+
+This setup will allow you to simulate the production environment and continue developing without needing access to our official database.
 
 ## 💻 Technology Stack:
 - **NextJS** (frontend and backend, good for SEO)
@@ -46,3 +69,4 @@ Unfortunately, we don't let community developers get access to our official Mong
 - **Husky** (pre-commit solution to run commands prior to a commit)
 - **ESLint** (used for linting enforcement)
 - **Groq** (used to power the AI study planner)
+- **Better Auth** (abstracts the authentication logic)
