@@ -1,6 +1,6 @@
 import { client } from "../mongo";
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+ 
 export const handleGetUser = async (session: any | null) => {
     try {
         if (!session || !session.user?.email) {

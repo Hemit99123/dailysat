@@ -10,7 +10,7 @@ import DraggableItem from '@/components/features/Questions/Calculators/Draggable
 declare global {
   interface Window {
     Desmos: {
-      GraphingCalculator: (element: HTMLElement) => DesmosCalculator;
+      GraphingCalculator: (_element: HTMLElement) => DesmosCalculator;
     };
   }
 }
@@ -64,7 +64,7 @@ const GraphCalculator = () => {
     };
   }, []);
 
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
+   
 
   const handleResizeStop = (e: any, data: any) => {
     setDimensions({

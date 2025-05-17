@@ -11,7 +11,7 @@ interface ComponentShopItem {
   name: string;
   purpose: string;
   price: number;
-  dispatch?: (action: { type: string; payload?: string }) => void;
+  dispatch?: (_action: { type: string; payload?: string }) => void;
   state: {
     [key: string]: number | string;
   };
