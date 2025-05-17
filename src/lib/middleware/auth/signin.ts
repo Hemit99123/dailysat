@@ -1,12 +1,12 @@
 import protectedRoutes from "@/data/protected-routes/protectedLoginRoutes";
 import type { NextRequest } from "next/server";
 import redirectTo from "../common/redirect";
-import { handleGetSession } from "@/lib/auth/authActions";
+import { getSessionCookie } from "better-auth/cookies";
 
 const handleSignInRoutes = async (request: NextRequest) => {
-    const session = await handleGetSession();
+    const sessionCookie = await getSessionCookie(request);
   
-    if (session && protectedRoutes.includes(request.nextUrl.pathname)) {
+    if (sessionCookie && protectedRoutes.includes(request.nextUrl.pathname)) {
       return redirectTo(request, '/')
     }
   
