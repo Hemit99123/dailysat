@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { handleSignOut } from "@/lib/auth/authAction";
+import { handleSignOut } from "@/lib/auth/authActions";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 
 const AuthButton = () => {
