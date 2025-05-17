@@ -70,3 +70,4 @@ This setup will allow you to simulate the production environment and continue de
 - **ESLint** (used for linting enforcement)
 - **Groq** (used to power the AI study planner)
 - **Better Auth** (abstracts the authentication logic)
+- **CodeRabbit** (automatated code reviews + summary in PRs, allowing developers more time in development)
