@@ -6,14 +6,12 @@ import protectedUserRoutes from './data/protected-routes/protectedUserRoutes';
 
 export const middleware = async (request: NextRequest) => {
   const userResponse = await handleProtectedRoutes(request, protectedUserRoutes);
-  if (userResponse) {
-    return userResponse;
-  }
+  if (userResponse) return userResponse;
+  
 
   const signinResponse = await handleProtectedRoutes(request, protectedLoginRoutes);
-  if (signinResponse) {
-    return signinResponse;
-  }
+  if (signinResponse) return signinResponse;
+  
 
   return NextResponse.next();
 };
