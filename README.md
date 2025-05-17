@@ -31,11 +31,13 @@ We welcome open-source contributions! To contribute:
 
 ### 📛 Ticket Naming Convention
 
-When naming your GitHub issues, please use the following prefixes:
+When naming your GitHub PRs, please use the following prefixes:
 
 - `feat:` for new features  
 - `fix:` for bug fixes or incorrect behavior  
 - `chore:` for routine tasks like updating documentation or refactoring
+
+When issuing Github issues, this convention is not needed but please be descriptive in your titles. 
 
 ## 🔐 Authentication Overview
 
