@@ -7,10 +7,12 @@ import { cn } from "@/lib/utils";
 import { menuItems } from "@/data/navbar";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 import { useEffect, useState } from "react";
-import { signIn, signOut } from "@/lib/auth/authClient";
+import { signIn, signOut, revokeSessions } from "@/lib/auth/authClient";
 import { Menu, X } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 const NavBar = () => {
+  const router = useRouter();
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 100], [0, -50]);
   const opacity = useTransform(scrollY, [0, 100], [1, 0]);
@@ -30,6 +32,8 @@ const NavBar = () => {
 
     if (auth) {
       signOut();
+      revokeSessions()
+      router.refresh()
     } else {
       await signIn.social({
         provider: "google", 
