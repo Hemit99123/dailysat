@@ -1,7 +1,7 @@
 "use server"
 
 import jwt from "jsonwebtoken";
-import { auth } from "@/lib/auth";
+import { handleGetSession } from "../auth/authActions";
 
 const JWT_SECRET = process.env.JWT_SECRET; 
 
@@ -13,7 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export const generateJWT = async (payload: object) => {
     try {
         // Authenticate the user (this assumes `auth()` returns session information)
-        const session = await auth();
+        const session = await handleGetSession()
 
         if (!session || !session.user) {
             throw new Error("Unauthorized: User not authenticated");
