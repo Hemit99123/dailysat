@@ -1,7 +1,7 @@
 import { client } from "@/lib/mongo";
 import { Db, ObjectId } from "mongodb";
 import { REFERRAL_BONUS_REFERRED_PERSON, REFERRAL_BONUS_REFERREE } from "@/data/constant";
-import { auth } from "@/lib/auth";
+import { handleGetSession } from "@/lib/auth/authActions";
 
 /**
  * @swagger
@@ -50,7 +50,7 @@ export const POST = async (request: Request) => {
         });
     }
 
-    const session = await auth();
+    const session = await handleGetSession();
     const email = session?.user?.email;
 
     if (!email) {
