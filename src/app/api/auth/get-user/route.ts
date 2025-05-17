@@ -94,6 +94,8 @@ export const GET = async () => {
       user
     });
   } catch (error) {
-    return NextResponse.json({ message: "An error occurred:" + error });
+    return Response.json({
+      error
+    })  
   }
 };
