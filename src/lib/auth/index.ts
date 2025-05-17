@@ -1,5 +1,4 @@
 import { betterAuth } from "better-auth";
-import { createAuthClient } from "better-auth/react"
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "../mongo";
 
