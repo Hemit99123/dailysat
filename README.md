@@ -10,7 +10,9 @@
   <br>
 </div>
 
+<br>
 📚 To access the API documentation, [click here!](https://www.dailysat.org/api-docs)
+<br>
 
 ## 🧑‍🤝‍🧑 Open Source Contributions
 
