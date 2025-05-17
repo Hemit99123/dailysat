@@ -1,18 +1,11 @@
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [
-    Google({
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-    }),
-  ],
-  trustHost: true,
-  secret: process.env.AUTH_SECRET 
+import { betterAuth } from "better-auth";
+ 
+export const auth = betterAuth({
+  // Other configurations...
+  socialProviders: {
+    google: {
+      clientId: process.env.AUTH_GOOGLE_ID as string,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET as string,
+    },
+  },
 });
