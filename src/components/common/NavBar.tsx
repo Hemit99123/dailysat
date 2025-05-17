@@ -31,8 +31,9 @@ const NavBar = () => {
     setMenuOpen(false);
 
     if (auth) {
-      signOut();
-      router.replace("/auth/success");
+      await signOut();
+      alert("yoyo")
+      router.push('/auth/success');
     } else {
       await signIn.social({
         provider: "google", 
