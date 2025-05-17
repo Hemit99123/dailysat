@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { menuItems } from "@/data/navbar";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 import { useEffect, useState } from "react";
-import { handleSignIn, handleSignOut } from "@/lib/auth/authActions";
+import { signIn, signOut } from "@/lib/auth/authClient";
 import { Menu, X } from "lucide-react";
 
 const NavBar = () => {
@@ -25,13 +25,15 @@ const NavBar = () => {
     handleAuthStatus();
   }, []);
 
-  const handleAuthClick = () => {
+  const handleAuthClick = async () => {
     setMenuOpen(false);
 
     if (auth) {
-      handleSignOut();
+      signOut();
     } else {
-      handleSignIn();
+      await signIn.social({
+        provider: "google", 
+      });
     }
   };
 
@@ -71,7 +73,7 @@ const NavBar = () => {
             <Skeleton className="bg-blue-600 w-[82px] h-[35px] rounded-full" />
           ) : (
             <button
-              onClick={auth ? handleSignOut : handleSignIn}
+              onClick={() => auth ? signOut() : signIn.social({provider: "google"})}
               className="rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
             >
               {auth ? "Log out" : "Sign in"}
