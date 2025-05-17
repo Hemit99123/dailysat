@@ -1,3 +1,3 @@
-const protectedRoutes = ['/dashboard', '/shop', '/math', '/reading-writing', '/schools']
+const protectedUserRoutes = ['/dashboard', '/shop', '/math', '/reading-writing', '/schools']
 
-export default protectedRoutes
+export default protectedUserRoutes

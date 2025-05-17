@@ -1,9 +1,8 @@
-import protectedRoutes from "@/data/protected-routes/protectedLoginRoutes";
 import type { NextRequest } from "next/server";
 import redirectTo from "../common/redirect";
 import { getSessionCookie } from "better-auth/cookies";
 
-const handleSignInRoutes = async (request: NextRequest) => {
+const handleProtectedRoutes = async (request: NextRequest, protectedRoutes: any[]) => {
     const sessionCookie = await getSessionCookie(request);
   
     if (sessionCookie && protectedRoutes.includes(request.nextUrl.pathname)) {
@@ -13,4 +12,4 @@ const handleSignInRoutes = async (request: NextRequest) => {
     return null;
 };
   
-export default handleSignInRoutes
+export default handleProtectedRoutes

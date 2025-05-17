@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import handleUserRoutes from '@/lib/middleware/auth/user';
-import handleSignInRoutes from './lib/middleware/auth/signin';
+import handleProtectedRoutes from './lib/middleware/auth/signin';
+import protectedLoginRoutes from './data/protected-routes/protectedLoginRoutes';
+import protectedUserRoutes from './data/protected-routes/protectedUserRoutes';
 
 export const middleware = async (request: NextRequest) => {
-  const userResponse = await handleUserRoutes(request);
+  const userResponse = await handleProtectedRoutes(request, protectedUserRoutes);
   if (userResponse) {
     return userResponse;
   }
 
-  const signinResponse = await handleSignInRoutes(request);
+  const signinResponse = await handleProtectedRoutes(request, protectedLoginRoutes);
   if (signinResponse) {
     return signinResponse;
   }

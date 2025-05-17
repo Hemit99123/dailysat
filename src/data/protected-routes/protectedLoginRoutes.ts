@@ -1,4 +1,4 @@
-const protectedRoutes = ['/auth/signin', '/auth/success']
+const protectedLoginRoutes = ['/auth/signin', '/auth/success']
 
 
-export default protectedRoutes
+export default protectedLoginRoutes
