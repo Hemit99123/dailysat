@@ -13,3 +13,7 @@ export const middleware = async (request: NextRequest) => {
   // If none of the pre-checks match, move to the request
   return NextResponse.next();
 };
+
+export const config = {
+  runtime: 'nodejs',
+};
