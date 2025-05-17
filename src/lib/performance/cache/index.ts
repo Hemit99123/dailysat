@@ -1,11 +1,11 @@
-import { auth } from "@/lib/auth";
+import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/performance/cache/redis";
 import { NextResponse } from "next/server";
 
 
 export const handleGetUserCached = async () => {
-    const session = await auth();
+    const session = await handleGetSession();
     const email = session?.user?.email;
 
     if (!email) return false;
@@ -17,7 +17,7 @@ export const handleGetUserCached = async () => {
         return cached
         
     } else {
-        const session = await auth();
+        const session = await handleGetSession();
         if (!session?.user?.email) {
           return NextResponse.json({ error: "Missing session" }, { status: 400 });
         }
