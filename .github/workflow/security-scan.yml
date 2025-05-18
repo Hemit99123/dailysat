@@ -1,0 +1,27 @@
+name: Trivy Security Scan
+
+on:
+  push:           # trigger on every commit
+  workflow_dispatch: # still allow manual trigger
+
+jobs:
+  trivy:
+    name: Scan for Vulnerabilities
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          output: 'trivy-report.txt'
+
+      - name: Upload Trivy Scan Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.txt
