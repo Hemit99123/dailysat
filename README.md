@@ -62,7 +62,7 @@ To maintain security, community developers do not have access to our production 
    mongodb://localhost:27017/
    ```
 
-4. Open **MongoDB Compass** and connect using the URI above. Create a new database named `SATDaily`.
+4. Open **MongoDB Compass** and connect using the URI above. Create a new database named `DailySAT`.
 
 5. Start Redis locally:
 
