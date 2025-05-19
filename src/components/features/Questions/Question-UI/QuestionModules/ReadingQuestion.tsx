@@ -5,8 +5,17 @@ import Image from "next/image";
 import { QuestionsProps } from "@/types/sat-platform/questions";
 import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Importing the new component
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
+import { answerCorrectRef } from "@/lib/questions/answer";
 
-const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
+interface ReadingQuestionProps {
+  onAnswerSubmit: (isCorrect: boolean) => void;
+  moveToNextQuestion: () => void;
+}
+
+const ReadingQuestion: React.FC<ReadingQuestionProps> = ({ 
+  onAnswerSubmit,
+  moveToNextQuestion
+}) => {
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
   const [mode, setMode] = useState<"highlight" | "clear" | null>(null);
@@ -17,31 +26,8 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   const toggleMode = (newMode: "highlight" | "clear") => {
     setMode((prevMode) => (prevMode === newMode ? null : newMode));
   };
-  
-  useEffect(() => {
-    if (isAnswerCorrect) {
-      setSelectedAnswer(null);
-      setMode(null);
-    }
-  }, [isAnswerCorrect, setSelectedAnswer, setMode]);
 
-
-  const renderHighlightedText = () => {
-    return (
-      <div
-        ref={textRef}
-        className="relative"
-        onMouseUp={handleSelection}
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchEnd={handleSelection}
-        style={{ cursor: mode ? "text" : "default" }}
-      >
-        {randomQuestion?.question}
-      </div>
-    );
-  };
-
-  const handleSelection = (event: React.TouchEvent | React.MouseEvent) => {
+  const handleSelection = () => {
     if (!mode || !textRef.current) return;
 
     let selection: Selection | null = null;
@@ -59,13 +45,12 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
       const selectedText = range.toString().trim();
-
-      if (selectedText.length > 0) {
+      if (selectedText) {
         if (mode === "highlight") {
           highlightRange(range);
-        } else if (mode === "clear") {
+        } else {
           clearRange(range);
-        }
+        }        
         selection.removeAllRanges();
       }
     }
@@ -99,9 +84,26 @@ const ReadingQuestion: React.FC<QuestionsProps> = ({ onAnswerSubmit }) => {
   };
 
   const handleSubmit = () => {
-    if (selectedAnswer) {
-      onAnswerSubmit(selectedAnswer);
-      setSelectedAnswer(null);
+    if (!selectedAnswer || !randomQuestion) return;
+    
+    const correct = answerCorrectRef[selectedAnswer] === randomQuestion.correctAnswer;
+    setIsCorrect(correct);
+    setUserAnswered(true);
+    onAnswerSubmit(correct);
+  };
+
+  const handleTryAgain = () => {
+    setSelectedAnswer(null);
+    setUserAnswered(false);
+    setIsCorrect(null);
+  };
+
+  const handleContinue = () => {
+    if (isCorrect) {
+      textRef.current?.querySelectorAll("span[style='background-color: yellow;']").forEach(span => {
+        span.replaceWith(document.createTextNode(span.textContent || ""));
+      });
+      moveToNextQuestion();
     }
   };
 
