@@ -1,5 +1,9 @@
 import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
+import { client } from "@/lib/mongo";
+import { User } from "@/types/user";
+import { PartyPopperIcon } from "lucide-react";
+import { Db } from "mongodb";
 import { NextResponse } from "next/server";
 
 /**
@@ -83,17 +87,14 @@ import { NextResponse } from "next/server";
  */
 
 export const GET = async () => {
-  const session = await handleGetSession()
+  await client.connect();
+  const session = await handleGetSession();
 
   try {
     const user = await handleGetUser(session);
 
-    return NextResponse.json({
-      user
-    });
+    return NextResponse.json({ user });
   } catch (error) {
-    return Response.json({
-      error
-    })  
+    return Response.json({ error });
   }
 };

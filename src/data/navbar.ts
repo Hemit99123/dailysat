@@ -5,6 +5,7 @@ export const menuItems: NavItem[] = [
   { label: "Shop", href: "/shop" },
   { label: "Study AI", href: "/ai" },
   { label: "Math", href: "/math" },
-  { label: "Reading & Writing", href:"/reading-writing" },
-  { label: "Team", href:"/team" },
+  { label: "Reading & Writing", href: "/reading-writing" },
+  { label: "Team", href: "/team" },
+  { label: "Leaderboard", href: "/leaderboard" },
 ];
