@@ -1,9 +1,6 @@
 import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/mongo";
-import { User } from "@/types/user";
-import { PartyPopperIcon } from "lucide-react";
-import { Db } from "mongodb";
 import { NextResponse } from "next/server";
 
 /**

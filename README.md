@@ -11,7 +11,7 @@
 </div>
 
 <br>
-📚 To access the API documentation, [click here!](https://www.dailysat.org/api-docs)
+📚 To access the API documentation, <a href="https://www.dailysat.org/api-docs">click here!</a>
 <br>
 
 ## 🧑‍🤝‍🧑 Open Source Contributions
@@ -31,11 +31,13 @@ We welcome open-source contributions! To contribute:
 
 ### 📛 Ticket Naming Convention
 
-When naming your GitHub issues, please use the following prefixes:
+When naming your GitHub PRs, please use the following prefixes:
 
 - `feat:` for new features  
 - `fix:` for bug fixes or incorrect behavior  
 - `chore:` for routine tasks like updating documentation or refactoring
+
+When issuing Github issues, this convention is not needed but please be descriptive in your titles. 
 
 ## 🔐 Authentication Overview
 
@@ -60,7 +62,7 @@ To maintain security, community developers do not have access to our production 
    mongodb://localhost:27017/
    ```
 
-4. Open **MongoDB Compass** and connect using the URI above. Create a new database named `SATDaily`.
+4. Open **MongoDB Compass** and connect using the URI above. Create a new database named `DailySAT`.
 
 5. Start Redis locally:
 
