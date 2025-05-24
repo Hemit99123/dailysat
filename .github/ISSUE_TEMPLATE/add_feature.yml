@@ -1,0 +1,68 @@
+name: ✨ Feature Request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: [enhancement]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✨ Feature Request
+        Help us understand your idea and how it improves the project.
+
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details (optional)
+      description: How can we follow up with you if we need more information?
+      placeholder: "e.g. yourname@example.com"
+    validations:
+      required: false
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature Description
+      description: Clearly describe the proposed feature or improvement
+      placeholder: "What do you want to add or change?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Problem or Use Case
+      description: What problem does this solve, or what use case does it enable?
+      placeholder: "Why do you need this feature?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Did you consider other approaches or workarounds?
+      placeholder: "Any other solutions you've tried or thought about?"
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context or mockups to help us understand
+      placeholder: "Screenshots, diagrams, links to related issues, etc."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - 🚀 High - Very important, urgent
+        - ✅ Medium - Useful, not urgent
+        - 💤 Low - Nice to have, not critical
+    validations:
+      required: true
