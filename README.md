@@ -21,8 +21,9 @@ Our mission is to build a platform that’s free and accessible to everyone — 
 ### 💻 Want to contribute through code?
 
 We welcome open-source contributions! To contribute:
+Your base branch will be staging which includes all changes that will be implemented onto main branch (a "waiting" phase)
 
-1. Create a new branch from `main`.
+1. Create a new branch from `staging`.
 2. Submit a pull request (PR) that links to a relevant issue.
 3. Our team will review your PR and provide updates via comments on the linked issue.
 
