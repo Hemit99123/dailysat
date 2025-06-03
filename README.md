@@ -55,8 +55,7 @@ To maintain security, community developers do not have access to our production 
 
    ```bash
    docker pull mongo
-
-
+   ```
 3. Your local MongoDB URI will likely be:
 
    ```
