@@ -58,18 +58,22 @@ const Reading = () => {
       {/* Main Content */}
       <QuestionWrappers>
         {selectedTopic ? (
-          <div className="w-full mx-auto">
+            <div className="w-full mx-auto">
             <Header
               name={selectedTopic.name}
               question={randomQuestion?.question}
             />
             {randomQuestion ? (
               <ReadingQuestion
-                onAnswerSubmit={() =>
-                  handleAnswerSubmit(
-                    "reading-writing",
-                  )
-                }
+              onAnswerSubmit={() =>
+                handleAnswerSubmit(
+                "reading-writing",
+                )
+              }
+              moveToNextQuestion={() => {
+                // Logic to move to the next question
+                fetchRandomQuestion("reading-writing", selectedTopic);
+              }}
               />
             ) : (
               <Spinner />
@@ -79,7 +83,7 @@ const Reading = () => {
               explanation={randomQuestion?.explanation || ""}
               type="reading-writing"
             />
-          </div>
+            </div>
         ) : (
           <GetStarted />
         )}
