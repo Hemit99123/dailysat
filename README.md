@@ -5,68 +5,87 @@
 <div align="center" style="line-height: 1;">
   <a href="https://dailysat.org/"><img alt="Demo"
     src="https://img.shields.io/badge/🚀%20Live%20Demo-DailySAT-2F80ED?color=2F80ED&logoColor=white"/></a>
-  <a href="https://twitter.com/dailysat"><img alt="Twitter"
-    src="https://img.shields.io/badge/X@dailysat-1DA1F2?logo=x&logoColor=white"/></a>
-  <br>
   <a href="LICENSE-CODE"><img alt="Code License"
     src="https://img.shields.io/badge/Code%20License-MIT%202.0-00BFFF?color=00BFFF"/></a>
   <br>
 </div>
 
-📚 To access the API documentation, [click here!](https://www.dailysat.org/api-docs)
+<br>
+📚 To access the API documentation, <a href="https://www.dailysat.org/api-docs">click here!</a>
+<br>
 
-## 🧑‍🤝‍🧑 For open-source contributions:
-Our mission is to build an app that is free and accessible! This means we love input from the DailySAT community :) If you have any suggestions or feedback on our webapp, you can issue a "ticket" for our team to review. Kindly create an Issue within the issues tabs provided by the Github web app.
+## 🧑‍🤝‍🧑 Open Source Contributions
 
-- ##### What if I want to help through coding?
-  We do allow for open-source coding contributions! Simply create a new branch from the main and then creating a PR with an issue,     
-  linking the PR with it. Our team will swiftly review it and will keep you posted on the review progess through **comments** on the 
-  issue that has been assigned
+Our mission is to build a platform that’s free and accessible to everyone — and that means we value input from the DailySAT community! If you have suggestions or feedback about the web app, you can submit a “ticket” for our team to review by creating an **Issue** in the GitHub **Issues** tab.
 
-  You will given given **credit** for any work that we use from you. Do remember that all work done through open-source is purely volunteer and **NOT SUBJECT TO PAYMENT** You can add   
-  your contributions as experience however.
+### 💻 Want to contribute through code?
 
-##### 📛 When naming your ticket, please use the following prefixes...
-- feat: (for a feature)
-- fix: (for a fix in wrongful behaviour and bugs)
-- chore: (for mudane tasks such as updating documentation + refactors of code)
+We welcome open-source contributions! To contribute:
+Your base branch will be staging which includes all changes that will be implemented onto main branch (a "waiting" phase)
 
-## 🔐 How our authentication works
+1. Create a new branch from `staging`.
+2. Submit a pull request (PR) that links to a relevant issue.
+3. Our team will review your PR and provide updates via comments on the linked issue.
 
-Unlike the admin platform, the regular DailySAT platform's auth is handled by the AuthJS lib. It features simple Google SSO and its contents are saved onto a MongoDB collection called "users." This is then used to populate the dashboard with user information. We also employed a rate limiter to regulate the amount of DB calls. This way there is less burden on our MongoDB server. During the times when the API is restircted, we use a caching layer to populate the information
+✅ **You will receive full credit** for any work we use from your contribution.  
+❌ **Please note** that open-source contributions are volunteer-based and **not subject to payment**, but you are encouraged to list your contributions on your resume or portfolio.
 
-## 📊 How to create a mock database
-Unfortunately, we don't allow community developers direct access to our official MongoDB database. However, you can easily set up a mock MongoDB environment on your local machine. Here’s how:
+### 📛 Ticket Naming Convention
 
-1. **Install Docker** and **MongoDB Compass** if you haven’t already.
-2. Open your terminal (any directory works) and run:
+When naming your GitHub PRs, please use the following prefixes:
 
-   ```
+- `feat:` for new features  
+- `fix:` for bug fixes or incorrect behavior  
+- `chore:` for routine tasks like updating documentation or refactoring
+
+When issuing Github issues, this convention is not needed but please be descriptive in your titles. 
+
+## 🔐 Authentication Overview
+
+Unlike the admin dashboard, the main DailySAT platform uses [Auth.js](https://authjs.dev/) for authentication, with Google SSO support. User data is stored in a MongoDB collection called `users`, which powers the dashboard.
+
+To reduce load on our MongoDB server, we’ve implemented a rate limiter and use Redis as a caching layer when the API is restricted.
+
+## 🧪 Setting Up a Mock Database (Local Dev)
+
+To maintain security, community developers do not have access to our production MongoDB database. However, you can easily set up a local development environment:
+
+1. **Install Docker** and **MongoDB Compass**.
+2. In your terminal, run:
+
+   ```bash
    docker pull mongo
-   ```
-3. Your local MongoDB URL will likely be:
+
+
+3. Your local MongoDB URI will likely be:
 
    ```
    mongodb://localhost:27017/
    ```
-4. Head over to **Google Cloud** and create a new project.
-5. In **MongoDB Compass**, connect using the local Mongo URL and create a new database named **SATDaily**.
-6. After running the MongoDB Docker container, start Redis by running:
 
-   ```
+4. Open **MongoDB Compass** and connect using the URI above. Create a new database named `DailySAT`.
+
+5. Start Redis locally:
+
+   ```bash
    redis-server
    ```
 
-   (If you don’t have Redis installed, install it first.)
+   > *Note: If Redis is not installed, install it first.*
 
-This setup will allow you to simulate the production environment and continue developing without needing access to our official database.
+This setup mirrors our production environment and allows you to continue developing without access to the live database.
 
-## 💻 Technology Stack:
-- **NextJS** (frontend and backend, good for SEO)
-- **TailwindCSS** (styling)
-- **MongoDB** (db management solution)
-- **Upstash Redis** (storage solution for sessions, rate limiting and caching layer)
-- **Husky** (pre-commit solution to run commands prior to a commit)
-- **ESLint** (used for linting enforcement)
-- **Groq** (used to power the AI study planner)
-- **Better Auth** (abstracts the authentication logic)
+## 🧰 Tech Stack
+
+* **Next.js** – Frontend + backend framework (SEO-friendly)
+* **TailwindCSS** – Utility-first CSS framework for styling
+* **MongoDB** – Database management
+* **Upstash Redis** – Session storage, rate limiting, and caching
+* **Husky** – Pre-commit hook management
+* **ESLint** – Code linting enforcement
+* **Groq** – AI-powered study planner engine
+* **Better Auth** – Simplifies authentication logic
+* **CodeRabbit** – Automated PR reviews with summaries
+
+<br>
+<br>

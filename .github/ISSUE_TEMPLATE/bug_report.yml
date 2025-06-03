@@ -1,0 +1,72 @@
+name: 🐛 Bug Report
+description: Report a bug to help us improve
+title: "[Bug]: "
+labels: [bug]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐞 Bug Report
+        Please provide a clear and concise description of the problem.
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, browser, or platform where the bug occurred
+      placeholder: "e.g. macOS 13.2, Chrome 120.0.0, Node.js v18"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the bug in detail
+      placeholder: "What happened? What did you expect to happen?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce the issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs or Screenshots
+      description: Add any error logs, screenshots, or videos that help explain the issue
+      placeholder: "Paste logs here or drag-and-drop images/videos"
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: App Version or Commit Hash
+      placeholder: "e.g. v1.3.2 or a1b2c3d"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - 🔴 Critical - Blocks usage entirely
+        - 🟠 Major - Severe impact but a workaround exists
+        - 🟡 Minor - Annoying but doesn't block usage
+        - ⚪️ Cosmetic - UI or UX flaw, no functional impact
+    validations:
+      required: true
