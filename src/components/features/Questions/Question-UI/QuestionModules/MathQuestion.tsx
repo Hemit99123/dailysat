@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Answers } from "@/types/sat-platform/answer";
 import { useAnswerStore, useAnswerCorrectStore, useQuestionStore } from "@/store/questions";
-import { CalculatorIcon } from "lucide-react";
+import { BookmarkIcon, CalculatorIcon } from "lucide-react";
 import { useCalcOptionModalStore } from "@/store/modals";
 import CalcOption from "../../Modals/CalcOption";
 import { parseContent } from "@/lib/latex";
-import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; // Import the shared UI component
+import QuestionSharedUI from "../SharedQuestionUI/QuestionOptions"; 
 import MultipleChoice from "../SharedQuestionUI/MultipleChoice";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -28,9 +28,11 @@ interface MathQuestionProps {
 
 const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
   const randomQuestion = useQuestionStore((state) => state.randomQuestion);
+  const setRandomQuestion = useQuestionStore((state) => state.setRandomQuestion);
   const selectedAnswer = useAnswerStore((state) => state.answer);
   const setSelectedAnswer = useAnswerStore((state) => state.setAnswer);
   const isAnswerCorrect = useAnswerCorrectStore((state) => state.isAnswerCorrect);
+  const setIsAnswerCorrect = useAnswerCorrectStore((state) => state.setIsAnswerCorrect);
   
   // Remove null from the state type
   const [crossOffMode, setCrossOffMode] = useState(false);
@@ -205,6 +207,10 @@ const MathQuestion: React.FC<MathQuestionProps> = ({ onAnswerSubmit }) => {
     setShowExplanation(false);
     setUserAnswered(false);
     setSelectedAnswer(null);
+  };
+
+  const toggleMarkForReview = () => {
+    setMarkedForReview((prev) => !prev);
   };
 
   const handleOpenCalcModal = useCalcOptionModalStore((state) => state.openModal);
