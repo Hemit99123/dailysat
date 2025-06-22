@@ -1,28 +1,32 @@
 import React from "react";
-import { AnimatedTeamCard } from "@/components/features/About/AnimatedTeamCard";
-import "./team.css";
 import { teamMember } from "@/data/team";
+import TeamMemberCard from "@/components/features/About/TeamMemberCard";
+import "./team.css";
 
 const About = () => {
-  const text = "Our Executives";
-  
+  const heading = "Our Executives";
 
   return (
-    <div>
+    <div className="px-4">
       <div className="text-center mt-8">
         <h2 className="text-5xl tracking-tight font-extrabold text-blue-900">
-          {text.split("").map((char, index) => (
+          {heading.split("").map((char, index) => (
             <span
               key={index}
               className="fade-in-up inline-block"
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              {char === " " ? "\u00A0" : char} {/* Preserve spaces */}
+              {char === " " ? "\u00A0" : char}
             </span>
           ))}
         </h2>
       </div>
-      <AnimatedTeamCard testimonials={teamMember} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-6xl mx-auto">
+        {teamMember.map((member, index) => (
+          <TeamMemberCard key={index} member={member} />
+        ))}
+      </div>
     </div>
   );
 };
