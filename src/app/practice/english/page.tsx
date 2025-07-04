@@ -232,7 +232,7 @@ export default function EnglishPracticePage() {
     const correct = selectedAnswer === currentQuestion.question.correct_answer;
     setIsCorrect(correct);
     setIsSubmitted(true);
-    setShowExplanation(true); // Always show explanation after submission
+    setShowExplanation(true);
 
     if (correct) {
       setCorrectCount((prev) => prev + 1);
@@ -250,13 +250,11 @@ export default function EnglishPracticePage() {
 
     setQuestionHistory(prev => {
         const historyCopy = [...prev];
-        // Find if an unanswered entry for this question already exists (e.g., from being marked for later).
         const existingUnansweredIndex = historyCopy.findIndex(
             item => item.question.id === currentQuestion.id && !item.isAnswered
         );
 
         if (existingUnansweredIndex !== -1) {
-            // If an unanswered entry exists, update it. This preserves the 'isMarkedForLater' status.
             historyCopy[existingUnansweredIndex] = {
                 ...historyCopy[existingUnansweredIndex],
                 userAnswer: selectedAnswer,
@@ -265,14 +263,12 @@ export default function EnglishPracticePage() {
             };
             return historyCopy;
         } else {
-            // Otherwise, create a new history entry.
-            // This assumes we don't need to worry about re-answering already answered questions.
             const newHistoryItem: QuestionHistory = {
                 id: prev.length + 1,
                 question: currentQuestion,
                 userAnswer: selectedAnswer,
                 isCorrect: correct,
-                isMarkedForLater: false, // A direct submission is not marked by default.
+                isMarkedForLater: false,
                 isAnswered: true,
             };
             return [...prev, newHistoryItem];
@@ -401,7 +397,6 @@ export default function EnglishPracticePage() {
   }, [currentQuestion, subject, selectedAnswer, isSubmitted]);
 
   return (
-    // The rest of the JSX remains unchanged.
     <div style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#f8f9fa", minHeight: "100vh", margin: 0, padding: 0 }}>
       <div style={{ display: "flex", padding: "20px", gap: "20px" }}>
         <div style={{ width: "250px", backgroundColor: "#f8f9fa", padding: "20px", borderRadius: "8px", height: "fit-content" }}>
@@ -409,29 +404,28 @@ export default function EnglishPracticePage() {
             <div style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px", color: "#333", position: "relative" }}>
               <span style={{ marginLeft: "8px", marginRight: "3px" }}>📖 English</span>
             </div>
-            {/* New button to go to Math page, placed under the subject display */}
             <a
               href="/practice/math"
               style={{
-                display: 'block', // Make it a block element to take full width
-                padding: "6px 10px", // Smaller padding
+                display: 'block', 
+                padding: "6px 10px", 
                 backgroundColor: "#e3f2fd",
-                color: "#2196f3", // Less bold color
+                color: "#2196f3", 
                 border: "1px solid #2196f3",
                 borderRadius: "4px",
                 cursor: "pointer",
-                fontSize: "13px", // Smaller font size
-                fontWeight: "normal", // Less bold
+                fontSize: "13px", 
+                fontWeight: "normal", 
                 textAlign: "center",
-                textDecoration: "none", // Remove underline
-                marginTop: "10px", // Add some space below the subject title
+                textDecoration: "none", 
+                marginTop: "10px", 
                 boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
               }}
             >
               Go to Math <i className="fas fa-arrow-right" style={{ marginLeft: '5px' }}></i>
             </a>
           </div>
-          <div style={{ height: "2px", backgroundColor: "#6e6e6e", width: "210px", marginBottom: "20px", marginTop: "20px" }}></div> {/* Adjusted margin-top */}
+          <div style={{ height: "2px", backgroundColor: "#6e6e6e", width: "210px", marginBottom: "20px", marginTop: "20px" }}></div>
           <div style={{ marginBottom: "30px" }}>
             <div style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>Topics:</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -524,7 +518,7 @@ export default function EnglishPracticePage() {
                       borderColor = "#2196f3"; backgroundColor = "#e3f2fd";
                     }
                     return (
-                      <button key={key} onClick={() => handleAnswerSelect(key)} disabled={isViewingAnsweredHistory || isSubmitted} style={{ // Disable choices after submission
+                      <button key={key} onClick={() => handleAnswerSelect(key)} disabled={isViewingAnsweredHistory || isSubmitted} style={{ 
                         display: "block", width: "100%", padding: "15px", marginBottom: "10px", border: `2px solid ${borderColor}`,
                         borderRadius: "6px", backgroundColor: backgroundColor, cursor: (isViewingAnsweredHistory || isSubmitted) ? "not-allowed" : "pointer",
                         textAlign: "left", fontSize: "16px", color: "black", transition: "all 0.2s", boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
@@ -644,10 +638,10 @@ export default function EnglishPracticePage() {
                 {questionHistory.length === 0 && <span style={{ color: 'grey', fontSize: '14px' }}>Answer questions to see your progress.</span>}
                 {questionHistory.map((item, index) => {
                   let bgColor;
-                  if (item.isMarkedForLater) bgColor = "#ffc107"; // Yellow for marked for later
-                  else if (item.isCorrect === true) bgColor = "#66bb6a"; // Green for correct
-                  else if (item.isCorrect === false) bgColor = "#ef5350"; // Red for incorrect
-                  else bgColor = "#b0bec5"; // Grey for unanswered/unmarked
+                  if (item.isMarkedForLater) bgColor = "#ffc107";
+                  else if (item.isCorrect === true) bgColor = "#66bb6a"; 
+                  else if (item.isCorrect === false) bgColor = "#ef5350"; 
+                  else bgColor = "#b0bec5"; 
                   return (
                     <button key={item.id} onClick={() => handleProgressBoxClick(index)} title={`Question ${index + 1}`} style={{
                       width: '35px', height: '35px', borderRadius: '6px', backgroundColor: bgColor,

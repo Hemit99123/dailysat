@@ -8,7 +8,6 @@ declare global {
   }
 }
 
-// Note: The math page does not use the College Board API, so those constants are removed.
 const DATA_URL = "https://api.jsonsilo.com/public/942c3c3b-3a0c-4be3-81c2-12029def19f5";
 
 type Question = {
@@ -44,7 +43,6 @@ export default function MathPracticePage() {
   const subject: "Math" = "Math";
   const [difficulty, setDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All");
   const [selectedDomain, setSelectedDomain] = useState<string>("All");
-  // Removed englishDomains, added mathDomains
   const [mathDomains, setMathDomains] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -57,7 +55,6 @@ export default function MathPracticePage() {
   const [wrongCount, setWrongCount] = useState<number>(0);
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [maxStreak, setMaxStreak] = useState<number>(0);
-  // Renamed from englishCorrect/Wrong to mathCorrect/Wrong
   const [mathCorrect, setMathCorrect] = useState<number>(0);
   const [mathWrong, setMathWrong] = useState<number>(0);
   const [predictedMathScore, setPredictedMathScore] = useState<number>(200);
@@ -86,7 +83,6 @@ export default function MathPracticePage() {
 
   const totalAttempts = correctCount + wrongCount;
   const correctPercentage = totalAttempts === 0 ? 0 : (correctCount / totalAttempts) * 100;
-  // Renamed from englishTotal/Percentage
   const mathTotal = mathCorrect + mathWrong;
   const mathPercentage = mathTotal === 0 ? 0 : (mathCorrect / mathTotal);
 
@@ -112,7 +108,6 @@ export default function MathPracticePage() {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const jsonData: Data = await response.json();
         setData(jsonData);
-        // Set math domains instead of English
         const uniqueMathDomains = Array.from(new Set(jsonData.math.map((q) => q.domain)));
         setMathDomains(uniqueMathDomains);
       } catch (error) { console.error("Error fetching initial JSON data:", error); }
@@ -120,7 +115,6 @@ export default function MathPracticePage() {
     fetchInitialData();
   }, []);
 
-  // Revamped question loading logic to match the English page
   useEffect(() => {
     if (currentHistoryIndex !== null) { setIsLoading(false); return; }
     setIsLoading(true);
@@ -146,7 +140,6 @@ export default function MathPracticePage() {
             const randomIndex = Math.floor(Math.random() * unattemptedQuestions.length);
             newQuestion = unattemptedQuestions[randomIndex];
         } else if (allFilteredQuestions.length > 0) {
-            // If all questions for the filter have been attempted, recycle them.
             const randomIndex = Math.floor(Math.random() * allFilteredQuestions.length);
             newQuestion = allFilteredQuestions[randomIndex];
         }
@@ -160,7 +153,6 @@ export default function MathPracticePage() {
   }, [data, difficulty, selectedDomain, currentHistoryIndex, fetchQuestionTrigger, subject]);
 
 
-  // Updated score prediction for math
   useEffect(() => {
     const newMathScore = Math.round((mathPercentage * 600) + 200);
     setPredictedMathScore(newMathScore);
@@ -171,17 +163,16 @@ export default function MathPracticePage() {
     setSelectedAnswer(choice);
   };
 
-  // Revamped submit logic to match the English page
   const handleSubmit = () => {
     if (!selectedAnswer || !currentQuestion) return;
     const correct = selectedAnswer === currentQuestion.question.correct_answer;
     setIsCorrect(correct);
     setIsSubmitted(true);
-    setShowExplanation(true); // Always show explanation/result area after submission
+    setShowExplanation(true); 
 
     if (correct) {
       setCorrectCount((prev) => prev + 1);
-      setMathCorrect((prev) => prev + 1); // Update math-specific count
+      setMathCorrect((prev) => prev + 1);
       setCurrentStreak((prev) => {
         const newStreak = prev + 1;
         setMaxStreak((maxPrev) => Math.max(maxPrev, newStreak));
@@ -189,7 +180,7 @@ export default function MathPracticePage() {
       });
     } else {
       setWrongCount((prev) => prev + 1);
-      setMathWrong((prev) => prev + 1); // Update math-specific count
+      setMathWrong((prev) => prev + 1);
       setCurrentStreak(0);
     }
 
@@ -227,7 +218,6 @@ export default function MathPracticePage() {
     setFetchQuestionTrigger(prev => prev + 1);
   };
 
-  // Revamped mark for later logic to match the English page
   const handleMarkForLater = () => {
     if (!currentQuestion) return;
 
@@ -310,7 +300,6 @@ export default function MathPracticePage() {
   const getDifficultyEmoji = (diff: string) => ({ "All": "❓", "Easy": "😊", "Medium": "😐", "Hard": "😠" }[diff] || "❓");
   const getDifficultyColor = (diff: string) => ({ "Easy": "#4caf50", "Medium": "#F7DA1D", "Hard": "#f44336" }[diff] || "white");
   const getDifficultyTooltip = (diff: string) => ({ "All": "Any Difficulty", "Easy": "Easy", "Medium": "Medium", "Hard": "Hard" }[diff] || "");
-  // Use math domains
   const mathDomainNames = ["Algebra", "Advanced Math", "Problem-Solving and Data Analysis", "Geometry and Trigonometry"];
   const currentDomainNames = mathDomainNames;
   const currentQuestionStatus = getCurrentQuestionStatus();
@@ -344,7 +333,6 @@ export default function MathPracticePage() {
   }, [currentQuestion, subject, selectedAnswer, isSubmitted]);
 
   return (
-    // The entire JSX structure is replaced to match the English page for consistency.
     <div style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#f8f9fa", minHeight: "100vh", margin: 0, padding: 0 }}>
       <div style={{ display: "flex", padding: "20px", gap: "20px" }}>
         <div style={{ width: "250px", backgroundColor: "#f8f9fa", padding: "20px", borderRadius: "8px", height: "fit-content" }}>
@@ -352,9 +340,8 @@ export default function MathPracticePage() {
             <div style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px", color: "#333", position: "relative" }}>
               <span style={{ marginLeft: "8px", marginRight: "3px" }}>🧮 Math</span>
             </div>
-            {/* New button to go to English page, styled like the one on the English page */}
             <a
-              href="/practice/english" // Link to the English page
+              href="/practice/english" 
               style={{
                 display: 'block',
                 padding: "6px 10px",
@@ -460,7 +447,6 @@ export default function MathPracticePage() {
                       borderColor = "#2196f3"; backgroundColor = "#e3f2fd";
                     }
                     
-                    // Wrap choice in $...$ for LaTeX rendering if it doesn't already contain it.
                     const finalValue = value.includes('$') ? value : `$${value}$`;
 
                     return (
@@ -470,7 +456,6 @@ export default function MathPracticePage() {
                         textAlign: "left", fontSize: "16px", color: "black", transition: "all 0.2s", boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                         opacity: (isViewingAnsweredHistory || isSubmitted) ? 0.7 : 1
                       }}>
-                        {/* The span structure is slightly different for math to handle KaTeX in choices */}
                         <span style={{ fontWeight: "bold", marginRight: "8px" }}>{`${key}.`}</span>
                         <span dangerouslySetInnerHTML={{ __html: finalValue }} />
                       </button>
