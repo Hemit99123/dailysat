@@ -586,7 +586,7 @@ export default function MathPracticePage() {
                   );
                 })}
               </div>
-            </div>
+</div>
           </div>
         </div>
       </div>
