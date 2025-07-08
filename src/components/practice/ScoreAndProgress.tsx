@@ -105,13 +105,12 @@ const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
           {questionHistory.length === 0 && <span style={{ color: 'grey', fontSize: '14px' }}>Answer questions to see your progress.</span>}
           {questionHistory.map((item, index) => {
             let bgColor;
-            // Determine background color based on marking and answer status
             if (item.isMarkedForLater) {
-              bgColor = "#FFCC00"; // Yellow for marked questions
+              bgColor = "#FFCC00"; 
             } else if (item.isAnswered) {
-              bgColor = item.isCorrect ? "#4caf50" : "#f44336"; // Green for correct, Red for incorrect
+              bgColor = item.isCorrect ? "#4caf50" : "#f44336";
             } else {
-              bgColor = "#9e9e9e"; // Gray for unanswered
+              bgColor = "#9e9e9e"; 
             }
 
             const isCurrentQuestion = currentQuestion && item.question.id === currentQuestion.id;

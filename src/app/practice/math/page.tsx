@@ -47,7 +47,6 @@ export default function MathPracticePage() {
 
 
   useEffect(() => {
-  // Don't reset selectedAnswer if viewing an answered question from history
   resetQuestionStates(currentHistoryIndex !== null && questionHistory[currentHistoryIndex]?.isAnswered);
 }, [currentQuestion]);
 
