@@ -1,254 +1,225 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+
+import { useEffect, useState, useMemo } from "react";
+import { DesmosCalculator } from "@/components/practice/DesmosCalculator";  // ➕ 2
 import { TopicSidebar } from "@/components/practice/TopicSidebar";
 import { QuestionContent } from "@/components/practice/QuestionContent";
 import ScoreAndProgress from "@/components/practice/ScoreAndProgress";
-import { DesmosCalculator } from "@/components/practice/DesmosCalculator";
-import { usePracticeSession, Question, QuestionHistory } from "@/hooks/usePracticeSession";
 
-declare global {
-  interface Window {
-    katex: any;
-    renderMathInElement: (element: HTMLElement, options?: any) => void;
-  }
+import {
+  usePracticeSession,
+  QuestionHistory,
+} from "@/hooks/usePracticeSession";
+
+import { subject2, domainDisplayMapping2 } from "@/data/practice";
+
+interface InteractionState {
+  selectedAnswer: string | null;
+  isCorrect: boolean | null;
+  showExplanation: boolean;
+  isSubmitted: boolean;
 }
 
+const INITIAL_INTERACTION: InteractionState = {
+  selectedAnswer: null,
+  isCorrect: null,
+  showExplanation: false,
+  isSubmitted: false,
+};
+
 export default function MathPracticePage() {
-  const subject: "Math" = "Math";
   const {
-    difficulty, setDifficulty, selectedDomain, setSelectedDomain, mathDomains,
-    currentQuestion, setCurrentQuestion, isLoading,
-    correctCount, setCorrectCount, wrongCount, setWrongCount,
-    currentStreak, setCurrentStreak, maxStreak, setMaxStreak,
-    mathCorrect, setMathCorrect, mathWrong, setMathWrong, predictedMathScore,
-    questionHistory, setQuestionHistory, currentHistoryIndex, setCurrentHistoryIndex,
+    difficulty,
+    setDifficulty,
+    selectedDomain,
+    setSelectedDomain,
+    mathDomains,
+    currentQuestion,
+    setCurrentQuestion,
+    isLoading,
+    correctCount,
+    setCorrectCount,
+    wrongCount,
+    setWrongCount,
+    currentStreak,
+    setCurrentStreak,
+    maxStreak,
+    setMaxStreak,
+    mathCorrect,
+    setMathCorrect,
+    mathWrong,
+    setMathWrong,
+    predictedMathScore,
+    questionHistory,
+    setQuestionHistory,
+    currentHistoryIndex,
+    setCurrentHistoryIndex,
     showNext,
   } = usePracticeSession();
 
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [showExplanation, setShowExplanation] = useState<boolean>(false);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [interaction, setInteraction] =
+    useState<InteractionState>(INITIAL_INTERACTION);
+
+  const resetInteraction = (preserveAnswer = false) =>
+    setInteraction(prev => ({
+      ...INITIAL_INTERACTION,
+      selectedAnswer: preserveAnswer ? prev.selectedAnswer : null,
+    }));
+
   const [showDesmos, setShowDesmos] = useState(false);
-  const questionContentRef = useRef<HTMLDivElement>(null);
-
-  const domainDisplayMapping = {
-    "Algebra": "Algebra", "Advanced Math": "Advanced Math",
-    "Problem-Solving and Data Analysis": "Problem-Solving and Data Analysis",
-    "Geometry and Trigonometry": "Geometry and Trigonometry",
-  };
-
-  const resetQuestionStates = (preserveAnswer = false) => {
-  if (!preserveAnswer) setSelectedAnswer(null);
-  setIsCorrect(null);
-  setShowExplanation(false);
-  setIsSubmitted(false);
-};
-
 
   useEffect(() => {
-  resetQuestionStates(currentHistoryIndex !== null && questionHistory[currentHistoryIndex]?.isAnswered);
-}, [currentQuestion]);
+    const keepAnswer =
+      currentHistoryIndex !== null &&
+      questionHistory[currentHistoryIndex]?.isAnswered;
 
+    resetInteraction(keepAnswer);
+  }, [currentQuestion]);
 
-  useEffect(() => {
-    if (!document.head.querySelector('link[href*="font-awesome"]')) {
-      const fontAwesomeLink = document.createElement('link');
-      fontAwesomeLink.rel = 'stylesheet';
-      fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
-      document.head.appendChild(fontAwesomeLink);
-    }
-    if (!document.head.querySelector('link[href*="katex"]')) {
-        const katexLink = document.createElement('link');
-        katexLink.rel = 'stylesheet';
-        katexLink.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css';
-        document.head.appendChild(katexLink);
-    }
-  }, []);
+  const currentQuestionStatus = useMemo(
+    () => questionHistory.find(h => h.question.id === currentQuestion?.id),
+    [currentQuestion, questionHistory],
+  );
 
-  useEffect(() => {
-    const renderMath = () => {
-      if (questionContentRef.current && typeof window.renderMathInElement !== 'undefined') {
-        window.renderMathInElement(questionContentRef.current, {
-          delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
-          throwOnError: false,
-          output: 'html',
-          strict: false,
-          trust: true,
-          macros: {
-            "\\R": "\\mathbb{R}",
-            "\\N": "\\mathbb{N}",
-            "\\Z": "\\mathbb{Z}"
-          }
-        });
-      }
-    };
-    
-    const loadKatex = async () => {
-      if (typeof window === 'undefined') return;
-      
-      if (!document.getElementById('katex-script')) {
-        const script = document.createElement('script');
-        script.id = 'katex-script';
-        script.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js';
-        script.async = true;
-        
-        const autoRenderScript = document.createElement('script');
-        autoRenderScript.id = 'katex-autorender-script';
-        autoRenderScript.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js';
-        autoRenderScript.async = true;
-        
-        await new Promise((resolve) => {
-          script.onload = resolve;
-          document.body.appendChild(script);
-        });
-        
-        await new Promise((resolve) => {
-          autoRenderScript.onload = resolve;
-          document.body.appendChild(autoRenderScript);
-        });
-      }
-      
-      renderMath();
-    };
-    
-    loadKatex();
-  }, [currentQuestion, isSubmitted, selectedAnswer]);
+  const isViewingAnsweredHistory = useMemo(
+    () =>
+      currentHistoryIndex !== null &&
+      questionHistory[currentHistoryIndex]?.isAnswered,
+    [currentHistoryIndex, questionHistory],
+  );
 
   const handleSubmit = () => {
-    if (!selectedAnswer || !currentQuestion) return;
-    const correct = selectedAnswer === currentQuestion.question.correct_answer;
-    setIsCorrect(correct);
-    setIsSubmitted(true);
-    setShowExplanation(true);
+    if (!interaction.selectedAnswer || !currentQuestion) return;
+
+    const correct =
+      interaction.selectedAnswer === currentQuestion.question.correct_answer;
 
     if (correct) {
-      setCorrectCount(prev => prev + 1);
-      setMathCorrect(prev => prev + 1);
-      setCurrentStreak(prev => {
-        const newStreak = prev + 1;
-        setMaxStreak(max => Math.max(max, newStreak));
-        return newStreak;
+      setCorrectCount(c => c + 1);
+      setMathCorrect(c => c + 1);
+      setCurrentStreak(s => {
+        const next = s + 1;
+        setMaxStreak(m => Math.max(m, next));
+        return next;
       });
     } else {
-      setWrongCount(prev => prev + 1);
-      setMathWrong(prev => prev + 1);
+      setWrongCount(c => c + 1);
+      setMathWrong(c => c + 1);
       setCurrentStreak(0);
     }
 
     setQuestionHistory(prev => {
-      const foundIndex = prev.findIndex(item => item.question.id === currentQuestion.id);
-      if (foundIndex !== -1) {
-        return prev.map((item, index) => 
-          index === foundIndex ? {
-            ...item,
-            userAnswer: selectedAnswer,
-            isCorrect: correct,
-            isAnswered: true,
-            isMarkedForLater: item.isMarkedForLater
-          } : item
-        );
-      } else {
-        return [...prev, {
-          id: prev.length + 1,
-          question: currentQuestion,
-          userAnswer: selectedAnswer,
-          isCorrect: correct,
-          isAnswered: true,
-          isMarkedForLater: false
-        }];
+      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
+
+      const updatedItem: QuestionHistory = {
+        id: index !== -1 ? prev[index].id : prev.length + 1,
+        question: currentQuestion,
+        userAnswer: interaction.selectedAnswer,
+        isCorrect: correct,
+        isAnswered: true,
+        isMarkedForLater: index !== -1 ? prev[index].isMarkedForLater : false,
+      };
+
+      if (index !== -1) {
+        return prev.map((h, i) => (i === index ? updatedItem : h));
       }
+      return [...prev, updatedItem];
     });
+
+    setInteraction(prev => ({
+      ...prev,
+      isCorrect: correct,
+      isSubmitted: true,
+      showExplanation: true,
+    }));
   };
 
   const handleMarkForLater = () => {
     if (!currentQuestion) return;
 
     setQuestionHistory(prev => {
-      const foundIndex = prev.findIndex(item => item.question.id === currentQuestion.id);
-      
-      if (foundIndex !== -1) {
-        return prev.map((item, index) => {
-          if (index === foundIndex) {
-            const newMarkedStatus = !item.isMarkedForLater;
-            return {
-              ...item,
-              isMarkedForLater: newMarkedStatus
-            };
-          }
-          return item;
-        });
-      } else {
-        const newHistoryItem: QuestionHistory = {
-          id: prev.length + 1,
-          question: currentQuestion,
-          userAnswer: null,
-          isCorrect: null,
-          isMarkedForLater: true,
-          isAnswered: false
-        };
-        return [...prev, newHistoryItem];
+      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
+
+      if (index !== -1) {
+        return prev.map((h, i) =>
+          i === index ? { ...h, isMarkedForLater: !h.isMarkedForLater } : h,
+        );
       }
+
+      const newItem: QuestionHistory = {
+        id: prev.length + 1,
+        question: currentQuestion,
+        userAnswer: null,
+        isCorrect: null,
+        isMarkedForLater: true,
+        isAnswered: false,
+      };
+
+      return [...prev, newItem];
     });
   };
 
   const handleProgressBoxClick = (index: number) => {
     const historyItem = questionHistory[index];
+
     setCurrentHistoryIndex(index);
     setCurrentQuestion(historyItem.question);
-    setSelectedAnswer(historyItem.userAnswer);
-    setIsCorrect(historyItem.isCorrect);
-    setIsSubmitted(historyItem.isAnswered);
-    setShowExplanation(historyItem.isAnswered);
+    setInteraction({
+      selectedAnswer: historyItem.userAnswer,
+      isCorrect: historyItem.isCorrect,
+      isSubmitted: historyItem.isAnswered,
+      showExplanation: historyItem.isAnswered,
+    });
   };
 
   const handleNext = () => {
-    if (currentHistoryIndex !== null) {
-      setCurrentHistoryIndex(null);
-    }
+    if (currentHistoryIndex !== null) setCurrentHistoryIndex(null);
     showNext();
-    resetQuestionStates();
   };
 
-  const currentQuestionStatus = questionHistory.find(item => item.question.id === currentQuestion?.id);
-  const isViewingAnsweredHistory = currentHistoryIndex !== null && questionHistory[currentHistoryIndex]?.isAnswered;
-
   return (
-    <div style={{ display: "flex", gap: "24px", padding: "20px" }}>
+    <div className="flex gap-6 p-5">
+      {/* --------------------------- Sidebar --------------------------- */}
       <TopicSidebar
         selectedDomain={selectedDomain}
         setSelectedDomain={setSelectedDomain}
         currentDomainNames={mathDomains}
-        domainDisplayMapping={domainDisplayMapping}
+        domainDisplayMapping={domainDisplayMapping2}
         difficulty={difficulty}
         setDifficulty={setDifficulty}
-        subject={subject}
+        subject={subject2}
       />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "row", gap: "24px" }}>
-        <div ref={questionContentRef} style={{ flex: 1, backgroundColor: "white", padding: "20px", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", color: "black" }}>
+      {/* -------------------------- Main Pane --------------------------- */}
+      <div className="flex flex-1 gap-6">
+        <section className="flex-1 overflow-y-auto rounded-lg bg-white p-5 text-black shadow max-h-[calc(100vh-64px)]">
           <QuestionContent
             isMarked={currentQuestionStatus?.isMarkedForLater || false}
             isLoading={isLoading}
             currentQuestion={currentQuestion}
-            subject={subject}
-            selectedDomain={selectedDomain}
-            showDesmos={showDesmos}
-            setShowDesmos={setShowDesmos}
+            subject={subject2}
+            selectedDomain={
+              (domainDisplayMapping2 as Record<string, string>)[selectedDomain] || selectedDomain
+            }
             handleMarkForLater={handleMarkForLater}
             currentQuestionStatus={currentQuestionStatus}
-            selectedAnswer={selectedAnswer}
-            isSubmitted={isSubmitted}
+            selectedAnswer={interaction.selectedAnswer}
+            isSubmitted={interaction.isSubmitted}
             isViewingAnsweredHistory={isViewingAnsweredHistory}
-            handleAnswerSelect={setSelectedAnswer}
-            isCorrect={isCorrect}
+            handleAnswerSelect={(answer: string) =>
+              setInteraction(prev => ({ ...prev, selectedAnswer: answer }))
+            }
+            isCorrect={interaction.isCorrect}
             handleSubmit={handleSubmit}
             showNext={handleNext}
-            showExplanation={showExplanation}
+            showExplanation={interaction.showExplanation}
+            showDesmos={showDesmos}
+            setShowDesmos={setShowDesmos} 
           />
-        </div>
+        </section>
 
-        <div style={{ width: "250px" }}>
+        {/* ---------------------- Stats Sidebar ------------------------- */}
+        <aside className="w-[250px]">
           <ScoreAndProgress
             correctCount={correctCount}
             wrongCount={wrongCount}
@@ -259,12 +230,15 @@ export default function MathPracticePage() {
             onProgressBoxClick={handleProgressBoxClick}
             currentQuestion={currentQuestion}
           />
-        </div>
-      </div>
+        </aside>
 
-      {showDesmos && (
-        <DesmosCalculator showDesmos={showDesmos} setShowDesmos={setShowDesmos} />
-      )}
+        {/* ---------- Desmos floating modal -------- */}
+        <DesmosCalculator                                 // ➕ 5
+          showDesmos={showDesmos}
+          setShowDesmos={setShowDesmos}
+        />
+
+      </div>
     </div>
   );
 }

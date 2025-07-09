@@ -1,25 +1,34 @@
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
+import { X } from "lucide-react";
 
-type DesmosCalculatorProps = {
+interface DesmosCalculatorProps {
   showDesmos: boolean;
   setShowDesmos: (show: boolean) => void;
-};
+}
 
-export function DesmosCalculator({ showDesmos, setShowDesmos }: DesmosCalculatorProps) {
+export function DesmosCalculator({
+  showDesmos,
+  setShowDesmos,
+}: DesmosCalculatorProps) {
   const desmosRef = useRef<HTMLDivElement>(null);
-  const [desmosPosition, setDesmosPosition] = useState({ x: 100, y: 100 });
-  const [desmosSize, setDesmosSize] = useState({ width: 400, height: 300 });
+  const [position, setPosition] = useState({ x: 100, y: 100 });
+  const [size, setSize] = useState({ width: 400, height: 300 });
   const isDragging = useRef(false);
   const isResizing = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const resizeStart = useRef({ x: 0, y: 0 });
   const initialSize = useRef({ width: 0, height: 0 });
 
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>, type: 'drag' | 'resize') => {
-    if (desmosRef.current) {
+  const handleMouseDown = useCallback(
+    (
+      e: React.MouseEvent<HTMLDivElement>,
+      type: "drag" | "resize",
+    ) => {
+      if (!desmosRef.current) return;
       const rect = desmosRef.current.getBoundingClientRect();
-      if (type === 'drag') {
+
+      if (type === "drag") {
         isDragging.current = true;
         dragOffset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       } else {
@@ -27,33 +36,36 @@ export function DesmosCalculator({ showDesmos, setShowDesmos }: DesmosCalculator
         resizeStart.current = { x: e.clientX, y: e.clientY };
         initialSize.current = { width: rect.width, height: rect.height };
       }
+
       e.preventDefault();
-      document.body.style.userSelect = 'none';
-    }
-  }, []);
+      document.body.style.userSelect = "none";
+    },
+    [],
+  );
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging.current) {
-      setDesmosPosition({ x: e.clientX - dragOffset.current.x, y: e.clientY - dragOffset.current.y });
-    } else if (isResizing.current) {
+      setPosition({ x: e.clientX - dragOffset.current.x, y: e.clientY - dragOffset.current.y });
+    }
+    if (isResizing.current) {
       const newWidth = Math.max(300, initialSize.current.width + (e.clientX - resizeStart.current.x));
       const newHeight = Math.max(200, initialSize.current.height + (e.clientY - resizeStart.current.y));
-      setDesmosSize({ width: newWidth, height: newHeight });
+      setSize({ width: newWidth, height: newHeight });
     }
   }, []);
 
   const handleMouseUp = useCallback(() => {
     isDragging.current = false;
     isResizing.current = false;
-    document.body.style.userSelect = '';
+    document.body.style.userSelect = "";
   }, []);
 
   useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [handleMouseMove, handleMouseUp]);
 
@@ -62,26 +74,38 @@ export function DesmosCalculator({ showDesmos, setShowDesmos }: DesmosCalculator
   return (
     <div
       ref={desmosRef}
+      className="fixed z-50 flex flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg"
       style={{
-        position: "fixed", top: desmosPosition.y, left: desmosPosition.x,
-        width: desmosSize.width, height: desmosSize.height,
-        backgroundColor: "white", border: "1px solid #ccc", borderRadius: "8px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.2)", zIndex: 1000,
-        display: "flex", flexDirection: "column", overflow: "hidden",
+        left: position.x,
+        top: position.y,
+        width: size.width,
+        height: size.height,
       }}
     >
+      {/* Header / drag handle */}
       <div
-        style={{ cursor: "grab", backgroundColor: "#f1f1f1", padding: "8px 12px", borderBottom: "1px solid #ccc", display: "flex", justifyContent: "space-between", alignItems: "center", fontWeight: "bold", fontSize: "14px", color: "#333" }}
+        className="flex cursor-grab select-none items-center justify-between border-b border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-semibold text-gray-800"
         onMouseDown={(e) => handleMouseDown(e, "drag")}
       >
         Desmos Calculator
-        <button onClick={() => setShowDesmos(false)} style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#666" }}>
-          &times;
+        <button
+          onClick={() => setShowDesmos(false)}
+          className="rounded p-1 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-800"
+        >
+          <X size={16} />
         </button>
       </div>
-      <iframe src="https://www.desmos.com/calculator" width="100%" height="100%" style={{ border: "none" }} title="Desmos Calculator" />
+
+      {/* Desmos iframe */}
+      <iframe
+        src="https://www.desmos.com/calculator"
+        title="Desmos Calculator"
+        className="h-full w-full flex-1 border-0"
+      />
+
+      {/* Resize handle */}
       <div
-        style={{ position: "absolute", bottom: 0, right: 0, width: "15px", height: "15px", cursor: "nwse-resize", backgroundColor: "rgba(0,0,0,0.1)", borderTopLeftRadius: "5px" }}
+        className="absolute bottom-0 right-0 h-4 w-4 cursor-nwse-resize rounded-tl-sm bg-black/10"
         onMouseDown={(e) => handleMouseDown(e, "resize")}
       />
     </div>

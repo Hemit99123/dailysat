@@ -1,14 +1,49 @@
+"use client";
+
 import React from "react";
+import Link from "next/link";
+import {
+  BookOpen,
+  SquareSigma,
+  ArrowRight,
+  List as ListIcon,
+} from "lucide-react";
 
 interface TopicSidebarProps {
   selectedDomain: string;
   setSelectedDomain: (domain: string) => void;
   currentDomainNames: string[];
   domainDisplayMapping: Record<string, string>;
-  difficulty: string;
+  difficulty: "All" | "Easy" | "Medium" | "Hard";
   setDifficulty: (diff: "All" | "Easy" | "Medium" | "Hard") => void;
-  subject: string;
+  subject: "Math" | "English";
 }
+
+const DIFFICULTY_META: Record<
+  TopicSidebarProps["difficulty"],
+  { bg: string; emoji: string; tooltip: string }
+> = {
+  All: {
+    bg: "bg-gray-200",
+    emoji: "⚪",
+    tooltip: "All difficulties",
+  },
+  Easy: {
+    bg: "bg-green-200",
+    emoji: "😄",
+    tooltip: "Select Easy questions",
+  },
+  Medium: {
+    bg: "bg-amber-200",
+    emoji: "🤨",
+    tooltip: "Select Medium questions",
+  },
+  Hard: {
+    bg: "bg-red-200",
+    emoji: "😫",
+    tooltip: "Select Hard questions",
+  },
+};
 
 export const TopicSidebar: React.FC<TopicSidebarProps> = ({
   selectedDomain,
@@ -19,100 +54,88 @@ export const TopicSidebar: React.FC<TopicSidebarProps> = ({
   setDifficulty,
   subject,
 }) => {
-  const getDifficultyColor = (diff: string) => {
-    switch (diff) {
-      case "Easy": return "#a5d6a7";
-      case "Medium": return "#ffcc80";
-      case "Hard": return "#ef9a9a";
-      default: return "#e0e0e0";
-    }
-  };
+  const otherSubject = subject === "Math" ? "English" : "Math";
+  const switchHref = `/practice/${otherSubject.toLowerCase()}`;
 
-  const getDifficultyTooltip = (diff: string) => `Select ${diff} questions`;
-  const getDifficultyEmoji = (diff: string) => {
-    switch (diff) {
-      case "Easy": return "😄";
-      case "Medium": return "🤨";
-      case "Hard": return "😫";
-      default: return "⚪";
-    }
+  const renderTopicButton = (displayName: string, key: string) => {
+    const isActive = selectedDomain === displayName;
+    return (
+      <button
+        key={key}
+        onClick={() => setSelectedDomain(displayName)}
+        className={`flex items-center text-left gap-2 rounded border px-3 py-2 text-sm shadow transition-colors ${
+          isActive
+            ? "border-blue-600 bg-blue-50 text-blue-800"
+            : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+        }`}
+      >
+        {key === "all" ? <ListIcon size={14} /> : null}
+        {displayName}
+      </button>
+    );
   };
 
   return (
-    <div style={{ width: "250px", backgroundColor: "#f8f9fa", padding: "20px", borderRadius: "8px", height: "fit-content" }}>
-      <div style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "10px", color: "#333" }}>
-        <span style={{ marginLeft: "8px" }}>📖 {subject}</span>
-      </div>
+    <aside className="w-[250px] space-y-6 rounded-lg bg-slate-50 p-5 shadow">
+      {/* ---------------- Subject Heading ---------------- */}
+      {subject === "English" && (
+            <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
+              <BookOpen className="h-5 w-5" /> {subject}
+            </h2>
+       )}
+       {subject === "Math" && (
+            <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
+              <SquareSigma className="h-5 w-5" /> {subject}
+            </h2>
+       )}
 
-      <a
-        href={subject === "Math" ? "/practice/english" : "/practice/math"}
-        style={{
-          display: 'block', padding: "6px 10px", backgroundColor: "#e3f2fd", color: "#2196f3",
-          border: "1px solid #2196f3", borderRadius: "4px", cursor: "pointer", fontSize: "13px",
-          textAlign: "center", textDecoration: "none", marginTop: "10px", boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-        }}
+      {/* ---------------- Subject Switch ------------------ */}
+      <Link
+        href={switchHref}
+        className="flex items-center justify-center gap-1 rounded border border-blue-600 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 shadow hover:bg-blue-100"
       >
-        Go to {subject === "Math" ? "English" : "Math"} <i className="fas fa-arrow-right" style={{ marginLeft: '5px' }}></i>
-      </a>
+        Go to {otherSubject}
+        <ArrowRight size={12} />
+      </Link>
 
-      <div style={{ height: "2px", backgroundColor: "#6e6e6e", width: "210px", margin: "20px 0" }}></div>
+      <hr className="border-slate-300" />
 
-      <div style={{ marginBottom: "30px" }}>
-        <div style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>Topics:</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <button
-            onClick={() => setSelectedDomain("All")}
-            style={{
-              padding: "8px 12px", backgroundColor: "#e3f2fd",
-              border: selectedDomain === "All" ? "2px solid #2196f3" : "0px solid #ddd",
-              borderRadius: "4px", cursor: "pointer", fontSize: "14px", textAlign: "left", color: "black",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            }}
-          >
-            <i className="fas fa-list" style={{ marginRight: "8px" }}></i>All Topics
-          </button>
+      {/* ---------------- Topics -------------------------- */}
+      <section className="space-y-2">
+        <h3 className="text-sm font-semibold text-slate-600">Topics:</h3>
+        <div className="flex flex-col gap-2">
+          {renderTopicButton("All", "all")}
           {currentDomainNames.map((domainName) => {
-            const mappedDomain = domainDisplayMapping[domainName] || domainName;
-            return (
-              <button
-                key={domainName}
-                onClick={() => setSelectedDomain(mappedDomain)}
-                style={{
-                  padding: "8px 12px", backgroundColor: "#e3f2fd",
-                  border: selectedDomain === mappedDomain ? "2px solid #2196f3" : "0px solid #ddd",
-                  borderRadius: "4px", cursor: "pointer", fontSize: "14px", textAlign: "left", color: "black",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                }}
-              >
-                {mappedDomain}
-              </button>
-            );
+            const mapped = domainDisplayMapping[domainName] || domainName;
+            return renderTopicButton(mapped, domainName);
           })}
         </div>
-      </div>
+      </section>
 
-      <div>
-        <div style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>Choose Difficulty:</div>
-        <div style={{ display: "flex", gap: "8px" }}>
-          {["All", "Easy", "Medium", "Hard"].map((diff) => (
-            <div key={diff} style={{ position: "relative" }}>
-              <button
-                onClick={() => setDifficulty(diff as "All" | "Easy" | "Medium" | "Hard")}
-                style={{
-                  width: "40px", height: "40px", borderRadius: "50%",
-                  border: difficulty === diff ? "3px solid #2196f3" : "2px solid #ddd",
-                  backgroundColor: getDifficultyColor(diff), cursor: "pointer", fontSize: "20px",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                }}
-                title={getDifficultyTooltip(diff)}
-              >
-                {getDifficultyEmoji(diff)}
-              </button>
-            </div>
-          ))}
+      {/* ---------------- Difficulty ---------------------- */}
+      <section className="space-y-3">
+        <h3 className="text-sm font-semibold text-slate-600">Choose Difficulty:</h3>
+        <div className="flex gap-3">
+          {(Object.keys(DIFFICULTY_META) as TopicSidebarProps["difficulty"][]).map(
+            (diff) => {
+              const meta = DIFFICULTY_META[diff];
+              const isActive = difficulty === diff;
+              return (
+                <button
+                  key={diff}
+                  onClick={() => setDifficulty(diff)}
+                  title={meta.tooltip}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full border font-medium shadow transition-all ${
+                    isActive ? "border-blue-600" : "border-slate-300"
+                  } ${meta.bg}`}
+                >
+                  <span className="text-lg">{meta.emoji}</span>
+                </button>
+              );
+            },
+          )}
         </div>
-      </div>
-    </div>
+      </section>
+    </aside>
   );
 };

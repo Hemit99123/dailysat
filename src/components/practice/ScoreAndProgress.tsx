@@ -1,7 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Question, QuestionHistory } from '@/hooks/usePracticeSession';
+import {
+  Star,
+  Target,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
+  XCircle,
+  Flame,
+  Trophy,
+  ListChecks,
+} from "lucide-react";
+
+import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
 
 interface ScoreAndProgressProps {
   correctCount: number;
@@ -14,6 +26,41 @@ interface ScoreAndProgressProps {
   currentQuestion: Question | null;
 }
 
+interface CardProps {
+  title: string;
+  icon: React.ReactNode;
+  onClick?: () => void;
+  expandable?: boolean;
+  expanded?: boolean;
+  children?: React.ReactNode;
+}
+
+const Card: React.FC<CardProps> = ({
+  title,
+  icon,
+  children,
+  onClick,
+  expandable = false,
+  expanded = false,
+}) => (
+  <div className="rounded-lg bg-blue-50 shadow">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex w-full rounded-t-lg items-center justify-between bg-blue-200 px-4 py-2 text-left text-sm font-bold text-slate-900 ${
+        expandable ? "cursor-pointer" : "cursor-default"
+      }`}
+    >
+      <span className="flex items-center gap-2">
+        {icon}
+        {title}
+      </span>
+      {expandable && (expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+    </button>
+    {children}
+  </div>
+);
+
 const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
   correctCount,
   wrongCount,
@@ -25,125 +72,103 @@ const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
   currentQuestion,
 }) => {
   const [isAccuracyExpanded, setIsAccuracyExpanded] = useState(false);
+
   const totalAttempts = correctCount + wrongCount;
   const accuracy = totalAttempts === 0 ? 0 : (correctCount / totalAttempts) * 100;
 
   return (
-    <div style={{ width: "250px", display: "flex", flexDirection: "column", gap: "20px", position: "relative" }}>
-      {/* Predicted Score */}
-      <div style={{ backgroundColor: "#eff6ff", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", overflow: 'hidden' }}>
-        <div style={{ fontSize: "16px", fontWeight: "bold", color: "#292F33", background: "#99c6ff", paddingTop: "10px", paddingBottom: "12px", textAlign: "left", paddingLeft: "15px", margin: "0px" }}>
-          <i className="fas fa-star" style={{ marginRight: "8px" }}></i>Predicted Score
+    <div className="flex w-[250px] flex-col gap-5">
+      {/* ---------------- Predicted Score ---------------- */}
+      <Card title="Predicted Score" icon={<Star size={16} className="text-blue-500" />}>
+        <div className="py-3 text-center text-5xl font-extrabold tracking-tight text-blue-600">
+          {totalAttempts === 0 ? "---" : predictedScore}
         </div>
-        <div style={{ fontSize: "48px", fontWeight: "bold", color: "#292F33", textAlign: "center", padding: '10px 0' }}>
-          {totalAttempts === 0 ? <span style={{ color: '#9e9e9e' }}> ---</span> : <span style={{ color: '#4285f4' }}> {predictedScore}</span>}
-        </div>
-      </div>
+      </Card>
 
-      {/* Accuracy */}
-      <div style={{ backgroundColor: "#eff6ff", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", overflow: 'hidden' }}>
-        <div 
-          onClick={() => setIsAccuracyExpanded(!isAccuracyExpanded)}
-          style={{ 
-            fontSize: "16px", 
-            fontWeight: "bold", 
-            color: "#292F33", 
-            background: "#99c6ff", 
-            paddingTop: "10px", 
-            paddingBottom: "12px", 
-            textAlign: "left", 
-            paddingLeft: "15px", 
-            margin: "0px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingRight: "15px",
-            cursor: "pointer"
-          }}
-        >
-          <span>
-            <i className="fas fa-bullseye" style={{ marginRight: "8px" }}></i>Accuracy
-          </span>
-          <i className={`fas fa-chevron-${isAccuracyExpanded ? 'up' : 'down'}`} />
-        </div>
-        <div style={{ color: "black", padding: "15px" }}>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px', color: '#4285f4' }}>
+      {/* ---------------- Accuracy ----------------------- */}
+      <Card
+        title="Accuracy"
+        icon={<Target size={16} className="text-blue-800" />}
+        onClick={() => setIsAccuracyExpanded(!isAccuracyExpanded)}
+        expandable
+        expanded={isAccuracyExpanded}
+      >
+        <div className="space-y-4 px-4 py-4 text-slate-900">
+          <div className="text-center text-3xl font-bold text-blue-600">
             {accuracy.toFixed(1)}%
           </div>
+
           {isAccuracyExpanded && (
             <>
-             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
-                <span><i className="far fa-check-circle" style={{ marginRight: "8px", color: "#4caf50" }}></i>Correct: <strong>{correctCount}</strong></span>
-                <span><i className="far fa-times-circle" style={{ marginRight: "8px", color: "#f66055" }}></i>Incorrect: <strong>{wrongCount}</strong></span>
-                <span><i className="fas fa-fire" style={{ marginRight: "8px", color: "#ff9800" }}></i>Streak: <strong>{currentStreak}</strong></span>
-                <span><i className="fas fa-trophy" style={{ marginRight: "8px", color: "#3f51b5" }}></i>Max Streak: <strong>{maxStreak}</strong></span>
+              {/* Stats row */}
+              <div className="flex flex-wrap justify-between gap-2 text-sm">
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" /> Correct:
+                  <strong>{correctCount}</strong>
+                </span>
+                <span className="flex items-center gap-1">
+                  <XCircle className="h-4 w-4 text-red-500" /> Incorrect:
+                  <strong>{wrongCount}</strong>
+                </span>
+                <span className="flex items-center gap-1">
+                  <Flame className="h-4 w-4 text-orange-600" /> Streak:
+                  <strong>{currentStreak}</strong>
+                </span>
+                <span className="flex items-center gap-1">
+                  <Trophy className="h-4 w-4 text-indigo-600" /> Max Streak:
+                  <strong>{maxStreak}</strong>
+                </span>
               </div>
 
-              <div style={{
-                height: "17px", backgroundColor: totalAttempts === 0 ? "#e0e0e0" : "#f66055",
-                borderRadius: "10px", overflow: "hidden", boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              }}>
-                <div style={{ width: `${accuracy.toFixed(2)}%`, height: "100%", backgroundColor: "#4caf50", transition: "width 0.3s ease" }} />
-              </div>
-              <div style={{ fontSize: '13px', marginTop: '10px', textAlign: 'center', color: 'black' }}>
+              {/* Accuracy bar */}
+              {totalAttempts === 0 ? (
+                <div className="h-4 w-full overflow-hidden rounded-full bg-gray-300 shadow-inner" />
+              ) : (
+                <div className="h-4 w-full overflow-hidden rounded-full bg-red-500 shadow-inner">
+                  <div
+                    className="h-full rounded-full bg-green-500 transition-all"
+                    style={{ width: `${accuracy}%` }}
+                  />
+                </div>
+              )}
+
+              <div className="text-center text-xs">
                 Questions Answered: <strong>{totalAttempts}</strong>
               </div>
             </>
           )}
         </div>
-      </div>
+      </Card>
 
-      {/* Progress */}
-      <div style={{ backgroundColor: "#eff6ff", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)", overflow: 'hidden' }}>
-        <div style={{ fontSize: "16px", fontWeight: "bold", color: "#292F33", background: "#99c6ff", paddingTop: "10px", paddingBottom: "12px", textAlign: "left", paddingLeft: "15px", margin: "0px" }}>
-          <i className="fas fa-tasks" style={{ marginRight: "8px" }}></i>Progress
-        </div>
-        <div style={{
-          padding: '15px', display: 'flex', flexWrap: 'wrap', gap: '10px', color: 'white',
-          maxHeight: '125px', overflowY: 'auto'
-        }}>
-          {questionHistory.length === 0 && <span style={{ color: 'grey', fontSize: '14px' }}>Answer questions to see your progress.</span>}
+      {/* ---------------- Progress ---------------------- */}
+      <Card title="Progress" icon={<ListChecks size={16} className="text-blue-800" />}>
+        <div className="flex max-h-[125px] flex-wrap gap-2 overflow-y-auto p-4">
+          {questionHistory.length === 0 && (
+            <span className="text-xs text-gray-500">Answer questions to see your progress.</span>
+          )}
+
           {questionHistory.map((item, index) => {
-            let bgColor;
-            if (item.isMarkedForLater) {
-              bgColor = "#FFCC00"; 
-            } else if (item.isAnswered) {
-              bgColor = item.isCorrect ? "#4caf50" : "#f44336";
-            } else {
-              bgColor = "#9e9e9e"; 
-            }
+            let bgColor = "bg-gray-400";
+            if (item.isMarkedForLater) bgColor = "bg-yellow-400";
+            else if (item.isAnswered) bgColor = item.isCorrect ? "bg-green-500" : "bg-red-500";
 
-            const isCurrentQuestion = currentQuestion && item.question.id === currentQuestion.id;
+            const isCurrent = currentQuestion && item.question.id === currentQuestion.id;
 
             return (
-              <button 
-                key={item.id} 
-                onClick={() => onProgressBoxClick(index)} 
-                title={`Question ${index + 1}${item.isMarkedForLater ? ' (Marked for Review)' : ''}${item.isAnswered ? (item.isCorrect ? ' (Correct)' : ' (Incorrect)') : ''}`}
-                style={{
-                  width: '35px',
-                  height: '35px',
-                  borderRadius: '6px',
-                  backgroundColor: bgColor,
-                  border: isCurrentQuestion ? '3px solid #0d47a1' : 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  color: 'white',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                  flexShrink: 0,
-                  transition: 'all 0.2s ease-in-out'
-                }}
+              <button
+                key={item.id}
+                onClick={() => onProgressBoxClick(index)}
+                title={`Question ${index + 1}`}
+                className={`flex h-8 w-8 items-center justify-center rounded-md text-xs font-bold text-white shadow transition-all hover:opacity-90 ${bgColor} ${
+                  isCurrent ? "ring-2 ring-blue-800 ring-offset-2 ring-offset-blue-100" : ""
+                }`}
               >
                 {index + 1}
               </button>
             );
           })}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
