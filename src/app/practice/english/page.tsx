@@ -215,7 +215,7 @@ export default function EnglishPracticePage() {
               domainDisplayMapping[selectedDomain] || selectedDomain
             }
             handleMarkForLater={handleMarkForLater}
-            currentQuestionStatus={currentQuestionStatus}
+            currentQuestionStatus={currentQuestionStatus || null}
             selectedAnswer={interaction.selectedAnswer}
             isSubmitted={interaction.isSubmitted}
             isViewingAnsweredHistory={isViewingAnsweredHistory}
