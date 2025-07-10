@@ -142,7 +142,11 @@ const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
 
       {/* ---------------- Progress ---------------------- */}
       <Card title="Progress" icon={<ListChecks size={16} className="text-blue-800" />}>
-        <div className="flex max-h-[125px] flex-wrap gap-2 overflow-y-auto p-4">
+      <div 
+          className="flex max-h-[125px] flex-wrap gap-2 overflow-y-auto p-4"
+          role="group"
+          aria-label="Question progress tracker"
+      >
           {questionHistory.length === 0 && (
             <span className="text-xs text-gray-500">Answer questions to see your progress.</span>
           )}

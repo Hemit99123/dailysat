@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-
+// @ts-ignore
+import { convert } from 'html-to-text';
 const DATA_URL = "https://api.jsonsilo.com/public/942c3c3b-3a0c-4be3-81c2-12029def19f5";
 const QUESTION_LIST_URL = "https://qbank-api.collegeboard.org/msreportingquestionbank-prod/questionbank/digital/get-questions";
 const QUESTION_DETAIL_URL = "https://qbank-api.collegeboard.org/msreportingquestionbank-prod/questionbank/digital/get-question";
@@ -100,7 +101,7 @@ export const usePracticeSession = () => {
         const optionLetters = ['A', 'B', 'C', 'D'];
 
         questionData.answerOptions.forEach((option: any, index: number) => {
-            choices[optionLetters[index]] = option.content.replace(/<[^>]*>/g, '');
+            choices[optionLetters[index]] = convert(option.content);
         });
 
         const domainFullName = domainFullNameMapping[randomQuestionInfo.domain] || randomQuestionInfo.domain;
@@ -120,7 +121,7 @@ export const usePracticeSession = () => {
             difficulty: difficultyFullName,
         };
     };
-
+    const [loadError, setLoadError] = useState<string | null>(null);
     // Fetch initial data
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -131,7 +132,10 @@ export const usePracticeSession = () => {
                 setData(jsonData);
                 const uniqueEnglishDomains = Array.from(new Set(jsonData.english.map((q) => q.domain)));
                 setEnglishDomains(uniqueEnglishDomains);
-            } catch (error) { console.error("Error fetching initial JSON data:", error); }
+            } catch (error) {
+              console.error("Error fetching initial JSON data:", error);
+              setLoadError("Failed to load practice questions. Please refresh the page.");
+            }
         };
         fetchInitialData();
     }, []);
