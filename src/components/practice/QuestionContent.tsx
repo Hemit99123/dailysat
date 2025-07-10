@@ -3,6 +3,8 @@ import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
+import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
+
 import {
   Calculator,
   Bookmark,
@@ -13,13 +15,13 @@ import {
 
 interface QuestionContentProps {
   isLoading: boolean;
-  currentQuestion: any;
+  currentQuestion: Question | null;
   subject: string;
   selectedDomain: string;
   showDesmos?: boolean;
   setShowDesmos?: (show: boolean) => void;
   handleMarkForLater: () => void;
-  currentQuestionStatus: any;
+  currentQuestionStatus: QuestionHistory | null;
   selectedAnswer: string | null;
   isSubmitted: boolean;
   isViewingAnsweredHistory: boolean;
@@ -91,7 +93,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
 
             >
               <Calculator size={16} />
-              
+              Calculator
             </button>
           )}
 
@@ -207,7 +209,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
             onClick={showNext}
             className="rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow hover:bg-blue-700"
           >
-            Next <i className="fas fa-arrow-right" />
+            Next <ArrowRight size={16} className="inline ml-1" />
           </button>
         )}
       </div>
