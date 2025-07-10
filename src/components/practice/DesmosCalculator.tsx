@@ -45,7 +45,14 @@ export function DesmosCalculator({
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging.current) {
-      setPosition({ x: e.clientX - dragOffset.current.x, y: e.clientY - dragOffset.current.y });
+        const newX = e.clientX - dragOffset.current.x;
+        const newY = e.clientY - dragOffset.current.y;
+        const maxX = window.innerWidth - size.width;
+        const maxY = window.innerHeight - size.height;
+        setPosition({ 
+            x: Math.max(0, Math.min(newX, maxX)), 
+            y: Math.max(0, Math.min(newY, maxY)) 
+        });
     }
     if (isResizing.current) {
       const newWidth = Math.max(300, initialSize.current.width + (e.clientX - resizeStart.current.x));
@@ -86,11 +93,15 @@ export function DesmosCalculator({
       <div
         className="flex cursor-grab select-none items-center justify-between border-b border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-semibold text-gray-800"
         onMouseDown={(e) => handleMouseDown(e, "drag")}
+        role="button"
+        tabIndex={0}
+        aria-label="Drag to move calculator"
       >
         Desmos Calculator
         <button
           onClick={() => setShowDesmos(false)}
           className="rounded p-1 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-800"
+          aria-label="Close calculator"
         >
           <X size={16} />
         </button>
