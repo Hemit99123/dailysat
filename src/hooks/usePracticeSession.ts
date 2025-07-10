@@ -31,7 +31,7 @@ export type QuestionHistory = {
   isAnswered: boolean;
 };
 
-export const usePracticeSession = (subject: "Math" = "Math") => {
+export const usePracticeSession = () => {
     const [data, setData] = useState<Data | null>(null);
     const [difficulty, setDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All");
     const [selectedDomain, setSelectedDomain] = useState<string>("All");
@@ -52,18 +52,24 @@ export const usePracticeSession = (subject: "Math" = "Math") => {
         questionHistoryRef.current = questionHistory;
     }, [questionHistory]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number | null>(null);
-    
+    const [error, setError] = useState<Error | null>(null);
+
     // Fetch initial data
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
+                setError(null);
                 const response = await fetch(DATA_URL);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const jsonData: Data = await response.json();
                 setData(jsonData);
                 const uniqueMathDomains = Array.from(new Set(jsonData.math.map((q) => q.domain)));
                 setMathDomains(uniqueMathDomains);
-            } catch (error) { console.error("Error fetching initial JSON data:", error); }
+                } catch (error) { 
+                    console.error("Error fetching initial JSON data:", error);
+                    setError(error instanceof Error ? error : new Error('Failed to fetch data'));
+                    setIsLoading(false);
+                }
         };
         fetchInitialData();
     }, []);
@@ -74,7 +80,8 @@ export const usePracticeSession = (subject: "Math" = "Math") => {
         if (!data) return;
 
         setIsLoading(true);
-        let allFilteredQuestions = data.math.filter(q => {
+        const questions = data.math;
+        let allFilteredQuestions = questions.filter(q => {
             const matchesDifficulty = difficulty === "All" || q.difficulty === difficulty;
             const matchesDomain = selectedDomain === "All" || q.domain === selectedDomain;
             return matchesDifficulty && matchesDomain;
@@ -92,7 +99,7 @@ export const usePracticeSession = (subject: "Math" = "Math") => {
         
         setCurrentQuestion(newQuestion);
         setIsLoading(false);
-    }, [data, difficulty, selectedDomain, fetchQuestionTrigger, currentHistoryIndex, subject]);
+    }, [data, difficulty, selectedDomain, fetchQuestionTrigger, currentHistoryIndex]);
 
     // Update predicted score
     useEffect(() => {
