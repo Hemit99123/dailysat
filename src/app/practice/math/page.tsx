@@ -202,7 +202,7 @@ export default function MathPracticePage() {
               (domainDisplayMapping2 as Record<string, string>)[selectedDomain] || selectedDomain
             }
             handleMarkForLater={handleMarkForLater}
-            currentQuestionStatus={currentQuestionStatus}
+            currentQuestionStatus={currentQuestionStatus || null}
             selectedAnswer={interaction.selectedAnswer}
             isSubmitted={interaction.isSubmitted}
             isViewingAnsweredHistory={isViewingAnsweredHistory}
