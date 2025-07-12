@@ -1,16 +1,7 @@
-// src/lib/mongo/index.ts
-
 import { MongoClient, ServerApiVersion } from "mongodb";
 
-const mongoUrl = process.env.MONGO_URL;
-
-if (!mongoUrl || (!mongoUrl.startsWith("mongodb://") && !mongoUrl.startsWith("mongodb+srv://"))) {
-  throw new Error(
-    "Invalid MongoDB connection string. Please set the MONGO_URL environment variable to a valid connection string starting with 'mongodb://' or 'mongodb+srv://'."
-  );
-}
-
-export const client: MongoClient = new MongoClient(mongoUrl, {
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+export const client: MongoClient = new MongoClient(process.env.MONGO_URL  || "0" , {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
