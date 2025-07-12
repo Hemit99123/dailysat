@@ -56,7 +56,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   showExplanation,
   isMarked,
 }) => {
-  if (isLoading) return <p>Loading question...</p>;
+  if (isLoading) return <iframe src="https://lottie.host/embed/825cda49-268f-442e-98ac-4225c480da21/NRYYcydDJE.lottie" className="w-1/2 h-1/2"></iframe>;
   if (!currentQuestion)
     return (
       <p>
