@@ -9,7 +9,7 @@ import 'katex/dist/katex.min.css';
 export const metadata: Metadata = {
   title: "DailySAT",
   description:
-    "DailySAT is an online SAT question bank that students can use to practice for the SAT.",
+    "Practice for the SAT with ease! DailySAT offers a broad range of SAT practice questions through a gamified experience.",
 };
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
