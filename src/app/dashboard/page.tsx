@@ -143,12 +143,12 @@ const Home = () => {
       <div className="lg:px-16 lg:p-6 px-2">
         <div className="grid grids-cols-1 md:grid-cols-3 mx-auto md:w-4/5 gap-2 mt-px">
           {user ? (
-            <Option icon={<Book />} header="Reading & Writing" redirect="/reading-writing" />
+            <Option icon={<Book />} header="English" redirect="/practice/english" />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
           {user ? (
-            <Option icon={<EqualApproximately />} header="Math" redirect="/math" />
+            <Option icon={<EqualApproximately />} header="Math" redirect="/practice/math" />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
