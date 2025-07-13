@@ -1,8 +1,10 @@
 import { client } from "@/lib/performance/rate-limiter/redis"
+import { handleGetSession } from "../../auth/authActions";
 
-export const handleFindRateLimitStatus = async (ip: string) => {
+export const handleFindRateLimitStatus = async (email: string) => {
+
   // Check if the key exists
-  let tokens: string | number | null = await client.get(ip);
+  let tokens: string | number | null = await client.get(email);
 
   if (tokens === null) {
       // If key does not exist, initialize it with 4 tokens and set expiry for 5 minutes
@@ -17,5 +19,5 @@ export const handleFindRateLimitStatus = async (ip: string) => {
       return false; // Not rate limited
   }
 
-  return true;
+  return true; // Rate limited, use cache
 };
