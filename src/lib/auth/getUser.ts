@@ -33,6 +33,6 @@ export const handleGetUser = async (session: any | null) => {
         }
         return existingUser;
     } catch (error) {
-        console.log(error)
+        throw new Error(error as string)
     }
 };
