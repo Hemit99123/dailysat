@@ -16,6 +16,7 @@ export const handleFindRateLimitStatus = async (email: string | undefined) => {
   }
 
   tokens = Number(tokens);
+  console.log(tokens)
 
   if (tokens > 0) {
       await client.decr(email); // safe operation, keeps expiry
