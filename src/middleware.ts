@@ -14,7 +14,7 @@ export const middleware = async (request: NextRequest) => {
   const signinResponse = await handleSignInRoutes(request, protectedLoginRoutes);
   if (signinResponse) return signinResponse;
   
-  if (request.nextUrl.pathname === "/practice") return redirectTo("/practice/math")
+  if (request.nextUrl.pathname === "/practice") return redirectTo(request, "/practice/math")
 
   return NextResponse.next();
 };
