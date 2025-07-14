@@ -91,15 +91,21 @@ export const GET = async () => {
   const email = session?.user?.email;
   
   const rateLimitStatus = await handleFindRateLimitStatus(email)
-
+  
   try {
 
     let user; 
 
-    if (rateLimitStatus) user = await handleGetUser(email);
-    else user = await handleGetUserCached(email)
+    if (rateLimitStatus) {
+      user = await handleGetUserCached(email)
+    } else {
+      user = await handleGetUser(session)
+    }
 
-    return NextResponse.json({ user });
+
+    console.log(user)
+    return NextResponse.json({ user, cached: rateLimitStatus });
+    
   } catch (error) {
     return Response.json({ error });
   }
