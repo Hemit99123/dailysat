@@ -64,7 +64,6 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
         <Skeleton key={index} className="w-full h-[50px] mb-2"/>
       ))}
       <Skeleton className="w-28 h-12 mb-2 bg-black/50" />
-
     </div>
   );
   if (!currentQuestion)
