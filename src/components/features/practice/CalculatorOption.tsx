@@ -1,17 +1,12 @@
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { X } from "lucide-react";
+import { useCalcModeModalStore } from "@/store/calc";
+import Options from "./Options";
+import { useCalculatorModalStore } from "@/store/modals";
 
-interface DesmosCalculatorProps {
-  showDesmos: boolean;
-  setShowDesmos: (show: boolean) => void;
-}
-
-export function DesmosCalculator({
-  showDesmos,
-  setShowDesmos,
-}: DesmosCalculatorProps) {
-  const desmosRef = useRef<HTMLDivElement>(null);
+export function CalculatorOptions() {
+  const calculatorRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 100, y: 100 });
   const [size, setSize] = useState({ width: 400, height: 300 });
   const isDragging = useRef(false);
@@ -20,13 +15,20 @@ export function DesmosCalculator({
   const resizeStart = useRef({ x: 0, y: 0 });
   const initialSize = useRef({ width: 0, height: 0 });
 
+  const calcMode = useCalcModeModalStore((state) => state.mode);
+  const setCalcMode = useCalcModeModalStore((state) => state.setMode);
+
+  const isOpen = useCalculatorModalStore((state) => state.isOpen);
+  const closeModal = useCalculatorModalStore((state) => state.closeModal);
+  const openModal = useCalculatorModalStore((state) => state.openModal);
+
   const handleMouseDown = useCallback(
     (
       e: React.MouseEvent<HTMLDivElement>,
       type: "drag" | "resize",
     ) => {
-      if (!desmosRef.current) return;
-      const rect = desmosRef.current.getBoundingClientRect();
+      if (!calculatorRef.current) return;
+      const rect = calculatorRef.current.getBoundingClientRect();
 
       if (type === "drag") {
         isDragging.current = true;
@@ -45,27 +47,32 @@ export function DesmosCalculator({
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging.current) {
-        const newX = e.clientX - dragOffset.current.x;
-        const newY = e.clientY - dragOffset.current.y;
-        const maxX = window.innerWidth - size.width;
-        const maxY = window.innerHeight - size.height;
-        setPosition({ 
-            x: Math.max(0, Math.min(newX, maxX)), 
-            y: Math.max(0, Math.min(newY, maxY)) 
-        });
+      const newX = e.clientX - dragOffset.current.x;
+      const newY = e.clientY - dragOffset.current.y;
+      const maxX = window.innerWidth - size.width;
+      const maxY = window.innerHeight - size.height;
+      setPosition({ 
+          x: Math.max(0, Math.min(newX, maxX)), 
+          y: Math.max(0, Math.min(newY, maxY)) 
+      });
     }
     if (isResizing.current) {
       const newWidth = Math.max(300, initialSize.current.width + (e.clientX - resizeStart.current.x));
       const newHeight = Math.max(200, initialSize.current.height + (e.clientY - resizeStart.current.y));
       setSize({ width: newWidth, height: newHeight });
     }
-  }, []);
+  }, [size.width, size.height]);
 
   const handleMouseUp = useCallback(() => {
     isDragging.current = false;
     isResizing.current = false;
     document.body.style.userSelect = "";
   }, []);
+
+  const handleClose = () => {
+    closeModal();
+    setCalcMode("none");
+  };
 
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
@@ -76,11 +83,11 @@ export function DesmosCalculator({
     };
   }, [handleMouseMove, handleMouseUp]);
 
-  if (!showDesmos) return null;
+  if (!isOpen) return null;
 
   return (
     <div
-      ref={desmosRef}
+      ref={calculatorRef}
       className="fixed z-50 flex flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg"
       style={{
         left: position.x,
@@ -97,9 +104,9 @@ export function DesmosCalculator({
         tabIndex={0}
         aria-label="Drag to move calculator"
       >
-        Desmos Calculator
+        Calculator GUI
         <button
-          onClick={() => setShowDesmos(false)}
+          onClick={handleClose}
           className="rounded p-1 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-800"
           aria-label="Close calculator"
         >
@@ -107,12 +114,26 @@ export function DesmosCalculator({
         </button>
       </div>
 
-      {/* Desmos iframe */}
-      <iframe
-        src="https://www.desmos.com/calculator"
-        title="Desmos Calculator"
-        className="h-full w-full flex-1 border-0"
-      />
+      {calcMode === "none" ? (
+        <div className="flex space-x-2">
+          <Options
+            type="graphing"
+            title="Graphing"
+            description="Use this to graph equations"
+          />
+          <Options
+            type="regular"
+            title="Regular"
+            description="Use this for everyday calculations"
+          />
+        </div>
+      ) : calcMode === "graphing" ? (
+        <iframe
+          src="https://www.desmos.com/calculator"
+          title="Desmos Calculator"
+          className="h-full w-full flex-1 border-0"
+        />
+      ) : null}
 
       {/* Resize handle */}
       <div
