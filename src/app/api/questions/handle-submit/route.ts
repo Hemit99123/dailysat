@@ -87,41 +87,119 @@ import { handleGetSession } from "@/lib/auth/authActions";
  *                   description: Detailed error message for debugging.
  */
 
-const verifyJWT = (token: string) => {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload; // Use type assertion to ensure it's a JwtPayload so that typescript voids errors
-  } catch (error) {
-    throw new Error(`JWT issue: ${error}`);
+// Helper function to perform binary search for insertion position
+const findInsertionPosition = (leaderboard: any[], points: number): number => {
+  let left = 0;
+  let right = leaderboard.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (leaderboard[mid].score === points) {
+      return mid;
+    } else if (leaderboard[mid].score > points) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  return left;
+};
+
+// Helper function to update leaderboard
+const updateLeaderboard = async (db: any, league: string, userData: any) => {
+  const leaderboardColl = db.collection("leaderboard");
+
+  // Check if user already exists in any league
+  const existingUser = await leaderboardColl.findOne({
+    username: userData.username,
+  });
+
+  if (existingUser) {
+    // User exists in a league
+    if (existingUser.league === league) {
+      // Same league - just update the score
+      await leaderboardColl.updateOne(
+        { username: userData.username },
+        { $set: { score: userData.score } }
+      );
+    } else {
+      // Different league - remove from old league and add to new league
+      await leaderboardColl.deleteOne({ username: userData.username });
+
+      // Get current leaderboard for the new league
+      const currentLeaderboard = await leaderboardColl
+        .find({ league })
+        .sort({ score: -1 })
+        .toArray();
+
+      // Find insertion position using binary search
+      const insertionIndex = findInsertionPosition(
+        currentLeaderboard,
+        userData.score
+      );
+
+      // Insert the user at the correct position
+      currentLeaderboard.splice(insertionIndex, 0, userData);
+
+      // Keep only top 20 entries
+      const updatedLeaderboard = currentLeaderboard.slice(0, 20);
+
+      // Update the leaderboard in database
+      await leaderboardColl.deleteMany({ league });
+      if (updatedLeaderboard.length > 0) {
+        await leaderboardColl.insertMany(updatedLeaderboard);
+      }
+    }
+  } else {
+    // User doesn't exist in any league - add to the new league
+    // Get current leaderboard for the league
+    const currentLeaderboard = await leaderboardColl
+      .find({ league })
+      .sort({ score: -1 })
+      .toArray();
+
+    // Find insertion position using binary search
+    const insertionIndex = findInsertionPosition(
+      currentLeaderboard,
+      userData.score
+    );
+
+    // Insert the user at the correct position
+    currentLeaderboard.splice(insertionIndex, 0, userData);
+
+    // Keep only top 20 entries
+    const updatedLeaderboard = currentLeaderboard.slice(0, 20);
+
+    // Update the leaderboard in database
+    await leaderboardColl.deleteMany({ league });
+    if (updatedLeaderboard.length > 0) {
+      await leaderboardColl.insertMany(updatedLeaderboard);
+    }
   }
 };
 
+// Helper function to determine league based on points
+const determineLeague = (points: number): string => {
+  if (points >= 200) return "Platinum";
+  if (points >= 100) return "Gold";
+  if (points >= 50) return "Silver";
+  if (points >= 20) return "Bronze";
+  return "None";
+};
+
 export const POST = async (request: Request) => {
-  console.log(request);
-  const { jwtToken } = await request.json();
-
-  // Check if the JWT token is provided
-  if (!jwtToken) {
-    return Response.json(
-      {
-        error: "JWT token was not specified",
-      },
-      { status: 400 }
-    );
-  }
-
   try {
-    // Verify JWT and extract the payload
-    const decodedToken = verifyJWT(jwtToken);
-    const { id, attempts, type, answer } = decodedToken;
-
-    // Check if the required parameters are valid
-    if (!id || attempts == null || !type) {
-      throw new Error("All params in JWT not found");
-    }
-
-    const session = await handleGetSession();
-    const email = session?.user?.email;
-
+    const { questionType, isCorrect, id, email } = await request.json();
+    const type = [
+      "Advanced Math",
+      "Problem-Solving and Data Analysis",
+      "Geometry and Trigonometry",
+      "Algebra",
+    ].includes(questionType)
+      ? "math"
+      : "reading";
+    console.log(email);
     await client.connect();
 
     const db = client.db("DailySAT");
@@ -130,37 +208,54 @@ export const POST = async (request: Request) => {
     const questionCollName =
       type === "math"
         ? "questions-math"
-        : type === "reading-writing"
+        : type === "reading"
           ? "questions-reading"
           : null;
-
+    console.log(questionCollName);
     // default to reading/writing sat bank
-    const questionsColl = db.collection(
-      questionCollName || "questions-reading"
-    );
-
-    // Retrieve the question from the database
-    const question = await questionsColl.findOne({ _id: new ObjectId(id) });
-
-    if (!question) {
-      throw new Error("No questions found");
+    try {
+      const questionsColl = db.collection(
+        questionCollName || "questions-reading"
+      );
+      const question = await questionsColl.findOne({ id: id });
+      console.log(question);
+    } catch (error) {
+      console.error("Error fetching question:", error);
     }
 
-    // Check if the answer is correct
-    const isCorrect = question.correctAnswer === answer;
+    // Retrieve the question from the database
+
+    // Calculate points to be added
+    const pointsToAdd = isCorrect ? 1 : -1;
 
     // Update the user's database with the new information
     await usersColl.updateOne(
       { email },
       {
         $inc: {
-          currency: isCorrect && attempts < 2 ? QUESTION_IS_CORRECT_POINTS : 0,
+          currency: isCorrect ? QUESTION_IS_CORRECT_POINTS : 0,
           correctAnswered: isCorrect ? 1 : 0,
           wrongAnswered: !isCorrect ? 1 : 0,
-          points: isCorrect && attempts < 2 ? 1 : 0,
+          points: pointsToAdd,
         },
       }
     );
+    console.log("updated user");
+    // Get updated user data for leaderboard
+    const updatedUser = await usersColl.findOne({ email });
+    if (updatedUser) {
+      const league = determineLeague(updatedUser.points);
+      if (league !== "None") {
+        const userData = {
+          score: updatedUser.points,
+          username: updatedUser.name || email,
+          league: league,
+        };
+
+        // Update leaderboard
+        await updateLeaderboard(db, league, userData);
+      }
+    }
 
     client.close();
 

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { DesmosCalculator } from "@/components/practice/DesmosCalculator";  // ➕ 2
+import { DesmosCalculator } from "@/components/practice/DesmosCalculator"; // ➕ 2
 import { TopicSidebar } from "@/components/practice/TopicSidebar";
 import { QuestionContent } from "@/components/practice/QuestionContent";
 import ScoreAndProgress from "@/components/practice/ScoreAndProgress";
+import axios from "axios";
 
 import {
   usePracticeSession,
@@ -12,6 +13,7 @@ import {
 } from "@/hooks/usePracticeSession";
 
 import { subject2, domainDisplayMapping2 } from "@/data/practice";
+import { handleGetSession } from "@/lib/auth/authActions";
 
 interface InteractionState {
   selectedAnswer: string | null;
@@ -61,7 +63,7 @@ export default function MathPracticePage() {
     useState<InteractionState>(INITIAL_INTERACTION);
 
   const resetInteraction = (preserveAnswer = false) =>
-    setInteraction(prev => ({
+    setInteraction((prev) => ({
       ...INITIAL_INTERACTION,
       selectedAnswer: preserveAnswer ? prev.selectedAnswer : null,
     }));
@@ -77,39 +79,54 @@ export default function MathPracticePage() {
   }, [currentQuestion]);
 
   const currentQuestionStatus = useMemo(
-    () => questionHistory.find(h => h.question.id === currentQuestion?.id),
-    [currentQuestion, questionHistory],
+    () => questionHistory.find((h) => h.question.id === currentQuestion?.id),
+    [currentQuestion, questionHistory]
   );
 
   const isViewingAnsweredHistory = useMemo(
     () =>
       currentHistoryIndex !== null &&
       questionHistory[currentHistoryIndex]?.isAnswered,
-    [currentHistoryIndex, questionHistory],
+    [currentHistoryIndex, questionHistory]
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!interaction.selectedAnswer || !currentQuestion) return;
 
     const correct =
       interaction.selectedAnswer === currentQuestion.question.correct_answer;
 
+    const session = await handleGetSession();
+    const email = session?.user?.email;
+
+    // Send API request to /api/handle-submit
+    axios
+      .post("/api/questions/handle-submit", {
+        questionType: currentQuestion.domain,
+        isCorrect: true,
+        id: currentQuestion.id,
+        email: email,
+      })
+      .catch((error) => {
+        console.error("Error sending submission:", error);
+      });
+
     if (correct) {
-      setCorrectCount(c => c + 1);
-      setMathCorrect(c => c + 1);
-      setCurrentStreak(s => {
+      setCorrectCount((c) => c + 1);
+      setMathCorrect((c) => c + 1);
+      setCurrentStreak((s) => {
         const next = s + 1;
-        setMaxStreak(m => Math.max(m, next));
+        setMaxStreak((m) => Math.max(m, next));
         return next;
       });
     } else {
-      setWrongCount(c => c + 1);
-      setMathWrong(c => c + 1);
+      setWrongCount((c) => c + 1);
+      setMathWrong((c) => c + 1);
       setCurrentStreak(0);
     }
 
-    setQuestionHistory(prev => {
-      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
+    setQuestionHistory((prev) => {
+      const index = prev.findIndex((h) => h.question.id === currentQuestion.id);
 
       const updatedItem: QuestionHistory = {
         id: index !== -1 ? prev[index].id : prev.length + 1,
@@ -126,7 +143,7 @@ export default function MathPracticePage() {
       return [...prev, updatedItem];
     });
 
-    setInteraction(prev => ({
+    setInteraction((prev) => ({
       ...prev,
       isCorrect: correct,
       isSubmitted: true,
@@ -137,12 +154,12 @@ export default function MathPracticePage() {
   const handleMarkForLater = () => {
     if (!currentQuestion) return;
 
-    setQuestionHistory(prev => {
-      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
+    setQuestionHistory((prev) => {
+      const index = prev.findIndex((h) => h.question.id === currentQuestion.id);
 
       if (index !== -1) {
         return prev.map((h, i) =>
-          i === index ? { ...h, isMarkedForLater: !h.isMarkedForLater } : h,
+          i === index ? { ...h, isMarkedForLater: !h.isMarkedForLater } : h
         );
       }
 
@@ -199,7 +216,9 @@ export default function MathPracticePage() {
             currentQuestion={currentQuestion}
             subject={subject2}
             selectedDomain={
-              (domainDisplayMapping2 as Record<string, string>)[selectedDomain] || selectedDomain
+              (domainDisplayMapping2 as Record<string, string>)[
+                selectedDomain
+              ] || selectedDomain
             }
             handleMarkForLater={handleMarkForLater}
             currentQuestionStatus={currentQuestionStatus || null}
@@ -207,14 +226,14 @@ export default function MathPracticePage() {
             isSubmitted={interaction.isSubmitted}
             isViewingAnsweredHistory={isViewingAnsweredHistory}
             handleAnswerSelect={(answer: string) =>
-              setInteraction(prev => ({ ...prev, selectedAnswer: answer }))
+              setInteraction((prev) => ({ ...prev, selectedAnswer: answer }))
             }
             isCorrect={interaction.isCorrect}
             handleSubmit={handleSubmit}
             showNext={handleNext}
             showExplanation={interaction.showExplanation}
             showDesmos={showDesmos}
-            setShowDesmos={setShowDesmos} 
+            setShowDesmos={setShowDesmos}
           />
         </section>
 
@@ -233,11 +252,10 @@ export default function MathPracticePage() {
         </aside>
 
         {/* ---------- Desmos floating modal -------- */}
-        <DesmosCalculator                                 // ➕ 5
+        <DesmosCalculator // ➕ 5
           showDesmos={showDesmos}
           setShowDesmos={setShowDesmos}
         />
-
       </div>
     </div>
   );
