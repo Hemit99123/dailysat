@@ -33,6 +33,6 @@ export const handleGetUser = async (session: any | null) => {
         }
         return existingUser;
     } catch (error) {
-        throw new Error(`An unexpected error occurred: ${error}`);
+        throw new Error(error as string)
     }
 };

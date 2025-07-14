@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  Star,
   Target,
   ChevronDown,
   ChevronUp,
@@ -66,7 +65,6 @@ const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
   wrongCount,
   currentStreak,
   maxStreak,
-  predictedScore,
   questionHistory,
   onProgressBoxClick,
   currentQuestion,
@@ -78,13 +76,6 @@ const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
 
   return (
     <div className="flex w-[250px] flex-col gap-5">
-      {/* ---------------- Predicted Score ---------------- */}
-      <Card title="Predicted Score" icon={<Star size={16} className="text-blue-500" />}>
-        <div className="py-3 text-center text-5xl font-extrabold tracking-tight text-blue-600">
-          {totalAttempts === 0 ? "---" : predictedScore}
-        </div>
-      </Card>
-
       {/* ---------------- Accuracy ----------------------- */}
       <Card
         title="Accuracy"

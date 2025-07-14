@@ -4,9 +4,7 @@ import { client } from "@/lib/performance/cache/redis";
 import { NextResponse } from "next/server";
 
 
-export const handleGetUserCached = async () => {
-    const session = await handleGetSession();
-    const email = session?.user?.email;
+export const handleGetUserCached = async (email: string | undefined) => {
 
     if (!email) return false;
 
@@ -15,11 +13,11 @@ export const handleGetUserCached = async () => {
 
     if (cached) {
         return cached
-        
     } else {
         const session = await handleGetSession();
+
         if (!session?.user?.email) {
-          return NextResponse.json({ error: "Missing session" }, { status: 400 });
+          return NextResponse.json({ error: "Missing session - not authenticated" }, { status: 400 });
         }
       
         const existingUser = await handleGetUser(session);

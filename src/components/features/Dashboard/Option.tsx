@@ -1,10 +1,11 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { redirectionRoutesType } from "@/types/dashboard/option-redirect-routes"
 
 interface OptionProps {
   icon: React.ReactNode; // Use React.ReactNode for flexibility on what jsx can be passed
   header: string;
-  redirect: "/math" | "/reading-writing" | "/dashboard/study-plan"
+  redirect: redirectionRoutesType;
 }
 
 const Option: React.FC<OptionProps> = ({ icon, header, redirect }) => {

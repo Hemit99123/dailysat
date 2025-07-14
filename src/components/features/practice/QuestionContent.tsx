@@ -4,6 +4,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   Calculator,
@@ -12,14 +13,13 @@ import {
   X as CloseIcon,
   ArrowRight,
 } from "lucide-react";
+import { useCalculatorModalStore } from "@/store/modals";
 
 interface QuestionContentProps {
   isLoading: boolean;
   currentQuestion: Question | null;
   subject: string;
   selectedDomain: string;
-  showDesmos?: boolean;
-  setShowDesmos?: (show: boolean) => void;
   handleMarkForLater: () => void;
   currentQuestionStatus: QuestionHistory | null;
   selectedAnswer: string | null;
@@ -42,10 +42,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   currentQuestion,
   subject,
   selectedDomain,
-  showDesmos,
-  setShowDesmos,
   handleMarkForLater,
-  currentQuestionStatus,
   selectedAnswer,
   isSubmitted,
   isViewingAnsweredHistory,
@@ -56,7 +53,29 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   showExplanation,
   isMarked,
 }) => {
-  if (isLoading) return <iframe src="https://lottie.host/embed/825cda49-268f-442e-98ac-4225c480da21/NRYYcydDJE.lottie" className="w-1/2 h-1/2"></iframe>;
+
+  const isOpen = useCalculatorModalStore(state => state.isOpen);
+  const openModal = useCalculatorModalStore(state => state.openModal);
+  const closeModal = useCalculatorModalStore(state => state.closeModal);
+
+  const handleOpenCalculator = () => {
+    if (isOpen) {
+      closeModal()
+    } else {
+      openModal()
+    }
+  }
+
+  if (isLoading) return (
+    <div>
+      <Skeleton className="w-full h-[50px] bg-black/20 mb-5" />
+      <Skeleton className="w-full h-[30px] mb-2 bg-black/30" />
+      {[1,2,3,4].map((item, index) => (
+        <Skeleton key={index} className="w-full h-[50px] mb-2"/>
+      ))}
+      <Skeleton className="w-28 h-12 mb-2 bg-black/50" />
+    </div>
+  );
   if (!currentQuestion)
     return (
       <p>
@@ -84,9 +103,9 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
           {subject === "Math" && (
             <button
               type="button"
-              onClick={() => setShowDesmos?.(!showDesmos)}
+              onClick={handleOpenCalculator}
               className={`flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all ${
-                showDesmos
+                isOpen
                   ? "border-blue-500 bg-blue-100 text-blue-700 hover:bg-blue-200"
                   : "border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
               }`}
