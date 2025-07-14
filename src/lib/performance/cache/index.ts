@@ -4,7 +4,7 @@ import { client } from "@/lib/performance/cache/redis";
 import { NextResponse } from "next/server";
 
 
-export const handleGetUserCached = async (email: string) => {
+export const handleGetUserCached = async (email: string | undefined) => {
 
     if (!email) return false;
 
