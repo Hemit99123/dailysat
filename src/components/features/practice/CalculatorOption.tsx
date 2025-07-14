@@ -133,7 +133,13 @@ export function CalculatorOptions() {
           title="Desmos Calculator"
           className="h-full w-full flex-1 border-0"
         />
-      ) : null}
+      ) : calcMode === "regular" ? (
+        <iframe
+          src="https://www.desmos.com/scientific"
+          title="Desmos Calculator"
+          className="h-full w-full flex-1 border-0"
+        />
+      ): null}
 
       {/* Resize handle */}
       <div
