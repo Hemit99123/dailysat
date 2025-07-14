@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { DesmosCalculator } from "@/components/features/practice/DesmosCalculator"; 
+import { CalculatorOptions } from "@/components/features/practice/CalculatorOption";
 import { TopicSidebar } from "@/components/features/practice/TopicSidebar";
 import { QuestionContent } from "@/components/features/practice/QuestionContent";
 import ScoreAndProgress from "@/components/features/practice/ScoreAndProgress";
@@ -66,7 +66,6 @@ export default function MathPracticePage() {
       selectedAnswer: preserveAnswer ? prev.selectedAnswer : null,
     }));
 
-  const [showDesmos, setShowDesmos] = useState(false);
 
   useEffect(() => {
     const keepAnswer =
@@ -213,8 +212,6 @@ export default function MathPracticePage() {
             handleSubmit={handleSubmit}
             showNext={handleNext}
             showExplanation={interaction.showExplanation}
-            showDesmos={showDesmos}
-            setShowDesmos={setShowDesmos} 
           />
         </section>
 
@@ -232,12 +229,8 @@ export default function MathPracticePage() {
           />
         </aside>
 
-        {/* ---------- Desmos floating modal -------- */}
-        <DesmosCalculator                                 // ➕ 5
-          showDesmos={showDesmos}
-          setShowDesmos={setShowDesmos}
-        />
-
+        {/* The Calculator modal */}
+        <CalculatorOptions />
       </div>
     </div>
   );
