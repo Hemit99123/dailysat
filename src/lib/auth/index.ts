@@ -52,11 +52,7 @@ export const auth = betterAuth({
         type: "number",
         required: true,
         defaultValue: 0,
-      },
-      enrolledSchool: {
-        type: "string",
-        required: false,
-      },
+      }
     },
   }
 });
