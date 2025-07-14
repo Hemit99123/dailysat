@@ -13,7 +13,8 @@ const HomePage: React.FC = () => {
     <div className="md:w-3/5 sm:w-4/5 w-[90%]  mx-auto">
       <Table className="w-full rounded-lg">
         <TableCaption id="leaderboard-caption">
-          This is a list of the highest scores on DailySAT.
+          This is a list of the highest scores on DailySAT. Scores are
+          determined by subtracting your incorrect from your correct answers.
         </TableCaption>
         <TableHeader className="rounded-lg">
           <TableRow className="bg-[#1E1F1F] hover:bg-[#1E1F1F] text-white">
