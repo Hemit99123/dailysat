@@ -4,6 +4,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   Calculator,
@@ -55,7 +56,17 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   showExplanation,
   isMarked,
 }) => {
-  if (isLoading) return <iframe src="https://lottie.host/embed/825cda49-268f-442e-98ac-4225c480da21/NRYYcydDJE.lottie" className="w-1/2 h-1/2"></iframe>;
+  if (isLoading) return (
+    <div>
+      <Skeleton className="w-full h-[50px] bg-black/20 mb-5" />
+      <Skeleton className="w-full h-[30px] mb-2 bg-black/30" />
+      {[1,2,3,4].map((item, index) => (
+        <Skeleton key={index} className="w-full h-[50px] mb-2"/>
+      ))}
+      <Skeleton className="w-28 h-12 mb-2 bg-black/50" />
+
+    </div>
+  );
   if (!currentQuestion)
     return (
       <p>
