@@ -45,7 +45,6 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   showDesmos,
   setShowDesmos,
   handleMarkForLater,
-  currentQuestionStatus,
   selectedAnswer,
   isSubmitted,
   isViewingAnsweredHistory,
