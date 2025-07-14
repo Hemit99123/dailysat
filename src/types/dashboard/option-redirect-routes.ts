@@ -1,0 +1,1 @@
+export type redirectionRoutesType = "/practice/math" | "/practice/english" | "/dashboard/study-plan";
