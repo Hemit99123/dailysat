@@ -378,7 +378,6 @@ export default function LessonsPage() {
                           <FinalQuiz
                             quizType={selectedTopic === "FinalMathQuiz" ? "math" : "reading"}
                             onBack={handleBackToLessons}
-                            onFinish={() => setQuizFinished(true)}
                           />
                         ) : !showPractice ? (
                           <div className="flex flex-col items-center justify-center text-center summary-box">
