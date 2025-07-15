@@ -6,6 +6,7 @@ import parse from "html-react-parser";
 import { TopicSidebar } from "@/components/practice/TopicSidebar";
 import { QuestionContent } from "@/components/practice/QuestionContent";
 import ScoreAndProgress from "@/components/practice/ScoreAndProgress";
+import axios from "axios";
 
 import {
   usePracticeSession,
@@ -13,7 +14,9 @@ import {
 } from "@/hooks/useEnglishPracticeSession";
 
 import { subject, domainDisplayMapping } from "@/data/practice";
+import { handleGetSession } from "@/lib/auth/authActions";
 
+// Defines the shape of the user's interaction state with a question.
 interface InteractionState {
   selectedAnswer: string | null;
   isCorrect: boolean | null;
@@ -21,6 +24,7 @@ interface InteractionState {
   isSubmitted: boolean;
 }
 
+// Initial state for user interaction.
 const INITIAL_INTERACTION: InteractionState = {
   selectedAnswer: null,
   isCorrect: null,
@@ -58,11 +62,14 @@ export default function EnglishPracticePage() {
     showNext,
   } = usePracticeSession();
 
+  // State for the user's current interaction with the question.
   const [interaction, setInteraction] =
     useState<InteractionState>(INITIAL_INTERACTION);
 
+  // --- Utility Functions ---
+  // Resets the interaction state, optionally preserving the selected answer.
   const resetInteraction = (preserveAnswer = false) =>
-    setInteraction(prev => ({
+    setInteraction((prev) => ({
       ...INITIAL_INTERACTION,
       selectedAnswer: preserveAnswer ? prev.selectedAnswer : null,
     }));
@@ -76,15 +83,15 @@ export default function EnglishPracticePage() {
   }, [currentQuestion]);
 
   const currentQuestionStatus = useMemo(
-    () => questionHistory.find(h => h.question.id === currentQuestion?.id),
-    [currentQuestion, questionHistory],
+    () => questionHistory.find((h) => h.question.id === currentQuestion?.id),
+    [currentQuestion, questionHistory]
   );
 
   const isViewingAnsweredHistory = useMemo(
     () =>
       currentHistoryIndex !== null &&
       questionHistory[currentHistoryIndex]?.isAnswered,
-    [currentHistoryIndex, questionHistory],
+    [currentHistoryIndex, questionHistory]
   );
 
   const renderedQuestionStem = useMemo(() => {
@@ -100,28 +107,47 @@ export default function EnglishPracticePage() {
     return rawStem ? parse(rawStem) : null;
   }, [currentQuestion]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!interaction.selectedAnswer || !currentQuestion) return;
 
+    // Check if the selected answer is correct.
     const correct =
       interaction.selectedAnswer === currentQuestion.question.correct_answer;
 
+    // Get user session to associate the submission with the user.
+    const session = await handleGetSession();
+    const email = session?.user?.email;
+
+    // Send the submission result to the backend.
+    axios
+      .post("/api/questions/handle-submit", {
+        questionType: currentQuestion.domain,
+        isCorrect: correct,
+        id: currentQuestion.id,
+        email: email,
+      })
+      .catch((error) => {
+        console.error("Error sending submission:", error);
+      });
+
+    // Update scores and streaks based on the answer's correctness.
     if (correct) {
-      setCorrectCount(c => c + 1);
-      setEnglishCorrect(c => c + 1);
-      setCurrentStreak(s => {
+      setCorrectCount((c) => c + 1);
+      setEnglishCorrect((c) => c + 1);
+      setCurrentStreak((s) => {
         const next = s + 1;
-        setMaxStreak(m => Math.max(m, next));
+        setMaxStreak((m) => Math.max(m, next));
         return next;
       });
     } else {
-      setWrongCount(c => c + 1);
-      setEnglishWrong(c => c + 1);
+      setWrongCount((c) => c + 1);
+      setEnglishWrong((c) => c + 1);
       setCurrentStreak(0);
     }
 
-    setQuestionHistory(prev => {
-      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
+    // Update the question history with the user's answer and result.
+    setQuestionHistory((prev) => {
+      const index = prev.findIndex((h) => h.question.id === currentQuestion.id);
 
       const updatedItem: QuestionHistory = {
         id: index !== -1 ? prev[index].id : prev.length + 1,
@@ -138,7 +164,8 @@ export default function EnglishPracticePage() {
       return [...prev, updatedItem];
     });
 
-    setInteraction(prev => ({
+    // Update the interaction state to show the result and explanation.
+    setInteraction((prev) => ({
       ...prev,
       isCorrect: correct,
       isSubmitted: true,
@@ -146,15 +173,16 @@ export default function EnglishPracticePage() {
     }));
   };
 
+  // Handles marking a question for later review.
   const handleMarkForLater = () => {
     if (!currentQuestion) return;
 
-    setQuestionHistory(prev => {
-      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
+    setQuestionHistory((prev) => {
+      const index = prev.findIndex((h) => h.question.id === currentQuestion.id);
 
       if (index !== -1) {
         return prev.map((h, i) =>
-          i === index ? { ...h, isMarkedForLater: !h.isMarkedForLater } : h,
+          i === index ? { ...h, isMarkedForLater: !h.isMarkedForLater } : h
         );
       }
 
@@ -171,6 +199,7 @@ export default function EnglishPracticePage() {
     });
   };
 
+  // Handles clicking on a question in the progress tracker.
   const handleProgressBoxClick = (index: number) => {
     const historyItem = questionHistory[index];
 
@@ -191,7 +220,7 @@ export default function EnglishPracticePage() {
 
   return (
     <div className="flex gap-6 p-5">
-      {/* --------------------------- Sidebar --------------------------- */}
+      {/* Sidebar for topic and difficulty selection. */}
       <TopicSidebar
         selectedDomain={selectedDomain}
         setSelectedDomain={setSelectedDomain}
@@ -205,7 +234,6 @@ export default function EnglishPracticePage() {
       {/* -------------------------- Main Pane --------------------------- */}
       <div className="flex flex-1 gap-6">
         <section className="flex-1 overflow-y-auto rounded-lg bg-white p-5 text-black shadow max-h-[calc(100vh-64px)]">
-
           <QuestionContent
             isMarked={currentQuestionStatus?.isMarkedForLater || false}
             isLoading={isLoading}
@@ -220,7 +248,7 @@ export default function EnglishPracticePage() {
             isSubmitted={interaction.isSubmitted}
             isViewingAnsweredHistory={isViewingAnsweredHistory}
             handleAnswerSelect={(answer: string) =>
-              setInteraction(prev => ({ ...prev, selectedAnswer: answer }))
+              setInteraction((prev) => ({ ...prev, selectedAnswer: answer }))
             }
             isCorrect={interaction.isCorrect}
             handleSubmit={handleSubmit}

@@ -190,6 +190,7 @@ const determineLeague = (points: number): string => {
 
 export const POST = async (request: Request) => {
   try {
+    // Get the question type, whether the answer is correct, the question id, and the user's email
     const { questionType, isCorrect, id, email } = await request.json();
     const type = [
       "Advanced Math",
@@ -224,10 +225,15 @@ export const POST = async (request: Request) => {
     }
 
     // Retrieve the question from the database
-
+    const user = await usersColl.findOne({ email });
+    if (user && user?.points == null) {
+      await usersColl.updateOne(
+        { email },
+        { $set: { points: user.correctAnswered - user.wrongAnswered } }
+      );
+    }
     // Calculate points to be added
     const pointsToAdd = isCorrect ? 1 : -1;
-
     // Update the user's database with the new information
     await usersColl.updateOne(
       { email },

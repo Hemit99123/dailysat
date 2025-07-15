@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
             </TableRow>
           ) : leaderboardData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-8">
+              <TableCell colSpan={3} className="text-center bg-gray-100 py-8">
                 No data available for {selectedLeague} league
               </TableCell>
             </TableRow>

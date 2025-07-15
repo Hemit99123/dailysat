@@ -62,14 +62,19 @@ export default function MathPracticePage() {
   const [interaction, setInteraction] =
     useState<InteractionState>(INITIAL_INTERACTION);
 
+  // State to control the visibility of the Desmos calculator.
+  const [showDesmos, setShowDesmos] = useState(false);
+
+  // --- Utility Functions ---
+  // Resets the interaction state, optionally preserving the selected answer.
   const resetInteraction = (preserveAnswer = false) =>
     setInteraction((prev) => ({
       ...INITIAL_INTERACTION,
       selectedAnswer: preserveAnswer ? prev.selectedAnswer : null,
     }));
 
-  const [showDesmos, setShowDesmos] = useState(false);
-
+  // --- Effects ---
+  // Resets interaction state when the question changes.
   useEffect(() => {
     const keepAnswer =
       currentHistoryIndex !== null &&
@@ -93,17 +98,19 @@ export default function MathPracticePage() {
   const handleSubmit = async () => {
     if (!interaction.selectedAnswer || !currentQuestion) return;
 
+    // Check if the selected answer is correct.
     const correct =
       interaction.selectedAnswer === currentQuestion.question.correct_answer;
 
+    // Get user session to associate the submission with the user.
     const session = await handleGetSession();
     const email = session?.user?.email;
 
-    // Send API request to /api/handle-submit
+    // Send the submission result to the backend.
     axios
       .post("/api/questions/handle-submit", {
         questionType: currentQuestion.domain,
-        isCorrect: true,
+        isCorrect: correct,
         id: currentQuestion.id,
         email: email,
       })
@@ -111,6 +118,7 @@ export default function MathPracticePage() {
         console.error("Error sending submission:", error);
       });
 
+    // Update scores and streaks based on the answer's correctness.
     if (correct) {
       setCorrectCount((c) => c + 1);
       setMathCorrect((c) => c + 1);
@@ -143,6 +151,7 @@ export default function MathPracticePage() {
       return [...prev, updatedItem];
     });
 
+    // Update the interaction state to show the result and explanation.
     setInteraction((prev) => ({
       ...prev,
       isCorrect: correct,
@@ -176,6 +185,7 @@ export default function MathPracticePage() {
     });
   };
 
+  // Handles clicking on a question in the progress tracker.
   const handleProgressBoxClick = (index: number) => {
     const historyItem = questionHistory[index];
 
@@ -189,6 +199,7 @@ export default function MathPracticePage() {
     });
   };
 
+  // Handles moving to the next question.
   const handleNext = () => {
     if (currentHistoryIndex !== null) setCurrentHistoryIndex(null);
     showNext();
