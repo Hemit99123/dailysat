@@ -14,7 +14,14 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-
+    // Validate league parameter
+    const validLeagues = ["Bronze", "Silver", "Gold", "Platinum"];
+    if (!validLeagues.includes(league)) {
+      return NextResponse.json(
+        { error: "Invalid league parameter" },
+        { status: 400 }
+      );
+    }
     await client.connect();
     const db: Db = client.db("DailySAT");
 

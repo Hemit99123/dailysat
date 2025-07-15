@@ -96,7 +96,7 @@ const SelectContent = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "absolute z-50 mt-1 w-1/2 py-2 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80",
+        "absolute z-50 mt-1 w-[200px] py-2 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80",
         className
       )}
       {...props}
@@ -131,6 +131,15 @@ const SelectItem = React.forwardRef<
         className
       )}
       onClick={handleSelect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleSelect();
+        }
+      }}
+      tabIndex={0}
+      role="option"
+      aria-selected={isSelected}
       {...props}
     >
       {isSelected && (

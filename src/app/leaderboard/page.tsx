@@ -32,8 +32,11 @@ const HomePage: React.FC = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [error, setError] = useState<string | null>(null);
   const fetchLeaderboardData = async (league: string) => {
     setLoading(true);
+    setError(null);
+
     try {
       const response = await fetch(`/api/leaderboard?league=${league}`);
       if (!response.ok) {
@@ -43,6 +46,7 @@ const HomePage: React.FC = () => {
       setLeaderboardData(data.data);
     } catch (error) {
       console.error("Error fetching leaderboard data:", error);
+      setError("Failed to load leaderboard data. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -88,6 +92,12 @@ const HomePage: React.FC = () => {
             <TableRow>
               <TableCell colSpan={3} className="text-center py-8">
                 Loading...
+              </TableCell>
+            </TableRow>
+          ) : error ? (
+            <TableRow>
+              <TableCell colSpan={3} className="text-center bg-gray-100 py-8">
+                {error}
               </TableCell>
             </TableRow>
           ) : leaderboardData.length === 0 ? (

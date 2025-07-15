@@ -60,7 +60,11 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
     return (
       <>
         <div className="flex justify-center items-center h-full">
-          <iframe src="https://lottie.host/embed/825cda49-268f-442e-98ac-4225c480da21/NRYYcydDJE.lottie"></iframe>
+          <iframe
+            src="https://lottie.host/embed/825cda49-268f-442e-98ac-4225c480da21/NRYYcydDJE.lottie"
+            className="w-64 h-64"
+            title="Loading animation"
+          ></iframe>
         </div>
       </>
     );

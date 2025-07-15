@@ -275,5 +275,7 @@ export const POST = async (request: Request) => {
       code: 500,
       error: error,
     });
+  } finally {
+    client.close();
   }
 };
