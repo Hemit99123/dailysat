@@ -477,4 +477,8 @@ export default function LessonsPage() {
       </div>
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4b524d4 (feat: Add lessons page)
