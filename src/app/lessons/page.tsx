@@ -477,3 +477,4 @@ export default function LessonsPage() {
       </div>
     </div>
   );
+}
