@@ -9,10 +9,16 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendEmail(to: string, subject: string, html: string): Promise<void> {
-  await transporter.sendMail({
-    from: '"Daily SAT Reminders" <dailysat.reminders@gmail.com>',
-    to,
-    subject,
-    html,
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: '"Daily SAT Reminders" <dailysat.reminders@gmail.com>',
+      to,
+      subject,
+      html,
+    });
+    console.log(`Email sent to ${to}:`, info);
+  } catch (err) {
+    console.error(`Failed to send email to ${to}:`, err);
+    throw err;
+  }
 }
