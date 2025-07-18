@@ -3,6 +3,8 @@ import { sendEmail } from '@/lib/email/email';
 import { getWeeklyReminderFromGrok } from '@/lib/email/grok';
 import dbConnect from '@/lib/email/dbConnect';
 import User from '@/models/User';
+import { divideIntoGroups } from '@/lib/email/groupUsers';
+import { sendToGroup } from '@/lib/email/sendToGroup';
 
 export async function GET() {
   try {
@@ -18,20 +20,23 @@ export async function GET() {
 
     const { subject, html } = await getWeeklyReminderFromGrok();
     console.log('Grok generated subject:', subject);
-    console.log('Grok generated HTML:', html);
 
-    await Promise.all(
-      emails.map(async (email) => {
-        try {
-          console.log(`Sending email to: ${email}`);
-          await sendEmail(email, subject, html);
-        } catch (emailErr) {
-          console.error(`Failed to send email to ${email}:`, emailErr);
-        }
-      })
-    );
+    // GROUP SENDING
+    //const numGroups = 3;
+    //const groups = divideIntoGroups(emails, numGroups);
 
-    return NextResponse.json({ success: true, count: emails.length, emails });
+    //for (const [groupName, groupEmails] of Object.entries(groups)) {
+    //  console.log(`📧 Sending to ${groupName} (${groupEmails.length} users)`);
+    //  await sendToGroup(groupEmails, subject, html);
+    //}
+
+    //return NextResponse.json({
+    //  success: true,
+    //  total: emails.length,
+    //  groups: Object.fromEntries(
+    //    Object.entries(groups).map(([name, list]) => [name, list.length])
+    //  ),
+    //});
   } catch (err) {
     console.error('Error sending reminders:', err);
     return NextResponse.json({ success: false, error: (err as Error).message });
