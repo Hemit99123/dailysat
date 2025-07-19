@@ -4,7 +4,6 @@ import * as React from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Context to manage the state of the select component
 const SelectContext = React.createContext<{
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,6 +11,12 @@ const SelectContext = React.createContext<{
   setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
   value?: string;
   onValueChange?: (value: string) => void;
+  activeIndex: number;
+  setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
+  items: string[];
+  setItems: React.Dispatch<React.SetStateAction<string[]>>;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+  contentRef: React.RefObject<HTMLDivElement | null>;
 } | null>(null);
 
 const useSelectContext = () => {
@@ -33,12 +38,32 @@ const Select = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(value || "");
+  const [activeIndex, setActiveIndex] = React.useState(-1);
+  const [items, setItems] = React.useState<string[]>([]);
+  const triggerRef = React.useRef<HTMLButtonElement | null>(null);
+  const contentRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
-    if (value) {
-      setSelectedValue(value);
-    }
+    setSelectedValue(value || "");
   }, [value]);
+
+  // Handle click outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        contentRef.current &&
+        !contentRef.current.contains(event.target as Node) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+        setActiveIndex(-1);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const contextValue = React.useMemo(
     () => ({
@@ -48,13 +73,26 @@ const Select = ({
       setSelectedValue,
       value,
       onValueChange,
+      activeIndex,
+      setActiveIndex,
+      items,
+      setItems,
+      triggerRef,
+      contentRef,
     }),
-    [open, selectedValue, value, onValueChange]
+    [open, selectedValue, value, onValueChange, activeIndex, items]
   );
 
   return (
     <SelectContext.Provider value={contextValue}>
-      <div className="relative">{children}</div>
+      <div
+        className="relative"
+        role="combobox"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        {children}
+      </div>
     </SelectContext.Provider>
   );
 };
@@ -68,15 +106,48 @@ const SelectTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, children, ...props }, ref) => {
-  const { open, setOpen } = useSelectContext();
+  const { open, setOpen, triggerRef, setActiveIndex, items, selectedValue } =
+    useSelectContext();
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case "Enter":
+      case " ":
+      case "ArrowDown":
+        e.preventDefault();
+        setOpen(true);
+        setActiveIndex(
+          items.indexOf(selectedValue) !== -1 ? items.indexOf(selectedValue) : 0
+        );
+        break;
+      case "Escape":
+        setOpen(false);
+        setActiveIndex(-1);
+        triggerRef.current?.focus();
+        break;
+    }
+  };
+
   return (
     <button
-      ref={ref}
+      ref={(node) => {
+        // Handle both refs
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+        if (triggerRef) {
+          triggerRef.current = node;
+        }
+      }}
       className={cn(
         "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
         className
       )}
       onClick={() => setOpen(!open)}
+      onKeyDown={handleKeyDown}
+      aria-controls="select-content"
       {...props}
     >
       {children}
@@ -90,15 +161,29 @@ const SelectContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
-  const { open } = useSelectContext();
+  const { open, contentRef } = useSelectContext();
+
   if (!open) return null;
+
   return (
     <div
-      ref={ref}
+      ref={(node) => {
+        // Handle both refs
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+        if (contentRef) {
+          contentRef.current = node;
+        }
+      }}
       className={cn(
         "absolute z-50 mt-1 w-[200px] py-2 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80",
         className
       )}
+      role="listbox"
+      id="select-content"
       {...props}
     >
       {children}
@@ -111,33 +196,87 @@ const SelectItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { value: string }
 >(({ className, children, value, ...props }, ref) => {
-  const { selectedValue, setSelectedValue, setOpen, onValueChange } =
-    useSelectContext();
+  const {
+    selectedValue,
+    setSelectedValue,
+    setOpen,
+    onValueChange,
+    activeIndex,
+    setActiveIndex,
+    items,
+    setItems,
+  } = useSelectContext();
+
   const isSelected = selectedValue === value;
+  const itemIndex = items.indexOf(value);
+  const isActive = activeIndex === itemIndex;
+
+  // Register item on mount
+  React.useEffect(() => {
+    setItems((prev) => {
+      if (!prev.includes(value)) {
+        return [...prev, value];
+      }
+      return prev;
+    });
+    return () => {
+      setItems((prev) => prev.filter((item) => item !== value));
+    };
+  }, [value, setItems]);
 
   const handleSelect = () => {
-    setSelectedValue(value);
+    setSelectedValue(value || "");
     if (onValueChange) {
       onValueChange(value);
     }
     setOpen(false);
+    setActiveIndex(-1);
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        handleSelect();
+        break;
+      case "ArrowDown":
+        e.preventDefault();
+        setActiveIndex((prev) => (prev < items.length - 1 ? prev + 1 : 0));
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setActiveIndex((prev) => (prev > 0 ? prev - 1 : items.length - 1));
+        break;
+      case "Escape":
+        e.preventDefault();
+        setOpen(false);
+        setActiveIndex(-1);
+        break;
+      case "Tab":
+        setOpen(false);
+        setActiveIndex(-1);
+        break;
+    }
+  };
+
+  React.useEffect(() => {
+    if (isActive) {
+      (ref as any)?.current?.focus();
+    }
+  }, [isActive, ref]);
 
   return (
     <div
       ref={ref}
       className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
+        isActive && "bg-accent text-accent-foreground",
         className
       )}
       onClick={handleSelect}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleSelect();
-        }
-      }}
-      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      tabIndex={isActive ? 0 : -1}
       role="option"
       aria-selected={isSelected}
       {...props}
@@ -160,6 +299,7 @@ const SelectLabel = React.forwardRef<
   <div
     ref={ref}
     className={cn("px-2 py-1.5 text-sm font-semibold", className)}
+    role="presentation"
     {...props}
   />
 ));
@@ -172,15 +312,14 @@ const SelectSeparator = React.forwardRef<
   <hr
     ref={ref}
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    role="separator"
     {...props}
   />
 ));
 SelectSeparator.displayName = "SelectSeparator";
 
-// The following components are not implemented as they are specific to Radix UI's implementation.
-// You may need to implement custom logic for these if required.
 const SelectGroup = ({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
+  <div role="group">{children}</div>
 );
 const SelectScrollUpButton = () => null;
 const SelectScrollDownButton = () => null;

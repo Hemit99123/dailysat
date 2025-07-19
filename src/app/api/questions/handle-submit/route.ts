@@ -10,8 +10,7 @@ import { handleGetSession } from "@/lib/auth/authActions";
  *   post:
  *     summary: Process user answer and update database
  *     description: >
- *       Verifies a JWT token, extracts the user's answer state and attempt count,
- *       and updates the user's data in the database accordingly.
+ *       Updates the user's data in the database accordingly.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -206,24 +205,6 @@ export const POST = async (request: Request) => {
     const db = client.db("DailySAT");
     const usersColl = db.collection("users");
 
-    const questionCollName =
-      type === "math"
-        ? "questions-math"
-        : type === "reading"
-          ? "questions-reading"
-          : null;
-    console.log(questionCollName);
-    // default to reading/writing sat bank
-    try {
-      const questionsColl = db.collection(
-        questionCollName || "questions-reading"
-      );
-      const question = await questionsColl.findOne({ id: id });
-      console.log(question);
-    } catch (error) {
-      console.error("Error fetching question:", error);
-    }
-
     // Retrieve the question from the database
     const user = await usersColl.findOne({ email });
     if (user && user?.points == null) {
@@ -262,8 +243,6 @@ export const POST = async (request: Request) => {
         await updateLeaderboard(db, league, userData);
       }
     }
-
-    client.close();
 
     // Return a success response
     return Response.json({
