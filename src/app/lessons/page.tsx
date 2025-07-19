@@ -1,8 +1,22 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import content from "@/data/lessonContent";
-import "./lessons.css";
+
 import FinalQuiz from "@/data/FinalQuiz";
+
+//3D flip effect
+const flipStyles = {
+  perspective: '1200px',
+} as any;
+const flipInnerStyles = {
+  transformStyle: 'preserve-3d',
+} as any;
+const backfaceHidden = {
+  backfaceVisibility: 'hidden',
+} as any;
+const rotateY180 = {
+  transform: 'rotateY(180deg)',
+} as any;
 
 export default function LessonsPage() {
   const [flipState, setFlipState] = useState<'none' | 'flipping' | 'flipped'>('none');
@@ -164,10 +178,19 @@ export default function LessonsPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex justify-center">
       <div className="w-full max-w-5xl flex flex-col space-y-10">
-        <div className={`flip-container${flipState === 'flipping' ? ' flipping' : ''}${flipState === 'flipped' ? ' flipped' : ''}`}> 
-          <div className="flip-inner">
+        <div className="relative" style={flipStyles}> 
+          <div
+            className={`transition-transform duration-500 ease-in-out w-full h-full`}
+            style={{
+              ...flipInnerStyles,
+              transform: flipState === 'flipped' ? 'rotateY(180deg)' : 'none',
+            } as any}
+          >
             {/* Front: Lessons Page */}
-            <div className="flip-front">
+            <div
+              className="absolute w-full h-full top-0 left-0"
+              style={{ ...backfaceHidden, pointerEvents: flipState === 'flipped' ? 'none' : 'auto' } as any}
+            >
               {selectedTopic === null && (
                 <>
                   <div className="flex-1">
@@ -183,11 +206,11 @@ export default function LessonsPage() {
                       <p className="text-center mt-2">{overallProgress}% Completed</p>
                     </div>
 
-                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 fade-in-panes${panesVisible ? " visible" : ""}`}> 
+                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 transition-opacity duration-700 ${panesVisible ? 'opacity-100' : 'opacity-0'}`}> 
                       {Object.entries(lessons).map(([section, topics]) => (
                         <div
                           key={section}
-                          className="bg-white rounded-lg shadow-lg p-6 floating-window lesson-pane"
+                          className="bg-white rounded-lg shadow-lg p-6 border border-gray-200"
                         >
                           <h2 className="text-2xl font-semibold mb-4 text-center">{section}</h2>
                           {Object.entries(topics).map(([topic, subtopics]) => (
@@ -215,7 +238,7 @@ export default function LessonsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg shadow-lg p-6 floating-window">
+                  <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
                     <h2 className="text-3xl font-bold mb-4 text-center">Final Quizzes</h2>
                     <p className="text-center text-gray-600 mb-6">
                       These quizzes test your skills from all subtopics!
@@ -270,12 +293,19 @@ export default function LessonsPage() {
               )}
             </div>
             {/* Back: Learning Interface */}
-            <div className="flip-back">
+            <div
+              className="absolute inset-0 w-full h-full"
+              style={{
+                ...backfaceHidden,
+                ...rotateY180,
+                pointerEvents: flipState === 'flipped' ? 'auto' : 'none',
+              } as any}
+            >
               {selectedTopic !== null && (
                 <div className="flex w-full justify-center">
                   {!isFinalQuiz && (
                     <div
-                      className={`sidebar floating-window mr-6 relative sidebar-anim${sidebarCollapsed ? " collapsed" : ""}`}
+                      className={`transition-all duration-300 bg-white rounded-lg shadow-lg p-4 border border-gray-200 mr-6 relative ${sidebarCollapsed ? 'w-0 overflow-hidden p-0 mr-0' : 'w-64'}`}
                     >
                       <div className="flex justify-between items-center mb-2">
                         <h2 className="text-lg font-bold">{currentTopic} Units</h2>
@@ -356,7 +386,7 @@ export default function LessonsPage() {
                   {!isFinalQuiz && sidebarCollapsed && (
                     <button
                       onClick={() => setSidebarCollapsed(false)}
-                      className="mr-4 bg-gray-200 hover:bg-gray-300 p-2 rounded sidebar-expand-btn"
+                      className="mr-4 bg-gray-200 hover:bg-gray-300 p-2 rounded"
                       title="Expand Sidebar"
                     >
                       <svg
@@ -372,7 +402,7 @@ export default function LessonsPage() {
                   )}
 
                   <div className="flex-1">
-                    <div className="bg-white p-6 overflow-y-auto w-full floating-window" ref={isFinalQuiz ? quizContainerRef : undefined}>
+                    <div className="bg-white p-6 overflow-y-auto w-full rounded-lg shadow-lg border border-gray-200" ref={isFinalQuiz ? quizContainerRef : undefined}>
                       <div className="w-full max-w-3xl mx-auto">
                         {isFinalQuiz ? (
                           <FinalQuiz
@@ -380,7 +410,7 @@ export default function LessonsPage() {
                             onBack={handleBackToLessons}
                           />
                         ) : !showPractice ? (
-                          <div className="flex flex-col items-center justify-center text-center summary-box">
+                          <div className="flex flex-col items-center justify-center text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
                             <h2 className="text-3xl font-bold mb-2">Summary of Topic</h2>
                             <h3 className="text-2xl font-semibold mb-4">{selectedTopic}</h3>
                             <p className="mb-8 text-xl text-gray-700 max-w-2xl">
@@ -392,12 +422,12 @@ export default function LessonsPage() {
                             >
                               Start Practice →
                             </button>
-                      <button
-                        onClick={handleBackToLessons}
-                        className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-                      >
-                        Back to Lessons
-                      </button>
+                            <button
+                              onClick={handleBackToLessons}
+                              className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                            >
+                              Back to Lessons
+                            </button>
                           </div>
                         ) : (
                           <div className="flex flex-col space-y-4 pt-6">
@@ -420,7 +450,7 @@ export default function LessonsPage() {
                               const isCorrect = selectedOption === q.correctAnswer;
 
                               return (
-                                <div key={idx} className="mb-6 p-4 border rounded bg-gray-100 question-card">
+                                <div key={idx} className="mb-6 p-4 border rounded bg-gray-100">
                                   <p className="font-medium mb-2">{q.question}</p>
                                   <div className="space-y-2">
                                     {q.options.map((opt) => {

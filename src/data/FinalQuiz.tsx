@@ -249,7 +249,9 @@ function FinalQuiz({ quizType, onBack }: { quizType: "math" | "reading"; onBack:
                 >
                   {opt}
                   {isAnswered && correct && <span className="ml-2 text-green-600 font-bold">✔</span>}
-                  {isAnswered && selected && !correct && <span className="ml-2 text-red-600 font-bold">✖</span>}
+                  {isAnswered && selected && !correct && (
+                    <span className="ml-2 text-red-600 font-bold">✖</span>
+                  )}
                 </button>
               );
             })}
@@ -265,18 +267,15 @@ function FinalQuiz({ quizType, onBack }: { quizType: "math" | "reading"; onBack:
       </button>
 
       {showResults && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="relative bg-white p-6 rounded-lg shadow-lg w-80 text-center text-black">
-            <button
-              onClick={onBack}
-              className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl font-bold"
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <h3 className="text-xl font-bold mb-2">Quiz Results</h3>
-            <p className="text-lg mb-2">You got {correctCount} out of {quiz.length} correct!</p>
-          </div>
+        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+          <h3 className="text-xl font-bold mb-2">Quiz Results</h3>
+          <p className="text-lg mb-2">You got {correctCount} out of {quiz.length} correct!</p>
+          <button
+            onClick={onBack}
+            className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Back to Lessons
+          </button>
         </div>
       )}
     </div>
