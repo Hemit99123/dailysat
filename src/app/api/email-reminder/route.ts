@@ -20,7 +20,7 @@ export async function GET() {
 
     const { subject, html } = await getWeeklyReminderFromGrok();
     console.log('Grok generated subject:', subject);
-
+    return NextResponse.json({success: true, message: subject})    
     //GROUP SENDING
     // const numGroups = 3;
     // const groups = divideIntoGroups(emails, numGroups);
