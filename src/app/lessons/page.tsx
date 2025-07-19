@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import content from "@/data/lessoncontent";
+import FinalQuiz from "@/components/features/lessons/FinalQuiz";
 
-import FinalQuiz from "@/data/finalquiz";
-
-//3D flip effect
+// 3D flip effect
 const flipStyles = {
   perspective: '1200px',
 } as any;
