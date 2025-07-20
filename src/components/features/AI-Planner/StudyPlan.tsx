@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { format } from "date-fns"
-import { Calendar } from "@/components/features/AI/Calendar"
+import { Calendar } from "@/components/features/AI-Planner/Calendar"
 import axios from "axios"
 
 interface Activity {
