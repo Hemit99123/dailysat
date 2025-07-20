@@ -5,6 +5,7 @@ import { Minus, Plus } from "lucide-react";
 import { ShopItem } from "@/types/shopitem";
 import { DisplayBanner } from "@/types/dashboard/banner";
 import Image from "next/image";
+import { useShop } from "@/hooks/useShop";
 
 // Component Props Interface
 interface ComponentShopItem {
@@ -27,11 +28,13 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   name,
   purpose,
   price,
-  dispatch,
   state,
   coins,
   userItemsBought,
 }) => {
+
+  const { handleDispatch } = useShop();
+
   // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
     diamondbanner: {
@@ -99,7 +102,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                   onClick={() => {
                     if (state[name.toLowerCase().replace(/\s/g, "")] === 0)
                       return;
-                    dispatch?.({ type: "decrement", payload: name });
+                    handleDispatch?.("decrement", name);
                   }}
                   disabled={state[name.toLowerCase().replace(/\s/g, "")] === 0}
                   className={
@@ -143,7 +146,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                         state[name.toLowerCase().replace(/\s/g, "")] === 1)
                     )
                       return;
-                    dispatch?.({ type: "increment", payload: name });
+                    handleDispatch?.("increment", name)
                   }}
                   className={
                     price > coins.amnt ||
