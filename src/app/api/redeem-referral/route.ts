@@ -1,6 +1,6 @@
 import { client } from "@/lib/mongo";
 import { Db, ObjectId } from "mongodb";
-import { REFERRAL_BONUS_REFERRED_PERSON, REFERRAL_BONUS_REFERREE } from "@/data/constant";
+import { BONUS_REFERRED_PERSON, BONUS_REFERRER } from "@/data/constant";
 import { handleGetSession } from "@/lib/auth/authActions";
 
 /**
@@ -33,6 +33,8 @@ import { handleGetSession } from "@/lib/auth/authActions";
 
 export const POST = async (request: Request) => {
     const body = await request.json();
+
+    // The referralCode is the referrer's UID by design
     const referralCode = body.referralCode;
 
     if (!referralCode) {
@@ -42,11 +44,10 @@ export const POST = async (request: Request) => {
         });
     }
 
-    // Validate the referral code
     if (!ObjectId.isValid(referralCode)) {
         return Response.json({
             code: 400,
-            message: "Invalid referral code format."
+            message: "Invalid referral code."
         });
     }
 
@@ -62,7 +63,7 @@ export const POST = async (request: Request) => {
 
     try {
         await client.connect();
-        const db: Db = client.db("DailySAT");
+        const db = client.db("DailySAT");
 
         // Check if the referee exists
         const referee = await db.collection("users").findOne({ _id: new ObjectId(referralCode) });
@@ -97,19 +98,17 @@ export const POST = async (request: Request) => {
             });
         }
 
-        // Update referred person's currency and isReferred status
         await db.collection("users").findOneAndUpdate(
             { email },
             {
-                $inc: { currency: REFERRAL_BONUS_REFERRED_PERSON },
+                $inc: { currency: BONUS_REFERRED_PERSON },
                 $set: { isReferred: true }
             }
         );
 
-        // Update referee's currency
         await db.collection("users").findOneAndUpdate(
-            { _id: new ObjectId(referralCode) },
-            { $inc: { currency: REFERRAL_BONUS_REFERREE } }
+            { _id: ObjectId.createFromHexString(referralCode) },
+            { $inc: { currency: BONUS_REFERRER } }
         );
 
         return Response.json({

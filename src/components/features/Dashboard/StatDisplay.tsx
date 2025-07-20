@@ -1,6 +1,5 @@
 import React from "react";
-import Image from "next/image";
-import { Store } from "lucide-react";
+import Header from "./Header";
 
 interface CoinDisplayProps {
   header: string;
@@ -17,18 +16,10 @@ const StatDisplay: React.FC<CoinDisplayProps> = ({
   icon,
   color,
 }) => {
+
   return (
     <div className="shadow-lg rounded-lg w-full bg-white p-4">
-      <div className="flex items-center mb-3">
-        {icon === "shop" ? (
-          <div className="bg-blue-600 p-2 h-[40px] w-[40px] rounded-full flex items-center justify-center">
-            <Store color="white" />
-          </div>
-        ) : (
-          <Image src={`/icons/${icon}.png`} width={40} height={40} alt="hi" />
-        )}
-        <p className={`text-md font-bold text-gray-600 ml-2`}>{header}</p>
-      </div>
+      <Header title={header} icon={icon} />
       <div className="flex items-center mb-5">
         <div>
           <p className="text-6xl font-bold">
