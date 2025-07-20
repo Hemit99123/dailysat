@@ -102,8 +102,6 @@ export const GET = async () => {
       user = await handleGetUserCached(email)
     }
 
-
-    console.log(user)
     return NextResponse.json({ user, cached: !rateLimitSuccess });
     
   } catch (error) {
