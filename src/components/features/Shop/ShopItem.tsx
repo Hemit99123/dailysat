@@ -2,7 +2,7 @@
 import { Minus, Plus } from "lucide-react";
 
 // Types
-import { ShopItem } from "@/types/shopitem";
+import { ShopItem } from "@/types/shop/shopItem";
 import { DisplayBanner } from "@/types/dashboard/banner";
 import Image from "next/image";
 import { useShop } from "@/hooks/useShop";

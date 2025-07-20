@@ -4,7 +4,7 @@ import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import { useUserStore } from "@/store/user";
 import { useGridStore } from "@/store/grid"; // <-- added
-import { ShopItem } from "@/types/shopitem";
+import { ShopItem } from "@/types/shop/shopItem";
 import { Items } from "@/data/shop";
 
 const initialState: { [key: string]: number } = {

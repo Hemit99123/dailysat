@@ -1,4 +1,4 @@
-import { ShopItem } from "@/types/shopitem";
+import { ShopItem } from "@/types/shop/shopItem";
 import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 import { User } from "@/types/user"; // assume you saved the User interface here

@@ -1,4 +1,4 @@
-import { NavItem } from "@/types/navbar";
+import { NavItem } from "@/types/common/navbar";
 
 export const menuItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard" },

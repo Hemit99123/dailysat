@@ -2,7 +2,7 @@ import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Items, Notes } from "@/data/shop";
 import ShopItemDisplay from "@/components/features/Shop/ShopItem";
-import { ShopItem } from "@/types/shopitem";
+import { ShopItem } from "@/types/shop/shopItem";
 import { useGridStore } from "@/store/grid";
 import { useUserStore } from "@/store/user";
 
