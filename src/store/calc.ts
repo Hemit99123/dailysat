@@ -1,4 +1,4 @@
-import { calc } from '@/types/sat-platform/calc';
+import { calc } from '@/types/practice/calc';
 import { create } from 'zustand'
 
 interface CalcMode {
