@@ -17,7 +17,6 @@ const Home = () => {
   const [icon, setIcon] = useState("");
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-  const [cached, setCached] = useState(false);
   const [greeting, setGreeting] = useState("");
   const [imageError, setImageError] = useState(false);
   const [userCoins, setUserCoins] = useState<number>(0);
@@ -83,7 +82,6 @@ const Home = () => {
         const response = await axios.get("/api/auth/get-user");
         const userData: User | undefined = response?.data?.user;
 
-        if (response?.data?.cached) setCached(true);
         setUserCoins(userData?.currency ?? 0);
 
         if (userData?.investors) {
@@ -124,11 +122,6 @@ const Home = () => {
   return (
     <div className="mb-10">
       <div className="flex flex-col items-center mt-8">
-        {cached && (
-          <div className="flex items-center text-[12px] space-x-2 text-gray-600 font-medium">
-            <p>Old data because you reached your limit</p>
-          </div>
-        )}
         {user ? (
           <h1 className="text-xl md:text-4xl font-bold text-gray-800">
             {greeting ? `${greeting}!` : "Loading greeting..."}
