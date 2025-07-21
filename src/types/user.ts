@@ -1,7 +1,7 @@
 // User interface representing a user in the system
 
-import { StudyPlanProps } from "@/components/features/AI/StudyPlan";
-import { ShopItem } from "./shopitem";
+import { StudyPlanProps } from "@/components/features/AI-Planner/StudyPlan";
+import { ShopItem } from "./shop/shopItem";
 import { Investor } from "./shop/investor";
 
 export interface User {

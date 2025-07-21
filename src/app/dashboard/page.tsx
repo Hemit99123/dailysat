@@ -11,12 +11,12 @@ import { Book, Calendar, EqualApproximately } from "lucide-react";
 import { useUserStore } from "@/store/user";
 import { User } from "@/types/user";
 import { DisplayBanner } from "@/types/dashboard/banner";
+import RedeemReferral from "@/components/features/Dashboard/RedeemReferral";
 
 const Home = () => {
   const [icon, setIcon] = useState("");
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-  const [cached, setCached] = useState(false);
   const [greeting, setGreeting] = useState("");
   const [imageError, setImageError] = useState(false);
   const [userCoins, setUserCoins] = useState<number>(0);
@@ -82,7 +82,6 @@ const Home = () => {
         const response = await axios.get("/api/auth/get-user");
         const userData: User | undefined = response?.data?.user;
 
-        if (response?.data?.cached) setCached(true);
         setUserCoins(userData?.currency ?? 0);
 
         if (userData?.investors) {
@@ -123,11 +122,6 @@ const Home = () => {
   return (
     <div className="mb-10">
       <div className="flex flex-col items-center mt-8">
-        {cached && (
-          <div className="flex items-center text-[12px] space-x-2 text-gray-600 font-medium">
-            <p>Old data because you reached your limit</p>
-          </div>
-        )}
         {user ? (
           <h1 className="text-xl md:text-4xl font-bold text-gray-800">
             {greeting ? `${greeting}!` : "Loading greeting..."}
@@ -165,7 +159,7 @@ const Home = () => {
       </div>
 
       <div className="lg:flex lg:space-x-2 mt-1.5 p-3.5">
-        <div className="shadow-lg rounded-lg w-full bg-white p-4 flex lg:items-center flex-col lg:flex-row lg:justify-between">
+        <div className="rounded-lg w-full bg-white p-4 flex lg:items-center flex-col lg:flex-row lg:justify-between">
           <div className="flex items-center mb-3">
             <div className="relative">
               {user ? (
@@ -212,7 +206,7 @@ const Home = () => {
             {user ? (
               <>
                 <p className="text-xl font-semibold text-green-600">Referral Code</p>
-                <p className="text-gray-700 flex items-center">
+                <p className="text-gray-700 flex items-center mb-2">
                   <button onClick={handleCopyReferral}>
                     <Image
                       src="/icons/copy.png"
@@ -236,7 +230,7 @@ const Home = () => {
       </div>
 
       <div className="p-3.5">
-        <div className="lg:flex lg:space-x-2 mt-1.5 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {user ? (
             <StatDisplay
               type="coins"
@@ -270,8 +264,17 @@ const Home = () => {
           ) : (
             <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
           )}
-          {user ? (
-            <Link href="/shop" className="w-full">
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {!user?.isReferred &&
+            <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center justify-center min-h-[200px]">
+              <RedeemReferral />
+            </div>
+          }
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center justify-center min-h-[200px]">
+            {user ? (
+              <Link href="/shop" className="w-full">
               <StatDisplay
                 type="items bought"
                 color="#2563EA"
@@ -279,10 +282,11 @@ const Home = () => {
                 header="Shop:"
                 number={user?.itemsBought?.length ?? 0}
               />
-            </Link>
-          ) : (
-            <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
-          )}
+              </Link>
+            ) : (
+              <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
+            )}
+          </div>
         </div>
 
         {user?.itemsBought?.some((item) => item.name.includes("Banner")) && banner?.style && (

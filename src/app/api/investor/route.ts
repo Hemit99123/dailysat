@@ -13,6 +13,7 @@ import { handleGetSession } from "@/lib/auth/authActions";
  * POST Handler for Investor Calculations
  * Calculates and updates user's earnings from investments
  */
+
 export const POST = async () => {
   try {
     // Initialize database connection

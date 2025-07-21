@@ -94,14 +94,7 @@ export const GET = async () => {
   
   try {
 
-    let user; 
-
-    if (rateLimitSuccess) {
-      user = await handleGetUser(session)
-    } else {
-      user = await handleGetUserCached(email)
-    }
-
+    const user = await handleGetUser(session); 
     return NextResponse.json({ user, cached: !rateLimitSuccess });
     
   } catch (error) {

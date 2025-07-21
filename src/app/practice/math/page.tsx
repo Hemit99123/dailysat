@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { CalculatorOptions } from "@/components/features/practice/CalculatorOption";
-import { TopicSidebar } from "@/components/features/practice/TopicSidebar";
-import { QuestionContent } from "@/components/features/practice/QuestionContent";
-import ScoreAndProgress from "@/components/features/practice/ScoreAndProgress";
+import { CalculatorOptions } from "@/components/features/Practice/CalculatorOption";
+import { TopicSidebar } from "@/components/features/Practice/TopicSidebar";
+import { QuestionContent } from "@/components/features/Practice/QuestionContent";
+import ScoreAndProgress from "@/components/features/Practice/ScoreAndProgress";
 
 import {
   usePracticeSession,

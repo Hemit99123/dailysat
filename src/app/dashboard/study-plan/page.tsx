@@ -1,7 +1,7 @@
 "use client"
 
-import { Calendar } from '@/components/features/AI/Calendar'
-import { StudyPlanProps } from '@/components/features/AI/StudyPlan'
+import { Calendar } from '@/components/features/AI-Planner/Calendar'
+import { StudyPlanProps } from '@/components/features/AI-Planner/StudyPlan'
 import { Skeleton } from '@/components/ui/skeleton'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
