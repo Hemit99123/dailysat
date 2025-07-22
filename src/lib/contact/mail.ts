@@ -3,7 +3,7 @@ export const openMailPopup = (email: string = 'dailysatstaff@gmail.com', subject
   window.open(mailtoUrl, '_blank');
 };
 
-export const copyEmailToClipboard = async (email: string = 'dailysatstaff@gmail.com') => {
+export const copyEmailToClipboard = async (email: string) => {
   try {
     await navigator.clipboard.writeText(email);
     return { success: true, message: 'Email copied to clipboard!' };

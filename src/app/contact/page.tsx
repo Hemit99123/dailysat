@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import Footer from "@/components/common/Footer";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
-import { openMailPopup, copyEmailToClipboard } from "@/lib/mail";
+import { copyEmailToClipboard } from "@/lib/contact/mail";
 
 interface FormData {
   first_name: string;
@@ -161,25 +161,13 @@ const Contact = () => {
   };
 
   const handleEmailCopy = async () => {
-    const result = await copyEmailToClipboard();
+    const result = await copyEmailToClipboard("dailysatorg@gmail.com");
     setEmailCopyStatus(result);
     setTimeout(() => setEmailCopyStatus(null), 3000);
   };
 
-  const handleMailPopup = () => {
-    openMailPopup();
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <div className="w-full bg-blue-600 py-16 text-center text-white">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Contact Us</h1>
-        <p className="text-lg md:text-xl font-medium">
-          Have questions about our program? We're here to help!
-        </p>
-      </div>
-
+    <div>
       {/* Contact Form & Info */}
       <div className="max-w-6xl mx-auto px-4 py-16 flex flex-col md:flex-row gap-12">
         {/* Form */}
@@ -348,7 +336,7 @@ const Contact = () => {
               </span>
               <div className="flex-1">
                 <div className="font-semibold">Email</div>
-                <div className="text-gray-600">dailysatstaff@gmail.com</div>
+                <div className="text-gray-600">dailysatorg@gmail.com</div>
                 {emailCopyStatus && (
                   <div className={`text-sm mt-1 ${emailCopyStatus.success ? 'text-green-600' : 'text-red-600'}`}>
                     {emailCopyStatus.message}
@@ -362,13 +350,6 @@ const Contact = () => {
                   title="Copy email to clipboard"
                 >
                   Copy
-                </button>
-                <button
-                  onClick={handleMailPopup}
-                  className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
-                  title="Open email client"
-                >
-                  Mail
                 </button>
               </div>
             </div>
