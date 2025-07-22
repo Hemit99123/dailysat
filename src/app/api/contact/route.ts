@@ -1,6 +1,7 @@
+import { transporter } from '@/lib/nodemailer';
+import { handleGetContactEmailContent } from "@/lib/nodemailer/emailTemplates"
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from "resend";
-
+ 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -22,36 +23,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prepare email content
-    const emailContent = `
-        New Contact Form Submission - DailySAT
-
-        Name: ${first_name} ${last_name}
-        Email: ${email}
-        Phone: ${phone || 'Not provided'}
-        Inquiry Type: ${inquiry_type}
-
-        Message:
-        ${message}
-
-        ---
-        This message was sent from the DailySAT contact form.
-    `.trim();
-
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
     try {
-      await resend.emails.send({
-        to: "dailysatstaff@gmail.com",
-        subject: 'New Form Submission - DailySAT',
-        text: emailContent
+      await transporter.sendMail({
+        from: "DailySAT <dailysatorg@gmail.com>",
+        to: "DailySAT <dailysatorg@gmail.com>",
+        subject: "New form submission - DailySAT CONTACT FORM",
+        html: handleGetContactEmailContent(first_name, last_name, email, phone, inquiry_type, message)
       })
     } catch(error) {
       throw new Error(`Failed to send email ${error}`)
     }
-
-    // Simulate email sending delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
     return NextResponse.json(
       { message: 'Message sent successfully' },
