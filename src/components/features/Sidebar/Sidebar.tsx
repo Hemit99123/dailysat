@@ -1,7 +1,7 @@
 // Sidebar.js
 import React from 'react';
 import SideDisplay from './SideDisplay';
-import { Topic } from '@/types/sat-platform/topic';
+import { Topic } from '@/types/practice/topic';
 import { useTopicStore } from '@/store/questions';
 import { useAnswerCounterStore, useScoreStore } from '@/store/score';
 import { Award, Target } from 'lucide-react';

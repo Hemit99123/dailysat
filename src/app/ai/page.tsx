@@ -4,8 +4,8 @@
 import type React from "react"
 import { useState } from "react"
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
-import { StudyPlan } from "@/components/features/AI/StudyPlan"
-import { ValidPlan, DebugPlan, ErrorPlan, StudyDay } from "@/types/ai"
+import { StudyPlan } from "@/components/features/AI-Planner/StudyPlan"
+import { ValidPlan, DebugPlan, ErrorPlan, StudyDay } from "@/types/ai-planner/ai"
 import {toast} from "react-toastify"
 
 type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan

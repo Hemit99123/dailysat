@@ -3,9 +3,9 @@
 import { useEffect, useState, useMemo } from "react";
 import parse from "html-react-parser";
 
-import { TopicSidebar } from "@/components/features/practice/TopicSidebar";
-import { QuestionContent } from "@/components/features/practice/QuestionContent";
-import ScoreAndProgress from "@/components/features/practice/ScoreAndProgress";
+import { TopicSidebar } from "@/components/features/Practice/TopicSidebar";
+import { QuestionContent } from "@/components/features/Practice/QuestionContent";
+import ScoreAndProgress from "@/components/features/Practice/ScoreAndProgress";
 
 import {
   usePracticeSession,

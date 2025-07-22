@@ -1,4 +1,4 @@
-import { ShopItem } from "@/types/shopitem";
+import { ShopItem } from "@/types/shop/shopItem";
 import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 import { User } from "@/types/user"; // assume you saved the User interface here
@@ -10,6 +10,7 @@ import { handleGetSession } from "@/lib/auth/authActions";
  * @param email - The email of the user.
  * @param items - An array of items to append to the itemsBought array.
  */
+
 export const POST = async (request: Request) => {
   const { items, coins } = await request.json();
   if (!Array.isArray(items)) {

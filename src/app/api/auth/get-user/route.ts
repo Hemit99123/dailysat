@@ -2,7 +2,7 @@ import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/mongo";
 import { NextResponse } from "next/server";
-import { handleFindRateLimitStatus } from "@/lib/performance/rate-limiter/findLimitStatus";
+import { handleRatelimitSuccess } from "@/lib/performance/rate-limiter";
 import { handleGetUserCached } from "@/lib/performance/cache";
 
 /**
@@ -90,21 +90,12 @@ export const GET = async () => {
   const session = await handleGetSession();
   const email = session?.user?.email;
   
-  const rateLimitStatus = await handleFindRateLimitStatus(email)
+  const rateLimitSuccess = await handleRatelimitSuccess(email as string)
   
   try {
 
-    let user; 
-
-    if (rateLimitStatus) {
-      user = await handleGetUserCached(email)
-    } else {
-      user = await handleGetUser(session)
-    }
-
-
-    console.log(user)
-    return NextResponse.json({ user, cached: rateLimitStatus });
+    const user = await handleGetUser(session); 
+    return NextResponse.json({ user, cached: !rateLimitSuccess });
     
   } catch (error) {
     return Response.json({ error });
