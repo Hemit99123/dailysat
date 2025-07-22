@@ -23,6 +23,7 @@ import {
 import { useRouter } from "next/navigation";
 import React from "react";
 import Footer from "@/components/common/Footer";
+import { faqs } from "@/data/faqs";
 
 const Home = () => {
   const router = useRouter();
@@ -361,6 +362,42 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+      
+      {/* FAQ Section */}
+      <div className="w-full bg-blue-50 py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-8"
+          >
+            <Header
+              badgeText="FAQ"
+              text="Frequently Asked"
+              gradientText="Questions"
+              description="Get answers to common questions about DailySAT and our SAT preparation platform."
+            />
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {faqs.map((faq, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="bg-white rounded-xl shadow p-6 h-fit"
+              >
+                <div className="font-semibold text-lg text-blue-800 mb-3">{faq.question}</div>
+                <div className="text-gray-700 text-sm leading-relaxed">{faq.answer}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
       <Footer />
     </div>
   );
