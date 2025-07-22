@@ -92,7 +92,7 @@ export const POST = async (request: Request) => {
 
   if (!encryptedPayload) {
     return Response.json({
-      error: 'JWT token was not specified',
+      error: 'encryptedPayload was not specified',
     }, { status: 400 });
   }
 
