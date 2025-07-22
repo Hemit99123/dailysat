@@ -97,7 +97,7 @@ export const POST = async (request: Request) => {
   }
 
   try {
-    const decryptedPayload = decryptPayload(encryptedPayload);
+    const decryptedPayload = await decryptPayload(encryptedPayload);
     const { isCorrect } = decryptedPayload;
 
     if (!isCorrect) {
