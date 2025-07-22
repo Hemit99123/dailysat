@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-interface ContactFormData {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  inquiry_type: string;
-  message: string;
-}
+import { Resend } from "resend";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { first_name, last_name, email, phone, inquiry_type, message }: ContactFormData = body;
+    const { first_name, last_name, email, phone, inquiry_type, message } = body;
 
     // Server-side validation
     if (!first_name || !last_name || !email || !inquiry_type || !message) {
@@ -22,7 +14,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -33,40 +24,31 @@ export async function POST(request: NextRequest) {
 
     // Prepare email content
     const emailContent = `
-New Contact Form Submission - DailySAT
+        New Contact Form Submission - DailySAT
 
-Name: ${first_name} ${last_name}
-Email: ${email}
-Phone: ${phone || 'Not provided'}
-Inquiry Type: ${inquiry_type}
+        Name: ${first_name} ${last_name}
+        Email: ${email}
+        Phone: ${phone || 'Not provided'}
+        Inquiry Type: ${inquiry_type}
 
-Message:
-${message}
+        Message:
+        ${message}
 
----
-This message was sent from the DailySAT contact form.
+        ---
+        This message was sent from the DailySAT contact form.
     `.trim();
 
-    // Send email using a service like Resend, SendGrid, or NodeMailer
-    // For now, we'll simulate sending the email
-    // In production, you would integrate with an email service
-    
-    // Example with Resend (you would need to install @resend/react and set up RESEND_API_KEY)
-    // const { Resend } = require('@resend/react');
-    // const resend = new Resend(process.env.RESEND_API_KEY);
-    // await resend.emails.send({
-    //   from: 'noreply@dailysat.com',
-    //   to: 'dailysatstaff@gmail.com',
-    //   subject: 'New Contact Form Submission - DailySAT',
-    //   text: emailContent,
-    // });
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // For now, we'll just log the email content (replace with actual email sending)
-    console.log('Contact form submission:', {
-      to: 'dailysatstaff@gmail.com',
-      subject: 'New Contact Form Submission - DailySAT',
-      content: emailContent
-    });
+    try {
+      await resend.emails.send({
+        to: "dailysatstaff@gmail.com",
+        subject: 'New Form Submission - DailySAT',
+        text: emailContent
+      })
+    } catch(error) {
+      throw new Error(`Failed to send email ${error}`)
+    }
 
     // Simulate email sending delay
     await new Promise(resolve => setTimeout(resolve, 1000));
