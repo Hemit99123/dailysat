@@ -89,7 +89,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   return (
     <>
       {/* Metadata bar (topic, difficulty, actions)*/}
-      <div className="mb-4 flex items-center justify-between rounded-md bg-blue-50 p-3 text-sm shadow">
+      <div className="flex flex-col md:flex-row md:mb-4 items-center justify-between rounded-md bg-blue-50 p-3 text-sm shadow md:gap-3 md:p-3">
         <div className="text-black">
           {!(subject === "English" && selectedDomain === "All") && (
             <span>

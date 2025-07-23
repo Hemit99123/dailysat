@@ -177,7 +177,7 @@ export default function MathPracticePage() {
   };
 
   return (
-    <div className="flex gap-6 p-5">
+    <div className="flex flex-col gap-4 p-2 md:flex-row md:gap-6 md:p-5">
       {/* --------------------------- Sidebar --------------------------- */}
       <TopicSidebar
         selectedDomain={selectedDomain}
@@ -190,7 +190,7 @@ export default function MathPracticePage() {
       />
 
       {/* -------------------------- Main Pane --------------------------- */}
-      <div className="flex flex-1 gap-6">
+      <div className="flex flex-col flex-1 gap-4 md:flex-row md:gap-6">
         <section className="flex-1 overflow-y-auto rounded-lg bg-white p-5 text-black shadow max-h-[calc(100vh-64px)]">
           <QuestionContent
             isMarked={currentQuestionStatus?.isMarkedForLater || false}
@@ -216,7 +216,7 @@ export default function MathPracticePage() {
         </section>
 
         {/* ---------------------- Stats Sidebar ------------------------- */}
-        <aside className="w-[250px]">
+        <aside className="w-full md:w-[250px]">
           <ScoreAndProgress
             correctCount={correctCount}
             wrongCount={wrongCount}

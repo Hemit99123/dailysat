@@ -75,7 +75,7 @@ const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
   const accuracy = totalAttempts === 0 ? 0 : (correctCount / totalAttempts) * 100;
 
   return (
-    <div className="flex w-[250px] flex-col gap-5">
+    <div className="flex flex-col md:flex-row w-full md:w-[250px] gap-4 md:gap-5">
       {/* ---------------- Accuracy ----------------------- */}
       <Card
         title="Accuracy"
