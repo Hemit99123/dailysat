@@ -92,9 +92,7 @@ const Home = () => {
         getIcon(userData);
         getBanner(userData);
         setUser?.(userData ?? null);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
+      } catch (error) {}
     };
 
     handleGetUser();

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-// Database and Authentication
 import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 
@@ -14,7 +13,6 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    // Validate league parameter
     const validLeagues = ["Bronze", "Silver", "Gold", "Platinum"];
     if (!validLeagues.includes(league)) {
       return NextResponse.json(
@@ -25,20 +23,18 @@ export async function GET(request: NextRequest) {
     await client.connect();
     const db: Db = client.db("DailySAT");
 
-    // Query the leaderboard collection for the specified league
     const leaderboardData = await db
       .collection("leaderboard")
       .find({ league: league })
-      .sort({ points: -1, wins: -1 }) // Sort by points descending, then wins
+      .sort({ points: -1, wins: -1 })
       .toArray();
 
     return NextResponse.json({
-      success: true,
+      message: "Leaderboard successfully retrieved",
       data: leaderboardData,
       league: league,
     });
   } catch (error) {
-    console.error("Error fetching leaderboard data:", error);
     return NextResponse.json(
       { error: "Failed to fetch leaderboard data" },
       { status: 500 }

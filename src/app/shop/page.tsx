@@ -21,9 +21,7 @@ export default function Shop() {
         const response = await axios.get("/api/auth/get-user");
         const userData: User | undefined = response?.data?.user;
         setUser?.(userData ?? null);
-      } catch (error) {
-        console.error(error);
-      }
+      } catch (error) {}
     };
     handleGetUser();
   }, []);

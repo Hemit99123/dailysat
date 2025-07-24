@@ -121,22 +121,20 @@ export default function EnglishPracticePage() {
       await axios.post("/api/practice", {
         encryptedPayload,
       });
-    } catch (error) {
-      console.error("Error sending submission:", error);
-    }
+    } catch (error) {}
 
     // Update scores and streaks based on the answer's correctness.
     if (correct) {
-      setCorrectCount((c) => c + 1);
-      setEnglishCorrect((c) => c + 1);
-      setCurrentStreak((s) => {
-        const next = s + 1;
-        setMaxStreak((m) => Math.max(m, next));
+      setCorrectCount((correctCount) => correctCount + 1);
+      setEnglishCorrect((englishCorrect) => englishCorrect + 1);
+      setCurrentStreak((streak) => {
+        const next = streak + 1;
+        setMaxStreak((maxStreak) => Math.max(maxStreak, next));
         return next;
       });
     } else {
-      setWrongCount((c) => c + 1);
-      setEnglishWrong((c) => c + 1);
+      setWrongCount((count) => count + 1);
+      setEnglishWrong((numWrong) => numWrong + 1);
       setCurrentStreak(0);
     }
 
@@ -226,7 +224,7 @@ export default function EnglishPracticePage() {
         subject={subject}
       />
 
-      {/* -------------------------- Main Pane --------------------------- */}
+      {/* Main Pane  */}
       <div className="flex flex-1 gap-6">
         <section className="flex-1 overflow-y-auto rounded-lg bg-white p-5 text-black shadow max-h-[calc(100vh-64px)]">
           <QuestionContent
@@ -252,7 +250,7 @@ export default function EnglishPracticePage() {
           />
         </section>
 
-        {/* ---------------------- Stats Sidebar ------------------------- */}
+        {/*  Stats Sidebar  */}
         <aside className="w-[250px]">
           <ScoreAndProgress
             correctCount={correctCount}

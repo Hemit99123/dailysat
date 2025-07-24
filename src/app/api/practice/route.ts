@@ -114,33 +114,27 @@ const updateLeaderboard = async (db: any, league: string, userData: any) => {
   });
 
   if (existingUser) {
-    // User exists in a league
+    // Update the leaderboard
     if (existingUser.league === league) {
-      // Same league - just update the score
       await leaderboardColl.updateOne(
         { username: userData.username },
         { $set: { score: userData.score } }
       );
     } else {
-      // Different league - remove from old league and add to new league
       await leaderboardColl.deleteOne({ username: userData.username });
 
-      // Get current leaderboard for the new league
       const currentLeaderboard = await leaderboardColl
         .find({ league })
         .sort({ score: -1 })
         .toArray();
 
-      // Find insertion position using binary search
       const insertionIndex = findInsertionPosition(
         currentLeaderboard,
         userData.score
       );
 
-      // Insert the user at the correct position
       currentLeaderboard.splice(insertionIndex, 0, userData);
 
-      // Keep only top 20 entries
       const updatedLeaderboard = currentLeaderboard.slice(0, 20);
 
       // Update the leaderboard in database
@@ -163,10 +157,9 @@ const updateLeaderboard = async (db: any, league: string, userData: any) => {
       userData.score
     );
 
-    // Insert the user at the correct position
+    // Insert the user at the correct position & only keep 20 entries
     currentLeaderboard.splice(insertionIndex, 0, userData);
 
-    // Keep only top 20 entries
     const updatedLeaderboard = currentLeaderboard.slice(0, 20);
 
     // Update the leaderboard in database
@@ -192,7 +185,7 @@ export const POST = async (request: Request) => {
   if (!encryptedPayload) {
     return Response.json(
       {
-        error: "JWT token was not specified",
+        error: "Request improperly formatted",
       },
       { status: 400 }
     );
@@ -251,7 +244,6 @@ export const POST = async (request: Request) => {
       isCorrect,
     });
   } catch (error) {
-    console.error("Practice submission error:", error);
     return Response.json({
       code: 500,
       error: "Internal servor error",

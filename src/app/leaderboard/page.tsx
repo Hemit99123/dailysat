@@ -45,7 +45,6 @@ const HomePage: React.FC = () => {
       const data = await response.json();
       setLeaderboardData(data.data);
     } catch (error) {
-      console.error("Error fetching leaderboard data:", error);
       setError("Failed to load leaderboard data. Please try again.");
     } finally {
       setLoading(false);
