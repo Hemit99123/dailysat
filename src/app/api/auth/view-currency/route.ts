@@ -1,5 +1,4 @@
 import { client } from "@/lib/mongo";
-import { Db, WithId, Document, FindCursor } from "mongodb";
 
 /**
  * @swagger
@@ -77,13 +76,14 @@ export const GET = async (request: Request) => {
     else {
         try {
             await client.connect();
-            const db: Db = client.db("DailySAT");
+            const db = client.db("DailySAT");
 
-            const result: FindCursor<WithId<Document>> = db.collection("users").find({ email: userEmail });
-            const allValues: WithId<Document>[] = await result.toArray();
+            const result = db.collection("users").find({ email: userEmail });
+            const allValues = await result.toArray();
+
             return Response.json({
                 code: 200,
-                points: allValues[0].currency
+                currency: allValues[0].currency
             })
         }
         catch {

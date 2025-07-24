@@ -1,5 +1,5 @@
 import { useCalcModeModalStore } from '@/store/calc';
-import { calc } from '@/types/sat-platform/calc';
+import { calc } from '@/types/practice/calc';
 import React from 'react'
 
 interface OptionsProps {

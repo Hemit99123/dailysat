@@ -1,8 +1,7 @@
 import { QUESTION_IS_CORRECT_POINTS } from '@/data/constant';
 import { client } from '@/lib/mongo';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
 import { handleGetSession } from '@/lib/auth/authActions';
+import { decryptPayload } from '@/lib/cryptojs';
 
 /**
  * @swagger
@@ -88,32 +87,21 @@ import { handleGetSession } from '@/lib/auth/authActions';
  */
 
 
-const verifyJWT = (token: string) => {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload; // Use type assertion to ensure it's a JwtPayload so that typescript voids errors
-  } catch (error) {
-    throw new Error(`JWT issue: ${error}`);
-  }
-}
-
 export const POST = async (request: Request) => {
-  const { jwtToken } = await request.json();
+  const { encryptedPayload } = await request.json();
 
-  // Check if the JWT token is provided
-  if (!jwtToken) {
+  if (!encryptedPayload) {
     return Response.json({
       error: 'JWT token was not specified',
     }, { status: 400 });
   }
 
   try {
-    // Verify JWT and extract the payload
-    const decodedToken = verifyJWT(jwtToken);
-    const { id, attempts, type, answer }= decodedToken;
+    const decryptedPayload = decryptPayload(encryptedPayload);
+    const { isCorrect } = decryptedPayload;
 
-    // Check if the required parameters are valid
-    if (!id || attempts == null || !type) {
-      throw new Error("All params in JWT not found")
+    if (!isCorrect) {
+      throw new Error("All required fields not found in body")
     }
 
     const session = await handleGetSession();
@@ -123,28 +111,12 @@ export const POST = async (request: Request) => {
 
     const db = client.db("DailySAT");
     const usersColl = db.collection('users');
-
-    const questionCollName   = type === "math" ? "questions-math" : type === "reading-writing" ? "questions-reading" : null
     
-    // default to reading/writing sat bank
-    const questionsColl = db.collection(questionCollName || "questions-reading");
-  
-    // Retrieve the question from the database
-    const question = await questionsColl.findOne({ _id: new ObjectId(id) });
-
-    if (!question) {
-      throw new Error("No questions found")
-    }
-
-    // Check if the answer is correct
-    const isCorrect = question.correctAnswer === answer;
-
-    // Update the user's database with the new information
     await usersColl.updateOne(
       { email },
       {
         $inc: {
-          currency: isCorrect && attempts === 0 ? QUESTION_IS_CORRECT_POINTS : 0,
+          currency: isCorrect ? QUESTION_IS_CORRECT_POINTS : 0,
           correctAnswered: isCorrect ? 1 : 0,
           wrongAnswered: !isCorrect ? 1 : 0,
         },

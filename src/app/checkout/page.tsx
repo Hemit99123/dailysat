@@ -16,7 +16,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { ShopItem } from "@/types/shopitem";
+import { ShopItem } from "@/types/shop/shopItem";
 import { redirect } from "next/navigation";
 
 // Helper function to process purchase and append items to user's inventory
