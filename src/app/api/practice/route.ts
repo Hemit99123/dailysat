@@ -1,7 +1,5 @@
 import { QUESTION_IS_CORRECT_POINTS } from "@/data/constant";
 import { client } from "@/lib/mongo";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { ObjectId } from "mongodb";
 import { handleGetSession } from "@/lib/auth/authActions";
 import { decryptPayload } from "@/lib/cryptojs";
 
@@ -202,6 +200,15 @@ export const POST = async (request: Request) => {
 
   try {
     const decryptedPayload = await decryptPayload(encryptedPayload);
+    if (
+      typeof decryptedPayload !== "object" ||
+      typeof decryptedPayload.isCorrect !== "boolean"
+    ) {
+      return Response.json(
+        { error: "Invalid payload structure" },
+        { status: 400 }
+      );
+    }
     const { isCorrect } = decryptedPayload;
 
     const session = await handleGetSession();
@@ -229,7 +236,7 @@ export const POST = async (request: Request) => {
       if (league !== "None") {
         const userData = {
           score: updatedUser.points,
-          username: updatedUser.name || email,
+          username: updatedUser.name || "Anonymous User",
           league: league,
         };
 
@@ -244,9 +251,10 @@ export const POST = async (request: Request) => {
       isCorrect,
     });
   } catch (error) {
+    console.error("Practice submission error:", error);
     return Response.json({
       code: 500,
-      error: error,
+      error: "Internal servor error",
     });
   } finally {
     client.close();

@@ -31,7 +31,9 @@ export default function Shop() {
         ) : (
           <>
             <h3 className="font-bold text-3xl">DailySAT Shop</h3>
-            <p className="font-thin">Browse & see what’s interesting to you!</p>
+            <p className="font-thin">
+              Browse & see what&apos;s interesting to you!
+            </p>
           </>
         )}
       </div>

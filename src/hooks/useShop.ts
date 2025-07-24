@@ -40,6 +40,9 @@ function reducer(
           state[action.payload as string] - 1
         ),
       };
+    case "clear":
+      console.log("clearing");
+      return initialState;
     default:
       return state;
   }
@@ -70,7 +73,14 @@ export const useShop = () => {
     handleGetUserAuth();
   }, [setUser]);
 
-  const handleDispatch = (type: "increment" | "decrement", payload: string) => {
+  const handleDispatch = (
+    type: "increment" | "decrement" | "clear",
+    payload: string
+  ) => {
+    if (type === "clear") {
+      dispatch({ type, payload });
+      return;
+    }
     const matchedItem = Items[grid]?.find((item) => item.name === payload);
 
     if (matchedItem) {
