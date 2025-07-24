@@ -1,4 +1,4 @@
-import { Topic } from "@/types/sat-platform/topic";
+import { Topic } from "@/types/practice/topic";
 
 export const readingTopics: Topic[] = [
     { id: 1, name: "Information and Ideas", description: "Topic 1" },

@@ -2,9 +2,10 @@
 import { Minus, Plus } from "lucide-react";
 
 // Types
-import { ShopItem } from "@/types/shopitem";
+import { ShopItem } from "@/types/shop/shopItem";
 import { DisplayBanner } from "@/types/dashboard/banner";
 import Image from "next/image";
+import { useShop } from "@/hooks/useShop";
 
 // Component Props Interface
 interface ComponentShopItem {
@@ -27,11 +28,12 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   name,
   purpose,
   price,
-  dispatch,
   state,
   coins,
   userItemsBought,
 }) => {
+  const { handleDispatch, user } = useShop();
+
   // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
     diamondbanner: {
@@ -99,7 +101,9 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                   onClick={() => {
                     if (state[name.toLowerCase().replace(/\s/g, "")] === 0)
                       return;
-                    dispatch?.({ type: "decrement", payload: name });
+                    handleDispatch?.("decrement", name);
+                    state[name.toLowerCase().replace(/\s/g, "")] =
+                      Number(state[name.toLowerCase().replace(/\s/g, "")]) - 1;
                   }}
                   disabled={state[name.toLowerCase().replace(/\s/g, "")] === 0}
                   className={
@@ -129,11 +133,8 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                 <button
                   onClick={() => {
                     if (
-                      price > coins.amnt ||
-                      (!name
-                        .toLowerCase()
-                        .replace(/\s/g, "")
-                        .includes("investor") &&
+                      price > user?.currency! ||
+                      (!name.toLowerCase().includes("investor") &&
                         userItemsBought &&
                         userItemsBought.some((item) => item.name === name)) ||
                       (!name
@@ -143,10 +144,12 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                         state[name.toLowerCase().replace(/\s/g, "")] === 1)
                     )
                       return;
-                    dispatch?.({ type: "increment", payload: name });
+                    state[name.toLowerCase().replace(/\s/g, "")] =
+                      Number(state[name.toLowerCase().replace(/\s/g, "")]) + 1;
+                    handleDispatch?.("increment", name);
                   }}
                   className={
-                    price > coins.amnt ||
+                    price > user?.currency! ||
                     (!name
                       .toLowerCase()
                       .replace(/\s/g, "")
@@ -164,7 +167,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                 >
                   <Plus
                     color={
-                      price > coins.amnt ||
+                      price > user?.currency! ||
                       (!name
                         .toLowerCase()
                         .replace(/\s/g, "")

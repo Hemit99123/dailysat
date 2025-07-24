@@ -3,6 +3,7 @@ import { client } from "@/lib/mongo";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import { handleGetSession } from "@/lib/auth/authActions";
+import { decryptPayload } from "@/lib/cryptojs";
 
 /**
  * @swagger
@@ -188,33 +189,28 @@ const determineLeague = (points: number): string => {
 };
 
 export const POST = async (request: Request) => {
+  const { encryptedPayload } = await request.json();
+
+  if (!encryptedPayload) {
+    return Response.json(
+      {
+        error: "JWT token was not specified",
+      },
+      { status: 400 }
+    );
+  }
+
   try {
-    // Get the question type, whether the answer is correct, the question id, and the user's email
-    const { questionType, isCorrect, id, email } = await request.json();
-    const type = [
-      "Advanced Math",
-      "Problem-Solving and Data Analysis",
-      "Geometry and Trigonometry",
-      "Algebra",
-    ].includes(questionType)
-      ? "math"
-      : "reading";
+    const decryptedPayload = await decryptPayload(encryptedPayload);
+    const { isCorrect } = decryptedPayload;
+
+    const session = await handleGetSession();
+    const email = session?.user?.email;
+
     await client.connect();
 
     const db = client.db("DailySAT");
     const usersColl = db.collection("users");
-
-    // Retrieve the question from the database
-    const user = await usersColl.findOne({ email });
-    if (user && user?.points == null) {
-      await usersColl.updateOne(
-        { email },
-        { $set: { points: user.correctAnswered - user.wrongAnswered } }
-      );
-    }
-    // Calculate points to be added
-    const pointsToAdd = isCorrect ? 1 : -1;
-    // Update the user's database with the new information
     await usersColl.updateOne(
       { email },
       {
@@ -222,7 +218,7 @@ export const POST = async (request: Request) => {
           currency: isCorrect ? QUESTION_IS_CORRECT_POINTS : 0,
           correctAnswered: isCorrect ? 1 : 0,
           wrongAnswered: !isCorrect ? 1 : 0,
-          points: pointsToAdd,
+          points: isCorrect ? 1 : -1,
         },
       }
     );

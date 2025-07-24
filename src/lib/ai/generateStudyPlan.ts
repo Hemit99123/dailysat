@@ -1,6 +1,6 @@
 import { MAX_RETRIES } from "@/data/constant"
 import axios from "axios"
-import { StudyPlanRequest, Activity } from "@/types/ai"
+import { StudyPlanRequest, Activity } from "@/types/ai-planner/ai"
 
 export const generateStudyPlan = async (data: StudyPlanRequest) => {
   const today = new Date()

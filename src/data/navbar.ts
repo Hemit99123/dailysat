@@ -1,4 +1,4 @@
-import { NavItem } from "@/types/navbar";
+import { NavItem } from "@/types/common/navbar";
 
 export const menuItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard" },
@@ -7,4 +7,5 @@ export const menuItems: NavItem[] = [
   { label: "Shop", href: "/shop" },
   { label: "Team", href: "/team" },
   { label: "Leaderboard", href: "/leaderboard" },
+  { label: "Contact", href: "/contact" },
 ];

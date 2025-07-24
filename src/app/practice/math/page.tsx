@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { CalculatorOptions } from "@/components/features/practice/CalculatorOption";
-import { TopicSidebar } from "@/components/features/practice/TopicSidebar";
-import { QuestionContent } from "@/components/features/practice/QuestionContent";
-import ScoreAndProgress from "@/components/features/practice/ScoreAndProgress";
+import { CalculatorOptions } from "@/components/features/Practice/CalculatorOption";
+import { TopicSidebar } from "@/components/features/Practice/TopicSidebar";
+import { QuestionContent } from "@/components/features/Practice/QuestionContent";
+import ScoreAndProgress from "@/components/features/Practice/ScoreAndProgress";
 
 import {
   usePracticeSession,
@@ -12,8 +12,8 @@ import {
 } from "@/hooks/usePracticeSession";
 
 import { subject2, domainDisplayMapping2 } from "@/data/practice";
-import { handleGetSession } from "@/lib/auth/authActions";
 import axios from "axios";
+import { encryptPayload } from "@/lib/cryptojs";
 
 interface InteractionState {
   selectedAnswer: string | null;
@@ -93,21 +93,19 @@ export default function MathPracticePage() {
 
     const correct =
       interaction.selectedAnswer === currentQuestion.question.correct_answer;
-    const session = await handleGetSession();
-
-    const email = session?.user?.email;
 
     // Send the submission result to the backend.
-    axios
-      .post("/api/practice", {
-        questionType: currentQuestion.domain,
-        isCorrect: correct,
-        id: currentQuestion.id,
-        email: email,
-      })
-      .catch((error) => {
-        console.error("Error sending submission:", error);
+    try {
+      const payload = { isCorrect: correct };
+      const encryptedPayload = await encryptPayload(payload as unknown as JSON);
+
+      await axios.post("/api/practice", {
+        encryptedPayload,
       });
+    } catch (error) {
+      console.error("Error sending submission:", error);
+    }
+
     if (correct) {
       setCorrectCount((c) => c + 1);
       setMathCorrect((c) => c + 1);
