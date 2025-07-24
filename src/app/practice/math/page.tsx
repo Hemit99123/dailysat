@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { DesmosCalculator } from "@/components/practice/DesmosCalculator"; // ➕ 2
-import { TopicSidebar } from "@/components/practice/TopicSidebar";
-import { QuestionContent } from "@/components/practice/QuestionContent";
-import ScoreAndProgress from "@/components/practice/ScoreAndProgress";
-import axios from "axios";
+import { CalculatorOptions } from "@/components/features/practice/CalculatorOption";
+import { TopicSidebar } from "@/components/features/practice/TopicSidebar";
+import { QuestionContent } from "@/components/features/practice/QuestionContent";
+import ScoreAndProgress from "@/components/features/practice/ScoreAndProgress";
 
 import {
   usePracticeSession,
@@ -14,6 +13,7 @@ import {
 
 import { subject2, domainDisplayMapping2 } from "@/data/practice";
 import { handleGetSession } from "@/lib/auth/authActions";
+import axios from "axios";
 
 interface InteractionState {
   selectedAnswer: string | null;
@@ -62,19 +62,12 @@ export default function MathPracticePage() {
   const [interaction, setInteraction] =
     useState<InteractionState>(INITIAL_INTERACTION);
 
-  // State to control the visibility of the Desmos calculator.
-  const [showDesmos, setShowDesmos] = useState(false);
-
-  // --- Utility Functions ---
-  // Resets the interaction state, optionally preserving the selected answer.
   const resetInteraction = (preserveAnswer = false) =>
     setInteraction((prev) => ({
       ...INITIAL_INTERACTION,
       selectedAnswer: preserveAnswer ? prev.selectedAnswer : null,
     }));
 
-  // --- Effects ---
-  // Resets interaction state when the question changes.
   useEffect(() => {
     const keepAnswer =
       currentHistoryIndex !== null &&
@@ -98,17 +91,15 @@ export default function MathPracticePage() {
   const handleSubmit = async () => {
     if (!interaction.selectedAnswer || !currentQuestion) return;
 
-    // Check if the selected answer is correct.
     const correct =
       interaction.selectedAnswer === currentQuestion.question.correct_answer;
-
-    // Get user session to associate the submission with the user.
     const session = await handleGetSession();
+
     const email = session?.user?.email;
 
     // Send the submission result to the backend.
     axios
-      .post("/api/questions/handle-submit", {
+      .post("/api/practice", {
         questionType: currentQuestion.domain,
         isCorrect: correct,
         id: currentQuestion.id,
@@ -117,8 +108,6 @@ export default function MathPracticePage() {
       .catch((error) => {
         console.error("Error sending submission:", error);
       });
-
-    // Update scores and streaks based on the answer's correctness.
     if (correct) {
       setCorrectCount((c) => c + 1);
       setMathCorrect((c) => c + 1);
@@ -151,7 +140,6 @@ export default function MathPracticePage() {
       return [...prev, updatedItem];
     });
 
-    // Update the interaction state to show the result and explanation.
     setInteraction((prev) => ({
       ...prev,
       isCorrect: correct,
@@ -185,7 +173,6 @@ export default function MathPracticePage() {
     });
   };
 
-  // Handles clicking on a question in the progress tracker.
   const handleProgressBoxClick = (index: number) => {
     const historyItem = questionHistory[index];
 
@@ -199,7 +186,6 @@ export default function MathPracticePage() {
     });
   };
 
-  // Handles moving to the next question.
   const handleNext = () => {
     if (currentHistoryIndex !== null) setCurrentHistoryIndex(null);
     showNext();
@@ -243,8 +229,6 @@ export default function MathPracticePage() {
             handleSubmit={handleSubmit}
             showNext={handleNext}
             showExplanation={interaction.showExplanation}
-            showDesmos={showDesmos}
-            setShowDesmos={setShowDesmos}
           />
         </section>
 
@@ -262,11 +246,8 @@ export default function MathPracticePage() {
           />
         </aside>
 
-        {/* ---------- Desmos floating modal -------- */}
-        <DesmosCalculator // ➕ 5
-          showDesmos={showDesmos}
-          setShowDesmos={setShowDesmos}
-        />
+        {/* The Calculator modal */}
+        <CalculatorOptions />
       </div>
     </div>
   );

@@ -43,5 +43,7 @@ export async function GET(request: NextRequest) {
       { error: "Failed to fetch leaderboard data" },
       { status: 500 }
     );
+  } finally {
+    await client.close();
   }
 }

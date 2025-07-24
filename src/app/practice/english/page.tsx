@@ -3,10 +3,9 @@
 import { useEffect, useState, useMemo } from "react";
 import parse from "html-react-parser";
 
-import { TopicSidebar } from "@/components/practice/TopicSidebar";
-import { QuestionContent } from "@/components/practice/QuestionContent";
-import ScoreAndProgress from "@/components/practice/ScoreAndProgress";
-import axios from "axios";
+import { TopicSidebar } from "@/components/features/practice/TopicSidebar";
+import { QuestionContent } from "@/components/features/practice/QuestionContent";
+import ScoreAndProgress from "@/components/features/practice/ScoreAndProgress";
 
 import {
   usePracticeSession,
@@ -15,6 +14,7 @@ import {
 
 import { subject, domainDisplayMapping } from "@/data/practice";
 import { handleGetSession } from "@/lib/auth/authActions";
+import axios from "axios";
 
 // Defines the shape of the user's interaction state with a question.
 interface InteractionState {
@@ -106,7 +106,7 @@ export default function EnglishPracticePage() {
 
     return rawStem ? parse(rawStem) : null;
   }, [currentQuestion]);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = async () => {
     if (!interaction.selectedAnswer || !currentQuestion) return;
 
@@ -117,18 +117,25 @@ export default function EnglishPracticePage() {
     // Get user session to associate the submission with the user.
     const session = await handleGetSession();
     const email = session?.user?.email;
-
+    if (!email) {
+      console.error("User session not found");
+      setIsSubmitting(false);
+      // Consider showing a toast or modal to inform the user
+      return;
+    }
     // Send the submission result to the backend.
-    axios
-      .post("/api/questions/handle-submit", {
+    try {
+      await axios.post("/api/practice", {
         questionType: currentQuestion.domain,
         isCorrect: correct,
         id: currentQuestion.id,
         email: email,
-      })
-      .catch((error) => {
-        console.error("Error sending submission:", error);
       });
+    } catch (error) {
+      console.error("Error sending submission:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
 
     // Update scores and streaks based on the answer's correctness.
     if (correct) {

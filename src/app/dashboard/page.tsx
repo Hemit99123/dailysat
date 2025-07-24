@@ -9,7 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Book, Calendar, EqualApproximately } from "lucide-react";
 import { useUserStore } from "@/store/user";
-import { ShopItem } from "@/types/shopitem";
 import { User } from "@/types/user";
 import { DisplayBanner } from "@/types/dashboard/banner";
 
@@ -26,27 +25,26 @@ const Home = () => {
     content: "",
   });
 
-  const getIcon = (userData: User) => {
-    if (!userData.itemsBought) return;
-    const icons = userData.itemsBought.filter((item: ShopItem) =>
+  const getIcon = (userData?: User) => {
+    const icons = userData?.itemsBought?.filter((item) =>
       item.name.includes("Icon")
     );
-    if (icons.length === 0) return;
-    const mostExpensiveIcon = icons.reduce((max: ShopItem, item: ShopItem) =>
+    if (!icons?.length) return;
+    const mostExpensiveIcon = icons.reduce((max, item) =>
       item.price > max.price ? item : max
     );
     setIcon(mostExpensiveIcon.name.split(" ").join("-").toLowerCase());
   };
 
-  const getBanner = (userData: User) => {
-    if (!userData.itemsBought) return;
-    const banners = userData.itemsBought.filter((item: ShopItem) =>
+  const getBanner = (userData?: User) => {
+    const banners = userData?.itemsBought?.filter((item) =>
       item.name.includes("Banner")
     );
-    if (banners.length === 0) return;
-    const mostExpensiveBanner = banners.reduce(
-      (max: ShopItem, item: ShopItem) => (item.price > max.price ? item : max)
+    if (!banners?.length) return;
+    const mostExpensiveBanner = banners.reduce((max, item) =>
+      item.price > max.price ? item : max
     );
+
     const bannerMap: { [key: string]: DisplayBanner } = {
       diamondbanner: {
         style:
@@ -69,25 +67,32 @@ const Home = () => {
         content: `Congratulations on your Bronze Banner`,
       },
     };
-    setBanner(
-      bannerMap[mostExpensiveBanner.name.toLowerCase().replace(/\s/g, "")]
-    );
+
+    const bannerKey = mostExpensiveBanner?.name
+      ?.toLowerCase()
+      ?.replace(/\s/g, "");
+    if (bannerKey && bannerMap[bannerKey]) {
+      setBanner(bannerMap[bannerKey]);
+    }
   };
 
   useEffect(() => {
     const handleGetUser = async () => {
       try {
         const response = await axios.get("/api/auth/get-user");
+        const userData: User | undefined = response?.data?.user;
+
         if (response?.data?.cached) setCached(true);
-        setUserCoins(response?.data?.user.currency);
-        if (response?.data?.user?.investors) {
+        setUserCoins(userData?.currency ?? 0);
+
+        if (userData?.investors) {
           const result = await axios.post("/api/investor");
-          const { totalQuantity } = result.data;
-          setUserCoins(totalQuantity);
+          setUserCoins(result?.data?.totalQuantity ?? 0);
         }
-        getIcon(response?.data?.user as User);
-        getBanner(response?.data?.user as User);
-        setUser?.(response?.data?.user);
+
+        getIcon(userData);
+        getBanner(userData);
+        setUser?.(userData ?? null);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -103,7 +108,6 @@ const Home = () => {
       if (hours < 18) return "Good afternoon";
       return "Good evening";
     };
-
     setGreeting(getGreeting());
   }, []);
 
@@ -143,12 +147,12 @@ const Home = () => {
       <div className="lg:px-16 lg:p-6 px-2">
         <div className="grid grids-cols-1 md:grid-cols-3 mx-auto md:w-4/5 gap-2 mt-px">
           {user ? (
-            <Option icon={<Book />} header="Reading & Writing" redirect="/reading-writing" />
+            <Option icon={<Book />} header="English" redirect="/practice/english" />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
           {user ? (
-            <Option icon={<EqualApproximately />} header="Math" redirect="/math" />
+            <Option icon={<EqualApproximately />} header="Math" redirect="/practice/math" />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
@@ -192,8 +196,8 @@ const Home = () => {
             <div className="ml-6">
               {user ? (
                 <>
-                  <p className="text-3xl font-bold text-blue-600">{user.name}</p>
-                  <p>Email: {user.email}</p>
+                  <p className="text-3xl font-bold text-blue-600">{user?.name}</p>
+                  <p>Email: {user?.email}</p>
                 </>
               ) : (
                 <>
@@ -239,7 +243,7 @@ const Home = () => {
               color="black"
               icon="coin"
               header="DailySAT Coins:"
-              number={userCoins ?? 0}
+              number={userCoins}
             />
           ) : (
             <Skeleton className="w-full h-[200px] mb-2 bg-gray-600/60" />
@@ -273,7 +277,7 @@ const Home = () => {
                 color="#2563EA"
                 icon="shop"
                 header="Shop:"
-                number={user?.itemsBought?.length || 0}
+                number={user?.itemsBought?.length ?? 0}
               />
             </Link>
           ) : (
@@ -281,17 +285,14 @@ const Home = () => {
           )}
         </div>
 
-        {user &&
-          user.itemsBought &&
-          user.itemsBought.find((elem: ShopItem) => elem.name.includes("Banner")) &&
-          banner.style && (
-            <div className={banner.style}>
-              <p>
-                {banner.content}
-                {user ? `, ${user.name.split(" ")[0]}!` : "!"}
-              </p>
-            </div>
-          )}
+        {user?.itemsBought?.some((item) => item.name.includes("Banner")) && banner?.style && (
+          <div className={banner.style}>
+            <p>
+              {banner.content}
+              {user?.name ? `, ${user.name.split(" ")[0]}!` : "!"}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

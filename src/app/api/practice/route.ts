@@ -199,7 +199,6 @@ export const POST = async (request: Request) => {
     ].includes(questionType)
       ? "math"
       : "reading";
-    console.log(email);
     await client.connect();
 
     const db = client.db("DailySAT");
@@ -227,7 +226,6 @@ export const POST = async (request: Request) => {
         },
       }
     );
-    console.log("updated user");
     // Get updated user data for leaderboard
     const updatedUser = await usersColl.findOne({ email });
     if (updatedUser) {

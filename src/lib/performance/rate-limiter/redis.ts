@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
 
 export const client = new Redis({
-  url: "https://careful-mammoth-29375.upstash.io",
-  token: "AXK_AAIjcDFmNTBmNDgzMmVlMDM0NmQzOWZlNjI0NWZmYjJiMzcxZHAxMA",
+  url: process.env.UPSTASH_RATE_LIMIT_URL,
+  token: process.env.UPSTASH_RATE_LIMIT_TOKEN,
 });
