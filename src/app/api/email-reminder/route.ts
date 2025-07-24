@@ -1,10 +1,23 @@
 import { NextResponse } from 'next/server';
-import { sendEmail } from '@/lib/email/email';
 import { getWeeklyReminderFromGrok } from '@/lib/email/grok';
 import dbConnect from '@/lib/email/dbConnect';
 import User from '@/models/User';
 import { divideIntoGroups } from '@/lib/email/groupUsers';
 import { sendToGroup } from '@/lib/email/sendToGroup';
+
+function getDaysSinceStartDate(startDate: Date): number {
+  const today = new Date();
+  const diffTime = today.getTime() - startDate.getTime(); // difference in milliseconds
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // convert to days
+}
+
+
+function getTodayGroupNumber(startDate: Date, numGroups: number): number {
+  const daysSinceStart = getDaysSinceStartDate(startDate);
+  return (daysSinceStart % numGroups) + 1; // +1 because groups are 1-based
+}
+
+
 
 export async function GET() {
   try {
@@ -20,23 +33,31 @@ export async function GET() {
 
     const { subject, html } = await getWeeklyReminderFromGrok();
     console.log('Grok generated subject:', subject);
-    return NextResponse.json({success: true, message: subject})    
+    console.log('Grok generated html:', html);
     //GROUP SENDING
-    // const numGroups = 3;
-    // const groups = divideIntoGroups(emails, numGroups);
+     const numGroups = 14;
+      const groups = divideIntoGroups(emails, numGroups);
+        
+      // Start Date: July 24, 2025
+      const startDate = new Date('2025-07-24'); 
+        
+      // Pick today’s group
+      const todayGroupNum = getTodayGroupNumber(startDate, numGroups);
+      const todayGroupName = `Group${todayGroupNum}`;
+      const todayGroupEmails = groups[todayGroupName];
+        
+      console.log(`📧 Sending to ${todayGroupName} (${todayGroupEmails.length} users)`);
+        
+      await sendToGroup(todayGroupEmails, subject, html);
+        
+      return NextResponse.json({
+        success: true,
+        total: emails.length,
+        sentGroup: todayGroupName,
+        sentCount: todayGroupEmails.length,
+      });
 
-    // for (const [groupName, groupEmails] of Object.entries(groups)) {
-    //  console.log(`📧 Sending to ${groupName} (${groupEmails.length} users)`);
-    //  await sendToGroup(groupEmails, subject, html);
-    // }
 
-    // return NextResponse.json({
-    //  success: true,
-    //  total: emails.length,
-    //  groups: Object.fromEntries(
-    //    Object.entries(groups).map(([name, list]) => [name, list.length])
-    //  ),
-    // });
   } catch (err) {
     console.error('Error sending reminders:', err);
     return NextResponse.json({ success: false, error: (err as Error).message });

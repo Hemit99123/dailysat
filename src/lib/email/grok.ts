@@ -14,16 +14,16 @@ export async function getWeeklyReminderFromGrok(): Promise<GrokResponse> {
 You are writing a weekly SAT prep reminder email. The email should be motivational, brief, and sound encouraging.
 
 Return only valid JSON with exactly these two fields:
-1. A short, catchy subject line (under 8 words).
+1. A short, catchy subject line (5-8 words).
 2. A concise HTML body (2-4 sentences) encouraging the student to stay on track with SAT prep this week. It must follow the HTML template below.
 
 The JSON format must look like this, and must not include any extra explanation:
 {
-  "subject": "Subject goes here",
-  "html": "<div style='font-family: Arial; margin:6%; width: 88%; text-align: center;'><img src='https://i.ibb.co/JWbkRtk6/DailySAT.png'style='width: 40%;'><h1 style='font-size: 24px; color: #2d3748; margin-bottom: 20px;'>{Catchy 3-6 word header. include 1 emoji at the end}</h1><p style='font-size: 16px; color: #4a5568;'>{Body Text for the reminder}</p><br><a href='https://dailysat.org' style='text-decoration:none; padding: 12px; background-color: #3182ce; color: #fff; font-size: 16px;'>Start Practicing</a><br><br><p style='font-size: 12px; color: #a0aec0;'>© 2025 DailySAT. All rights reserved.</p></div>"
+  "subject": "Important Reminder: {SUBJECT GOES HERE}",
+  "html": "<div style="font-family: Arial, sans-serif; text-align: center; color: #434343;"><h1 style="color: #3182ce; font-size: 28px; margin: 0 0 10px;">DailySAT</h1><p style="font-size: 20px; color: #2d3748; margin: 0 0 20px;">{Catchy 5-8 word header with 1 emoji}</p><p style="font-size: 16px; line-height: 1.5; margin: 0 0 30px;">{2-4 sentence body text for the reminder}</p><a href="https://dailysat.org" style="display: inline-block; padding: 12px 20px; background-color: #3182ce; color: #ffffff; text-decoration: none; border-radius: 4px; font-size: 16px;">Start Practicing</a></div>"
 }
 `;
-
+//<div style='font-family: Arial; text-align: center;color:#434343'><h1 style="color:#3182ce">DailySAT</h1><h1 style='font-size: 24px; color: #2d3748; margin-bottom: 20px;'>{Catchy 5-8 word header. include 1 emoji at the end}</h1>{2-4 sentence Body Text for the reminder}<br><br><br><a href='https://dailysat.org' style='text-decoration:none; padding: 12px; background-color: #3182ce; color: #fff; font-size: 16px;'>Start Practicing</a></div>
   const chatCompletion = await groq.chat.completions.create({
     messages: [
       {
@@ -42,6 +42,8 @@ The JSON format must look like this, and must not include any extra explanation:
 
   try {
     const parsed: GrokResponse = JSON.parse(content);
+    console.log("DEBUG");
+    console.log(parsed)
     return parsed;
   } catch (err) {
     console.error("Failed to parse Groq JSON:", content);
