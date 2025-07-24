@@ -2,10 +2,11 @@
 import { Minus, Plus } from "lucide-react";
 
 // Types
-import { ShopItem } from "@/types/shop/shopItem";
 import { DisplayBanner } from "@/types/dashboard/banner";
 import Image from "next/image";
 import { useShop } from "@/hooks/useShop";
+import { ShopItem } from "@/types/shop/shopItem";
+import { useUserStore } from "@/store/user";
 
 // Component Props Interface
 interface ComponentShopItem {
@@ -13,11 +14,6 @@ interface ComponentShopItem {
   purpose: string;
   price: number;
   dispatch?: (_action: { type: string; payload?: string }) => void;
-  state: {
-    [key: string]: number | string;
-  };
-  coins: { [key: string]: number };
-  userItemsBought: ShopItem[];
 }
 
 /**
@@ -28,11 +24,8 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   name,
   purpose,
   price,
-  state,
-  coins,
-  userItemsBought,
 }) => {
-  const { handleDispatch, user } = useShop();
+  const { state, increment, decrement, user, setUser } = useShop();
 
   // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
@@ -101,9 +94,21 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                   onClick={() => {
                     if (state[name.toLowerCase().replace(/\s/g, "")] === 0)
                       return;
-                    handleDispatch?.("decrement", name);
-                    state[name.toLowerCase().replace(/\s/g, "")] =
-                      Number(state[name.toLowerCase().replace(/\s/g, "")]) - 1;
+                    decrement(name);
+                    if (user) {
+                      setUser?.({
+                        ...user,
+                        currency: user.currency + price,
+                      });
+                    }
+                    console.log(user?.currency);
+                    window.dispatchEvent(
+                      new CustomEvent("user-updated", {
+                        detail: {
+                          price: price,
+                        },
+                      })
+                    );
                   }}
                   disabled={state[name.toLowerCase().replace(/\s/g, "")] === 0}
                   className={
@@ -133,10 +138,13 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                 <button
                   onClick={() => {
                     if (
+                      !user ||
                       price > user?.currency! ||
                       (!name.toLowerCase().includes("investor") &&
-                        userItemsBought &&
-                        userItemsBought.some((item) => item.name === name)) ||
+                        user?.itemsBought &&
+                        user?.itemsBought.some(
+                          (item: ShopItem) => item.name === name
+                        )) ||
                       (!name
                         .toLowerCase()
                         .replace(/\s/g, "")
@@ -144,9 +152,22 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                         state[name.toLowerCase().replace(/\s/g, "")] === 1)
                     )
                       return;
-                    state[name.toLowerCase().replace(/\s/g, "")] =
-                      Number(state[name.toLowerCase().replace(/\s/g, "")]) + 1;
-                    handleDispatch?.("increment", name);
+
+                    increment(name);
+                    if (user) {
+                      console.log(user.currency, price);
+                      setUser?.({
+                        ...user,
+                        currency: user.currency - price,
+                      });
+                    }
+                    window.dispatchEvent(
+                      new CustomEvent("user-updated", {
+                        detail: {
+                          price: -price,
+                        },
+                      })
+                    );
                   }}
                   className={
                     price > user?.currency! ||
@@ -154,8 +175,10 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                       .toLowerCase()
                       .replace(/\s/g, "")
                       .includes("investor") &&
-                      userItemsBought &&
-                      userItemsBought.some((item) => item.name === name)) ||
+                      user?.itemsBought &&
+                      user?.itemsBought.some(
+                        (item: ShopItem) => item.name === name
+                      )) ||
                     (!name
                       .toLowerCase()
                       .replace(/\s/g, "")
@@ -172,8 +195,10 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                         .toLowerCase()
                         .replace(/\s/g, "")
                         .includes("investor") &&
-                        userItemsBought &&
-                        userItemsBought.some((item) => item.name === name)) ||
+                        user?.itemsBought &&
+                        user?.itemsBought.some(
+                          (item: ShopItem) => item.name === name
+                        )) ||
                       (!name
                         .toLowerCase()
                         .replace(/\s/g, "")
