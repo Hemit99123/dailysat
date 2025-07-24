@@ -1,16 +1,11 @@
 import React from "react";
 import { Button } from "@/components/common/Button";
 import { toast } from "react-toastify";
-import { redirect } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useShopStore } from "@/hooks/useShop";
 import { useUserStore } from "@/store/user";
 
-interface Props {
-  // state: { [key: string]: number };
-}
-
-export default function CheckoutButton({}: Props) {
+export default function CheckoutButton() {
   const state = useShopStore((s) => s.state);
   const clear = useShopStore((s) => s.clear);
   const user = useUserStore((s) => s.user);

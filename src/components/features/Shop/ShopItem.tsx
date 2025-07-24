@@ -95,13 +95,6 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                     if (state[name.toLowerCase().replace(/\s/g, "")] === 0)
                       return;
                     decrement(name);
-                    if (user) {
-                      setUser?.({
-                        ...user,
-                        currency: user.currency + price,
-                      });
-                    }
-                    console.log(user?.currency);
                     window.dispatchEvent(
                       new CustomEvent("user-updated", {
                         detail: {
@@ -154,13 +147,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                       return;
 
                     increment(name);
-                    if (user) {
-                      console.log(user.currency, price);
-                      setUser?.({
-                        ...user,
-                        currency: user.currency - price,
-                      });
-                    }
+
                     window.dispatchEvent(
                       new CustomEvent("user-updated", {
                         detail: {
@@ -170,6 +157,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                     );
                   }}
                   className={
+                    !user ||
                     price > user?.currency! ||
                     (!name
                       .toLowerCase()
@@ -190,6 +178,7 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                 >
                   <Plus
                     color={
+                      !user ||
                       price > user?.currency! ||
                       (!name
                         .toLowerCase()
