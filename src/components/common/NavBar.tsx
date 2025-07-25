@@ -49,7 +49,7 @@ const NavBar = () => {
       <nav className="w-full flex items-center justify-between">
         <Link href="/" className="text-xl font-bold text-blue-600">
           <Image 
-            src="/logo/dailysat.org"
+            src="/logo/dailysat.png"
             width={50}
             height={50}
             alt="DailySAT Official Logo"
