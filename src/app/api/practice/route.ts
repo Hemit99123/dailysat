@@ -1,7 +1,7 @@
 import { QUESTION_IS_CORRECT_POINTS } from '@/data/constant';
 import { client } from '@/lib/mongo';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { handleGetSession } from '@/lib/auth/authActions';
-import { decryptPayload } from '@/lib/cryptojs';
 
 /**
  * @swagger
@@ -87,21 +87,32 @@ import { decryptPayload } from '@/lib/cryptojs';
  */
 
 
-export const POST = async (request: Request) => {
-  const { encryptedPayload } = await request.json();
+const verifyJWT = (token: string) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload; // Use type assertion to ensure it's a JwtPayload so that typescript voids errors
+  } catch (error) {
+    throw new Error(`JWT issue: ${error}`);
+  }
+}
 
-  if (!encryptedPayload) {
+export const POST = async (request: Request) => {
+  const { jwtToken } = await request.json();
+
+  // Check if the JWT token is provided
+  if (!jwtToken) {
     return Response.json({
       error: 'JWT token was not specified',
     }, { status: 400 });
   }
 
   try {
-    const decryptedPayload = decryptPayload(encryptedPayload);
-    const { isCorrect } = decryptedPayload;
+    // Verify JWT and extract the payload
+    const decodedToken = verifyJWT(jwtToken);
+    const { isCorrect }= decodedToken;
 
+    // Check if the required parameters are valid
     if (!isCorrect) {
-      throw new Error("All required fields not found in body")
+      throw new Error("All params in JWT not found")
     }
 
     const session = await handleGetSession();
@@ -112,6 +123,7 @@ export const POST = async (request: Request) => {
     const db = client.db("DailySAT");
     const usersColl = db.collection('users');
     
+    // Update the user's database with the new information
     await usersColl.updateOne(
       { email },
       {
