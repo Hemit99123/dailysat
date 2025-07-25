@@ -9,7 +9,8 @@ import { determineAuthStatus } from "@/lib/auth/authStatus";
 import { useEffect, useState } from "react";
 import { signIn, signOut } from "@/lib/auth/authClient";
 import { Menu, X } from "lucide-react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const NavBar = () => {
   const router = useRouter();
@@ -47,6 +48,12 @@ const NavBar = () => {
     >
       <nav className="w-full flex items-center justify-between">
         <Link href="/" className="text-xl font-bold text-blue-600">
+          <Image 
+            src="/logo/dailysat.org"
+            width={200}
+            height={200}
+            alt="DailySAT Official Logo"
+          />
           DailySAT
         </Link>
 
