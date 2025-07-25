@@ -11,7 +11,6 @@ import {
   Trophy,
   ListChecks,
 } from "lucide-react";
-
 import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
 
 interface ScoreAndProgressProps {
@@ -75,7 +74,7 @@ const ScoreAndProgress: React.FC<ScoreAndProgressProps> = ({
   const accuracy = totalAttempts === 0 ? 0 : (correctCount / totalAttempts) * 100;
 
   return (
-    <div className="flex flex-col md:flex-row w-full md:w-[250px] gap-4 md:gap-5">
+    <div>
       {/* ---------------- Accuracy ----------------------- */}
       <Card
         title="Accuracy"
