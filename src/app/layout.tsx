@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Analytics } from "@vercel/analytics/next";
-import Root from "@/components/common/Root";
 import { ToastContainer } from "react-toastify";
 import 'katex/dist/katex.min.css';
 
@@ -19,7 +18,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
         >
-          <Root>{children}</Root>
+          {children}
         </GoogleOAuthProvider>
         <Analytics />
         <ToastContainer></ToastContainer>
