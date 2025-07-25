@@ -50,8 +50,8 @@ const NavBar = () => {
         <Link href="/" className="text-xl font-bold text-blue-600">
           <Image 
             src="/logo/dailysat.org"
-            width={200}
-            height={200}
+            width={50}
+            height={50}
             alt="DailySAT Official Logo"
           />
           DailySAT
