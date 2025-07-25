@@ -18,7 +18,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
         >
-          {children}
+          <Root>{children}</Root>
         </GoogleOAuthProvider>
         <Analytics />
         <ToastContainer></ToastContainer>
