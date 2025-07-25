@@ -28,7 +28,7 @@ export default function Shop() {
 
   return (
     <div className="px-4">
-      {!user ? <></> : <UserCoinDisplay currency={user?.currency ?? 0} />}
+      {!user ? <></> : <UserCoinDisplay />}
 
       <div className="flex lg:flex-row flex-col items-center lg:space-y-0 space-y-2 lg:space-x-4">
         <ShopHeader />

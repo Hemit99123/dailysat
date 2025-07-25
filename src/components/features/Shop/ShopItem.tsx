@@ -25,8 +25,17 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   purpose,
   price,
 }) => {
-  const { state, increment, decrement, user, setUser } = useShop();
-
+  const { state, increment, decrement } = useShop();
+  const user = useUserStore((s) => s.user);
+  window.addEventListener("get-items-to-buy", (e) => {
+    window.dispatchEvent(
+      new CustomEvent("buy-items", {
+        detail: {
+          items: state,
+        },
+      })
+    );
+  });
   // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
     diamondbanner: {
