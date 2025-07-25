@@ -76,7 +76,7 @@ export const TopicSidebar: React.FC<TopicSidebarProps> = ({
   };
 
   return (
-    <aside className="w-[250px] space-y-6 rounded-lg bg-slate-50 p-5 shadow">
+    <aside className="w-full md:w-[250px] space-y-6 rounded-lg bg-slate-50 p-5 shadow mb-5 md:mb-0">
       {/* ---------------- Subject Heading ---------------- */}
       {subject === "English" && (
             <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
