@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { signIn, signOut } from "@/lib/auth/authClient";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const NavBar = () => {
   const router = useRouter();
@@ -43,10 +44,19 @@ const NavBar = () => {
   return (
     <motion.div
       style={{ y, opacity }}
-      className={cn("mx-auto max-w-7xl py-4 mt-2")}
+      className={cn("mx-auto max-w-7xl py-3 mt-2")}
     >
       <nav className="w-full flex items-center justify-between">
-        <Link href="/" className="text-xl ml-2 font-bold text-blue-600">
+        <Link
+          href="/"
+          className="flex items-center text-xl font-bold text-blue-600"
+        >
+          <Image
+            src="/logo/dailysat.png"
+            width={50}
+            height={50}
+            alt="DailySAT Official Logo"
+          />
           DailySAT
         </Link>
 

@@ -3,7 +3,6 @@
 import { Badge } from "@/components/common/Badge";
 import { Button } from "@/components/common/Button";
 import { Card, CardContent } from "@/components/common/Card";
-import NavBar from "@/components/common/NavBar";
 import { FeatureCard3D } from "@/components/features/Landing-Page/FeatureCard3D";
 import { GlowingButton } from "@/components/features/Landing-Page/GlowingButton";
 import Header from "@/components/features/Landing-Page/Header";
@@ -34,10 +33,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100">
-      {/* Adjusted padding-top to fit navbar */}
-      <div className="w-full">
-        <NavBar />
-      </div>
       <div></div>
       <section className="w-full min-h-screen flex flex-col items-center pt-36 text-center relative px-4 md:px-6">
         {/* the colorful ball over the content */}

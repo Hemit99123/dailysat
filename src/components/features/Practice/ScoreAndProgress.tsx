@@ -11,7 +11,6 @@ import {
   Trophy,
   ListChecks,
 } from "lucide-react";
-
 import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
 
 interface ScoreAndProgressProps {

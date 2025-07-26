@@ -1,14 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
+import axios from "axios";
+import { User } from "@/types/user";
 
 export default function UserCoinDisplay() {
   const user = useUserStore((state) => state.user);
   const [coins, setCoins] = useState(-1);
 
   useEffect(() => {
-    // Set coins to user's currency whenever user changes
-    setCoins(user?.currency ?? -1);
+    // Fetch the user doc from the backend using the user's email
+    const fetchUserDoc = async () => {
+      alert("running");
+      if (!user?.email) return;
+      alert("running line 16");
+      try {
+        const res = await axios.get("/api/auth/get-user");
+        console.log(res);
+        const userDoc = await res.data.user;
+        setCoins(userDoc.currency ?? -1);
+      } catch (err) {
+        setCoins(-1);
+      }
+    };
+
+    fetchUserDoc();
 
     // Event handler function for coin updates
     const handleUserUpdate = (e: Event) => {
@@ -21,7 +37,7 @@ export default function UserCoinDisplay() {
     return () => {
       window.removeEventListener("user-updated", handleUserUpdate);
     };
-  }, [user]);
+  }, []);
 
   return (
     <div className="fixed bg-blue-700 rounded-3xl bottom-2 right-2 z-50">
