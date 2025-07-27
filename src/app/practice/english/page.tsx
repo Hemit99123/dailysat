@@ -5,12 +5,9 @@ import parse from "html-react-parser";
 
 import { TopicSidebar } from "@/components/features/Practice/TopicSidebar";
 import { QuestionContent } from "@/components/features/Practice/QuestionContent";
-import ScoreAndProgress from "@/components/features/Practice/ScoreAndProgress";
+import Score from "@/components/features/Practice/Score";
 
-import {
-  usePracticeSession,
-  QuestionHistory,
-} from "@/hooks/useEnglishPracticeSession";
+import { usePracticeSession } from "@/hooks/useEnglishPracticeSession";
 
 import { subject, domainDisplayMapping } from "@/data/practice";
 
@@ -51,147 +48,65 @@ export default function EnglishPracticePage() {
     englishWrong,
     setEnglishWrong,
     predictedEnglishScore,
-    questionHistory,
-    setQuestionHistory,
-    currentHistoryIndex,
-    setCurrentHistoryIndex,
     showNext,
   } = usePracticeSession();
 
-  const [interaction, setInteraction] =
-    useState<InteractionState>(INITIAL_INTERACTION);
-
-  const resetInteraction = (preserveAnswer = false) =>
-    setInteraction(prev => ({
-      ...INITIAL_INTERACTION,
-      selectedAnswer: preserveAnswer ? prev.selectedAnswer : null,
-    }));
+  const [interaction, setInteraction] = useState(INITIAL_INTERACTION);
 
   useEffect(() => {
-    const keepAnswer =
-      currentHistoryIndex !== null &&
-      questionHistory[currentHistoryIndex]?.isAnswered;
-
-    resetInteraction(keepAnswer);
+    setInteraction(INITIAL_INTERACTION);
   }, [currentQuestion]);
-
-  const currentQuestionStatus = useMemo(
-    () => questionHistory.find(h => h.question.id === currentQuestion?.id),
-    [currentQuestion, questionHistory],
-  );
-
-  const isViewingAnsweredHistory = useMemo(
-    () =>
-      currentHistoryIndex !== null &&
-      questionHistory[currentHistoryIndex]?.isAnswered,
-    [currentHistoryIndex, questionHistory],
-  );
 
   const renderedQuestionStem = useMemo(() => {
-    if (!currentQuestion) return null;
+    if (!currentQuestion?.question) return null;
 
-    const rawStem =
-      (currentQuestion.question as any).stemHtml ??
-      (currentQuestion.question as any).stem ??
-      (currentQuestion.question as any).prompt ??
-      (currentQuestion.question as any).question ??
-      "";
+    const q = currentQuestion.question as any;
 
-    return rawStem ? parse(rawStem) : null;
+    return parse(q.stemHtml ?? q.stem ?? q.prompt ?? q.question ?? "");
   }, [currentQuestion]);
 
-  const handleSubmit = () => {
-    if (!interaction.selectedAnswer || !currentQuestion) return;
+  const handleAnswerSelect = (answer: string) => {
+    setInteraction(prev => ({
+      ...prev,
+      selectedAnswer: answer,
+    }));
+  };
 
-    const correct =
+  const handleSubmit = () => {
+    if (!interaction.selectedAnswer || !currentQuestion?.question) return;
+
+    const isCorrect =
       interaction.selectedAnswer === currentQuestion.question.correct_answer;
 
-    if (correct) {
-      setCorrectCount(c => c + 1);
-      setEnglishCorrect(c => c + 1);
-      setCurrentStreak(s => {
-        const next = s + 1;
-        setMaxStreak(m => Math.max(m, next));
-        return next;
+    if (isCorrect) {
+      setCorrectCount(prev => prev + 1);
+      setEnglishCorrect(prev => prev + 1);
+      setCurrentStreak(prev => {
+        const newStreak = prev + 1;
+        setMaxStreak(max => Math.max(max, newStreak));
+        return newStreak;
       });
     } else {
-      setWrongCount(c => c + 1);
-      setEnglishWrong(c => c + 1);
+      setWrongCount(prev => prev + 1);
+      setEnglishWrong(prev => prev + 1);
       setCurrentStreak(0);
     }
 
-    setQuestionHistory(prev => {
-      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
-
-      const updatedItem: QuestionHistory = {
-        id: index !== -1 ? prev[index].id : prev.length + 1,
-        question: currentQuestion,
-        userAnswer: interaction.selectedAnswer,
-        isCorrect: correct,
-        isAnswered: true,
-        isMarkedForLater: index !== -1 ? prev[index].isMarkedForLater : false,
-      };
-
-      if (index !== -1) {
-        return prev.map((h, i) => (i === index ? updatedItem : h));
-      }
-      return [...prev, updatedItem];
-    });
-
     setInteraction(prev => ({
       ...prev,
-      isCorrect: correct,
+      isCorrect,
       isSubmitted: true,
       showExplanation: true,
     }));
   };
 
-  const handleMarkForLater = () => {
-    if (!currentQuestion) return;
-
-    setQuestionHistory(prev => {
-      const index = prev.findIndex(h => h.question.id === currentQuestion.id);
-
-      if (index !== -1) {
-        return prev.map((h, i) =>
-          i === index ? { ...h, isMarkedForLater: !h.isMarkedForLater } : h,
-        );
-      }
-
-      const newItem: QuestionHistory = {
-        id: prev.length + 1,
-        question: currentQuestion,
-        userAnswer: null,
-        isCorrect: null,
-        isMarkedForLater: true,
-        isAnswered: false,
-      };
-
-      return [...prev, newItem];
-    });
-  };
-
-  const handleProgressBoxClick = (index: number) => {
-    const historyItem = questionHistory[index];
-
-    setCurrentHistoryIndex(index);
-    setCurrentQuestion(historyItem.question);
-    setInteraction({
-      selectedAnswer: historyItem.userAnswer,
-      isCorrect: historyItem.isCorrect,
-      isSubmitted: historyItem.isAnswered,
-      showExplanation: historyItem.isAnswered,
-    });
-  };
-
   const handleNext = () => {
-    if (currentHistoryIndex !== null) setCurrentHistoryIndex(null);
     showNext();
   };
 
   return (
     <div className="flex flex-col md:flex-row gap-4 p-2 md:gap-6 md:p-5">
-      {/* --------------------------- Sidebar --------------------------- */}
+      {/* Sidebar */}
       <TopicSidebar
         selectedDomain={selectedDomain}
         setSelectedDomain={setSelectedDomain}
@@ -202,44 +117,31 @@ export default function EnglishPracticePage() {
         subject={subject}
       />
 
-      {/* -------------------------- Main Pane --------------------------- */}
+      {/* Main content and stats */}
       <div className="flex flex-col flex-1 gap-4 md:flex-row md:gap-6">
         <section className="flex-1 overflow-y-auto rounded-lg bg-white p-5 text-black shadow max-h-[calc(100vh-64px)]">
-
           <QuestionContent
-            isMarked={currentQuestionStatus?.isMarkedForLater || false}
             isLoading={isLoading}
             currentQuestion={currentQuestion}
             subject={subject}
-            selectedDomain={
-              domainDisplayMapping[selectedDomain] || selectedDomain
-            }
-            handleMarkForLater={handleMarkForLater}
-            currentQuestionStatus={currentQuestionStatus || null}
+            selectedDomain={domainDisplayMapping[selectedDomain] || selectedDomain}
             selectedAnswer={interaction.selectedAnswer}
             isSubmitted={interaction.isSubmitted}
-            isViewingAnsweredHistory={isViewingAnsweredHistory}
-            handleAnswerSelect={(answer: string) =>
-              setInteraction(prev => ({ ...prev, selectedAnswer: answer }))
-            }
             isCorrect={interaction.isCorrect}
+            showExplanation={interaction.showExplanation}
+            handleAnswerSelect={handleAnswerSelect}
             handleSubmit={handleSubmit}
             showNext={handleNext}
-            showExplanation={interaction.showExplanation}
-          />
+            />
         </section>
 
-        {/* ---------------------- Stats Sidebar ------------------------- */}
+        {/* Score Sidebar */}
         <aside className="w-full md:w-[250px]">
-          <ScoreAndProgress
+          <Score
             correctCount={correctCount}
             wrongCount={wrongCount}
             currentStreak={currentStreak}
             maxStreak={maxStreak}
-            predictedScore={predictedEnglishScore}
-            questionHistory={questionHistory}
-            onProgressBoxClick={handleProgressBoxClick}
-            currentQuestion={currentQuestion}
           />
         </aside>
       </div>

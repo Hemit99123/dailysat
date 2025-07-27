@@ -1,35 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { Question, QuestionHistory, Data } from "@/types/hooks/practice";
 
 const DATA_URL = "https://api.jsonsilo.com/public/942c3c3b-3a0c-4be3-81c2-12029def19f5";
-
-// Keep type definitions here or move them to a central types file e.g., types/index.ts
-export type Question = {
-  id: string;
-  domain: string;
-  visuals: { type: string; svg_content: string };
-  question: {
-    choices: Record<string, string>;
-    question: string;
-    paragraph: string | null;
-    explanation: string;
-    correct_answer: string;
-  };
-  difficulty: "Easy" | "Medium" | "Hard" | string;
-};
-
-export type Data = {
-  math: Question[];
-  english: Question[];
-};
-
-export type QuestionHistory = {
-  id: number;
-  question: Question;
-  userAnswer: string | null;
-  isCorrect: boolean | null;
-  isMarkedForLater: boolean;
-  isAnswered: boolean;
-};
 
 export const usePracticeSession = () => {
     const [data, setData] = useState<Data | null>(null);

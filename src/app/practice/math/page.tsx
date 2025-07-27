@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { CalculatorOptions } from "@/components/features/Practice/CalculatorOption";
 import { TopicSidebar } from "@/components/features/Practice/TopicSidebar";
 import { QuestionContent } from "@/components/features/Practice/QuestionContent";
-import ScoreAndProgress from "@/components/features/Practice/ScoreAndProgress";
+import ScoreAndProgress from "@/components/features/Practice/Score";
 
 import {
   usePracticeSession,
