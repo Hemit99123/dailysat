@@ -12,7 +12,7 @@ import {
   QuestionHistory,
 } from "@/hooks/useEnglishPracticeSession";
 
-import { subject, domainDisplayMapping } from "@/data/practice";
+import { subject, domainDisplayMapping } from "@/data/practice/practice";
 
 interface InteractionState {
   selectedAnswer: string | null;
