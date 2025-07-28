@@ -15,7 +15,6 @@ export const GET = async (request: Request) => {
     })
   }
 
-
   if (
     (type !== "math" && type !== "english") ||
     (type === "math" && !mathSubjectsArray.includes(subject as MathSubjects)) || 
@@ -32,13 +31,12 @@ export const GET = async (request: Request) => {
     const collectionName = type === "math" ? "math" : "english";
     const collection = db.collection(collectionName);
 
-    const matchObject: MatchObject = {
-      subject
-    }
+    const matchObject: MatchObject = {}
 
-    if (difficulty == "All") {
+    if (difficulty != "All") {
       // Update match object 
       matchObject.difficulty = difficulty;
+      matchObject.subject = subject;
     }
     // The $sample gives questions in random order (so we can retrieve a rand question)
     const questionMeta = await collection.aggregate([

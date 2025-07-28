@@ -1,4 +1,4 @@
 export interface MatchObject {
-    subject: string;
+    subject?: string;
     difficulty?: string;
 }

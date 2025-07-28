@@ -1,9 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
-import { Question } from "@/types/hooks/practice";
+
+import { Difficulty } from "@/types/practice/difficulty";
+import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Calculator,
@@ -12,19 +16,14 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useCalculatorModalStore } from "@/store/modals";
+import { handleFetchQuestion } from "@/lib/practice/index";
 
 interface QuestionContentProps {
-  isLoading: boolean;
-  currentQuestion: Question | null;
-  subject: string;
-  selectedDomain: string;
-  selectedAnswer: string | null;
-  isSubmitted: boolean;
-  handleAnswerSelect: (key: string) => void;
-  isCorrect: boolean | null;
-  handleSubmit: () => void;
-  showNext: () => void;
-  showExplanation: boolean;
+  subject: EnglishSubjects;
+  type: Type;
+  difficulty: Difficulty;
+  onAnswered?: (isCorrect: boolean) => void;
+  onNext?: () => void;
 }
 
 const MARKDOWN_PROPS = {
@@ -32,22 +31,75 @@ const MARKDOWN_PROPS = {
   rehypePlugins: [rehypeRaw as any, rehypeKatex],
 };
 
-export const QuestionContent: React.FC<QuestionContentProps> = ({
-  isLoading,
-  currentQuestion,
+const QuestionContent: React.FC<QuestionContentProps> = ({
   subject,
-  selectedDomain,
-  selectedAnswer,
-  isSubmitted,
-  handleAnswerSelect,
-  isCorrect,
-  handleSubmit,
-  showNext,
-  showExplanation,
+  type,
+  difficulty,
+  onAnswered,
+  onNext,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const isOpen = useCalculatorModalStore(state => state.isOpen);
   const openModal = useCalculatorModalStore(state => state.openModal);
   const closeModal = useCalculatorModalStore(state => state.closeModal);
+
+  const fetchQuestion = async () => {
+    setIsLoading(true);
+    setError(null);
+    setSelectedAnswer(null);
+    setIsSubmitted(false);
+    setIsCorrect(null);
+    setShowExplanation(false);
+
+    try {
+      const response = await handleFetchQuestion(type, "All", subject as EnglishSubjects);
+      setCurrentQuestion(response.data);
+    } catch (err) {
+      setError("Failed to fetch question. Please try again.");
+      console.error("Error fetching question:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestion();
+  }, [type, difficulty, subject]);
+
+  const handleAnswerSelect = (key: string) => {
+    if (!isSubmitted) {
+      setSelectedAnswer(key);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!selectedAnswer || !currentQuestion) return;
+
+    const correct = selectedAnswer === currentQuestion.questionMeta.question.correct_answer;
+    setIsCorrect(correct);
+    setIsSubmitted(true);
+    setShowExplanation(true);
+    
+    // Notify parent component about the answer
+    if (onAnswered) {
+      onAnswered(correct);
+    }
+  };
+
+  const showNext = () => {
+    if (onNext) {
+      onNext(); // Notify parent to trigger new question
+    } else {
+      fetchQuestion(); // Fallback to internal fetch
+    }
+  };
 
   const handleOpenCalculator = () => {
     if (isOpen) {
@@ -70,6 +122,20 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
     );
   }
 
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600 mb-4">{error}</p>
+        <button
+          onClick={fetchQuestion}
+          className="rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow hover:bg-blue-700"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
   if (!currentQuestion) {
     return (
       <p>
@@ -88,15 +154,15 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
       {/* Metadata bar */}
       <div className="flex flex-col md:flex-row md:mb-4 items-center justify-between rounded-md bg-blue-50 p-3 text-sm shadow md:gap-3 md:p-3">
         <div className="text-black">
-          {!(subject === "English" && selectedDomain === "All") && (
+          {!(type === "english" && subject === "All") && currentQuestion?.questionMeta?.subject && (
             <span>
-              <strong>Topic:</strong> {currentQuestion.domain} |{" "}
+              <strong>Topic:</strong> {subject} {"  "}
             </span>
           )}
-          <span className="font-bold">Difficulty:</span> {currentQuestion.difficulty}
+          <span className="font-bold">Difficulty:</span> {currentQuestion?.questionMeta?.difficulty || difficulty}
         </div>
 
-        {subject === "Math" && (
+        {type === "math" && (
           <button
             type="button"
             onClick={handleOpenCalculator}
@@ -113,22 +179,22 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
       </div>
 
       {/* English paragraph */}
-      {subject === "English" && currentQuestion.question.paragraph && (
+      {type === "english" && currentQuestion?.questionMeta?.question?.paragraph && (
         <div className="mb-5 max-h-52 overflow-y-auto rounded border border-gray-300 bg-gray-100 p-4 leading-relaxed text-base">
-          {markdown(currentQuestion.question.paragraph)}
+          {markdown(currentQuestion.questionMeta.question.paragraph)}
         </div>
       )}
 
       {/* Question */}
       <div className="mb-5 text-base font-bold text-black">
-        {markdown(currentQuestion.question.question)}
+        {currentQuestion?.questionMeta?.question?.question && markdown(currentQuestion.questionMeta.question.question)}
       </div>
 
       {/* Choices */}
       <div className="mb-5">
-        {Object.entries(currentQuestion.question.choices).map(([key, value]) => {
+        {currentQuestion?.questionMeta?.question?.choices && Object.entries(currentQuestion.questionMeta.question.choices).map(([key, value]) => {
           const isSelected = selectedAnswer === key;
-          const isCorrectChoice = key === currentQuestion.question.correct_answer;
+          const isCorrectChoice = key === currentQuestion.questionMeta.question.correct_answer;
 
           let borderColor = "border-gray-300";
           let backgroundColor = "bg-white";
@@ -159,7 +225,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
           return (
             <button
               key={key}
-              onClick={() => !isSubmitted && handleAnswerSelect(key)}
+              onClick={() => handleAnswerSelect(key)}
               disabled={isSubmitted}
               className={`mb-2 relative block w-full rounded border px-4 py-3 text-left text-base shadow transition-opacity ${borderColor} ${backgroundColor} ${textColor} ${
                 isSubmitted ? "cursor-default" : "hover:opacity-90"
@@ -182,7 +248,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
               )}
             </button>
           );
-        })}
+        }) || null}
       </div>
 
       {/* Submit / Next buttons */}
@@ -221,10 +287,10 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
               <div className="mb-2">
                 Correct answer:{" "}
                 <span className="font-bold text-green-600">
-                  {currentQuestion.question.correct_answer}
+                  {currentQuestion?.questionMeta?.question?.correct_answer}
                 </span>
               </div>
-              {markdown(currentQuestion.question.explanation)}
+              {currentQuestion?.questionMeta?.question?.explanation && markdown(currentQuestion.questionMeta.question.explanation)}
             </>
           )}
         </div>
@@ -232,3 +298,5 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
     </>
   );
 };
+
+export default QuestionContent;
