@@ -1,4 +1,8 @@
-import { englishTopicsArray, mathTopicsArray } from "@/data/subject";
+import { englishSubjectsArray, mathSubjectsArray } from "@/data/subject";
 
-export type MathTopic = typeof mathTopicsArray[number];
-export type EnglishTopic = typeof englishTopicsArray[number];
+export type Type = "math" | "english";
+export type MathSubjects = typeof mathSubjectsArray[number];
+export type EnglishSubjects = typeof englishSubjectsArray[number];
+
+// This conditionally renders MathSubjects or EnglishSubjects depending on the generic of T (type)
+export type SubjectFor<T extends Type> = T extends "math" ? MathSubjects : EnglishSubjects;

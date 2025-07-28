@@ -1,150 +1,326 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import parse from "html-react-parser";
+import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
 
-import { TopicSidebar } from "@/components/features/Practice/TopicSidebar";
-import { QuestionContent } from "@/components/features/Practice/QuestionContent";
-import Score from "@/components/features/Practice/Score";
+interface QuestionData {
+  questionMeta: {
+    _id: string;
+    key: string;
+    id: string;
+    visuals: {
+      type: string;
+      svg_content: string;
+    };
+    question: {
+      choices: Record<string, string>;
+      question: string;
+      paragraph?: string;
+      explanation: string;
+      correct_answer: string;
+    };
+    difficulty: string;
+    subject: string;
+  };
+}
+import { Difficulty } from "@/types/practice/difficulty";
+import { SubjectFor } from "@/types/practice/subject";
+import { Type } from "@/types/practice/subject";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Calculator,
+  Check,
+  X as CloseIcon,
+  ArrowRight,
+} from "lucide-react";
+import { useCalculatorModalStore } from "@/store/modals";
+import { handleFetchQuestion } from "@/lib/practice/index";
 
-import { usePracticeSession } from "@/hooks/useEnglishPracticeSession";
-
-import { subject, domainDisplayMapping } from "@/data/practice";
-
-interface InteractionState {
-  selectedAnswer: string | null;
-  isCorrect: boolean | null;
-  showExplanation: boolean;
-  isSubmitted: boolean;
+interface QuestionContentProps {
+  subject: string;
+  selectedDomain: string;
+  type: Type;
+  difficulty: Difficulty;
+  onAnswered?: (isCorrect: boolean) => void;
+  onNext?: () => void;
 }
 
-const INITIAL_INTERACTION: InteractionState = {
-  selectedAnswer: null,
-  isCorrect: null,
-  showExplanation: false,
-  isSubmitted: false,
+const MARKDOWN_PROPS = {
+  remarkPlugins: [remarkMath],
+  rehypePlugins: [rehypeRaw as any, rehypeKatex],
 };
 
-export default function EnglishPracticePage() {
-  const {
-    difficulty,
-    setDifficulty,
-    selectedDomain,
-    setSelectedDomain,
-    englishDomains,
-    currentQuestion,
-    setCurrentQuestion,
-    isLoading,
-    correctCount,
-    setCorrectCount,
-    wrongCount,
-    setWrongCount,
-    currentStreak,
-    setCurrentStreak,
-    maxStreak,
-    setMaxStreak,
-    englishCorrect,
-    setEnglishCorrect,
-    englishWrong,
-    setEnglishWrong,
-    predictedEnglishScore,
-    showNext,
-  } = usePracticeSession();
+const QuestionContent: React.FC<QuestionContentProps> = ({
+  subject,
+  selectedDomain,
+  type,
+  difficulty,
+  onAnswered,
+  onNext,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [interaction, setInteraction] = useState(INITIAL_INTERACTION);
+  const isOpen = useCalculatorModalStore(state => state.isOpen);
+  const openModal = useCalculatorModalStore(state => state.openModal);
+  const closeModal = useCalculatorModalStore(state => state.closeModal);
 
+  const fetchQuestion = async () => {
+    setIsLoading(true);
+    setError(null);
+    setSelectedAnswer(null);
+    setIsSubmitted(false);
+    setIsCorrect(null);
+    setShowExplanation(false);
+
+    try {
+      const response = await handleFetchQuestion("english", "All", "All");
+      setCurrentQuestion(response.data);
+    } catch (err) {
+      setError("Failed to fetch question. Please try again.");
+      console.error("Error fetching question:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch question when component mounts or dependencies change
   useEffect(() => {
-    setInteraction(INITIAL_INTERACTION);
-  }, [currentQuestion]);
+    fetchQuestion();
+  }, [type, difficulty, subject]);
 
-  const renderedQuestionStem = useMemo(() => {
-    if (!currentQuestion?.question) return null;
-
-    const q = currentQuestion.question as any;
-
-    return parse(q.stemHtml ?? q.stem ?? q.prompt ?? q.question ?? "");
-  }, [currentQuestion]);
-
-  const handleAnswerSelect = (answer: string) => {
-    setInteraction(prev => ({
-      ...prev,
-      selectedAnswer: answer,
-    }));
+  const handleAnswerSelect = (key: string) => {
+    if (!isSubmitted) {
+      setSelectedAnswer(key);
+    }
   };
 
   const handleSubmit = () => {
-    if (!interaction.selectedAnswer || !currentQuestion?.question) return;
+    if (!selectedAnswer || !currentQuestion) return;
 
-    const isCorrect =
-      interaction.selectedAnswer === currentQuestion.question.correct_answer;
-
-    if (isCorrect) {
-      setCorrectCount(prev => prev + 1);
-      setEnglishCorrect(prev => prev + 1);
-      setCurrentStreak(prev => {
-        const newStreak = prev + 1;
-        setMaxStreak(max => Math.max(max, newStreak));
-        return newStreak;
-      });
-    } else {
-      setWrongCount(prev => prev + 1);
-      setEnglishWrong(prev => prev + 1);
-      setCurrentStreak(0);
+    const correct = selectedAnswer === currentQuestion.questionMeta.question.correct_answer;
+    setIsCorrect(correct);
+    setIsSubmitted(true);
+    setShowExplanation(true);
+    
+    // Notify parent component about the answer
+    if (onAnswered) {
+      onAnswered(correct);
     }
-
-    setInteraction(prev => ({
-      ...prev,
-      isCorrect,
-      isSubmitted: true,
-      showExplanation: true,
-    }));
   };
 
-  const handleNext = () => {
-    showNext();
+  const showNext = () => {
+    if (onNext) {
+      onNext(); // Notify parent to trigger new question
+    } else {
+      fetchQuestion(); // Fallback to internal fetch
+    }
   };
+
+  const handleOpenCalculator = () => {
+    if (isOpen) {
+      closeModal();
+    } else {
+      openModal();
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div>
+        <Skeleton className="w-full h-[50px] bg-black/20 mb-5" />
+        <Skeleton className="w-full h-[30px] mb-2 bg-black/30" />
+        {[1, 2, 3, 4].map((item, index) => (
+          <Skeleton key={index} className="w-full h-[50px] mb-2" />
+        ))}
+        <Skeleton className="w-28 h-12 mb-2 bg-black/50" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600 mb-4">{error}</p>
+        <button
+          onClick={fetchQuestion}
+          className="rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow hover:bg-blue-700"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (!currentQuestion) {
+    return (
+      <p>
+        No questions found for the selected filters. Please try a different
+        selection.
+      </p>
+    );
+  }
+
+  const markdown = (content: string) => (
+    <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
+  );
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 p-2 md:gap-6 md:p-5">
-      {/* Sidebar */}
-      <TopicSidebar
-        selectedDomain={selectedDomain}
-        setSelectedDomain={setSelectedDomain}
-        currentDomainNames={englishDomains}
-        domainDisplayMapping={domainDisplayMapping}
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
-        subject={subject}
-      />
+    <>
+      {/* Metadata bar */}
+      <div className="flex flex-col md:flex-row md:mb-4 items-center justify-between rounded-md bg-blue-50 p-3 text-sm shadow md:gap-3 md:p-3">
+        <div className="text-black">
+          {!(subject === "English" && selectedDomain === "All") && currentQuestion?.questionMeta?.subject && (
+            <span>
+              <strong>Topic:</strong> {currentQuestion.questionMeta.subject} |{" "}
+            </span>
+          )}
+          <span className="font-bold">Difficulty:</span> {currentQuestion?.questionMeta?.difficulty || difficulty}
+        </div>
 
-      {/* Main content and stats */}
-      <div className="flex flex-col flex-1 gap-4 md:flex-row md:gap-6">
-        <section className="flex-1 overflow-y-auto rounded-lg bg-white p-5 text-black shadow max-h-[calc(100vh-64px)]">
-          <QuestionContent
-            isLoading={isLoading}
-            currentQuestion={currentQuestion}
-            subject={subject}
-            selectedDomain={domainDisplayMapping[selectedDomain] || selectedDomain}
-            selectedAnswer={interaction.selectedAnswer}
-            isSubmitted={interaction.isSubmitted}
-            isCorrect={interaction.isCorrect}
-            showExplanation={interaction.showExplanation}
-            handleAnswerSelect={handleAnswerSelect}
-            handleSubmit={handleSubmit}
-            showNext={handleNext}
-            />
-        </section>
-
-        {/* Score Sidebar */}
-        <aside className="w-full md:w-[250px]">
-          <Score
-            correctCount={correctCount}
-            wrongCount={wrongCount}
-            currentStreak={currentStreak}
-            maxStreak={maxStreak}
-          />
-        </aside>
+        {subject === "Math" && (
+          <button
+            type="button"
+            onClick={handleOpenCalculator}
+            className={`flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all ${
+              isOpen
+                ? "border-blue-500 bg-blue-100 text-blue-700 hover:bg-blue-200"
+                : "border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <Calculator size={16} />
+            Calculator
+          </button>
+        )}
       </div>
-    </div>
+
+      {/* English paragraph */}
+      {subject === "English" && currentQuestion?.questionMeta?.question?.paragraph && (
+        <div className="mb-5 max-h-52 overflow-y-auto rounded border border-gray-300 bg-gray-100 p-4 leading-relaxed text-base">
+          {markdown(currentQuestion.questionMeta.question.paragraph)}
+        </div>
+      )}
+
+      {/* Question */}
+      <div className="mb-5 text-base font-bold text-black">
+        {currentQuestion?.questionMeta?.question?.question && markdown(currentQuestion.questionMeta.question.question)}
+      </div>
+
+      {/* Choices */}
+      <div className="mb-5">
+        {currentQuestion?.questionMeta?.question?.choices && Object.entries(currentQuestion.questionMeta.question.choices).map(([key, value]) => {
+          const isSelected = selectedAnswer === key;
+          const isCorrectChoice = key === currentQuestion.questionMeta.question.correct_answer;
+
+          let borderColor = "border-gray-300";
+          let backgroundColor = "bg-white";
+          let textColor = "text-black";
+
+          if (isSubmitted) {
+            if (isCorrectChoice) {
+              borderColor = "border-green-500";
+              backgroundColor = "bg-green-50";
+              textColor = "text-green-800";
+            }
+            if (isSelected) {
+              if (isCorrectChoice) {
+                borderColor = "border-green-500";
+                backgroundColor = "bg-green-50";
+                textColor = "text-green-800";
+              } else {
+                borderColor = "border-red-500";
+                backgroundColor = "bg-red-50";
+                textColor = "text-red-800";
+              }
+            }
+          } else if (isSelected) {
+            borderColor = "border-blue-500";
+            backgroundColor = "bg-blue-100";
+          }
+
+          return (
+            <button
+              key={key}
+              onClick={() => handleAnswerSelect(key)}
+              disabled={isSubmitted}
+              className={`mb-2 relative block w-full rounded border px-4 py-3 text-left text-base shadow transition-opacity ${borderColor} ${backgroundColor} ${textColor} ${
+                isSubmitted ? "cursor-default" : "hover:opacity-90"
+              }`}
+            >
+              <ReactMarkdown
+                {...MARKDOWN_PROPS}
+                components={{
+                  p: ({ children }) => <span className="inline">{children}</span>,
+                }}
+              >
+                {`${key}. ${value}`}
+              </ReactMarkdown>
+
+              {isSubmitted && isCorrectChoice && (
+                <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-green-600" />
+              )}
+              {isSubmitted && isSelected && !isCorrectChoice && (
+                <CloseIcon className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-red-600" />
+              )}
+            </button>
+          );
+        }) || null}
+      </div>
+
+      {/* Submit / Next buttons */}
+      <div className="flex gap-3">
+        {!isSubmitted ? (
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedAnswer}
+            className={`rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow transition-colors ${
+              !selectedAnswer ? "cursor-not-allowed opacity-60" : "hover:bg-blue-700"
+            }`}
+          >
+            Submit
+          </button>
+        ) : (
+          <button
+            onClick={showNext}
+            className="rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow hover:bg-blue-700"
+          >
+            Next <ArrowRight size={16} className="inline ml-1" />
+          </button>
+        )}
+      </div>
+
+      {/* Explanation */}
+      {showExplanation && (
+        <div className="mt-5 rounded border border-gray-300 bg-gray-100 p-4 text-black">
+          {isCorrect ? (
+            <div className="mb-2 font-bold text-green-600">Correct!</div>
+          ) : (
+            <>
+              <div className="mb-2 font-bold text-red-600">Incorrect</div>
+              <div className="mb-2">
+                Your answer: <span className="font-bold text-red-600">{selectedAnswer}</span>
+              </div>
+              <div className="mb-2">
+                Correct answer:{" "}
+                <span className="font-bold text-green-600">
+                  {currentQuestion?.questionMeta?.question?.correct_answer}
+                </span>
+              </div>
+              {currentQuestion?.questionMeta?.question?.explanation && markdown(currentQuestion.questionMeta.question.explanation)}
+            </>
+          )}
+        </div>
+      )}
+    </>
   );
-}
+};
+
+export default QuestionContent;

@@ -9,7 +9,7 @@ import ScoreAndProgress from "@/components/features/Practice/Score";
 import {
   usePracticeSession,
   QuestionHistory,
-} from "@/hooks/usePracticeSession";
+} from "@/hooks/useMathPracticeSession";
 
 import { subject2, domainDisplayMapping2 } from "@/data/practice";
 

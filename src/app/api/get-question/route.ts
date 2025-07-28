@@ -1,6 +1,7 @@
-import { englishTopicsArray, mathTopicsArray } from "@/data/subject";
+import { englishSubjectsArray, mathSubjectsArray } from "@/data/subject";
 import { client, db } from "@/lib/mongo";
-import { EnglishTopic, MathTopic } from "@/types/practice/subject";
+import { MatchObject } from "@/types/mongo/match-query";
+import { EnglishSubjects, MathSubjects } from "@/types/practice/subject";
 
 export const GET = async (request: Request) => {
   const { searchParams } = new URL(request.url);
@@ -14,10 +15,11 @@ export const GET = async (request: Request) => {
     })
   }
 
+
   if (
     (type !== "math" && type !== "english") ||
-    (type === "math" && !mathTopicsArray.includes(subject as MathTopic)) || 
-    (type === "english" && !englishTopicsArray.includes(subject as EnglishTopic))
+    (type === "math" && !mathSubjectsArray.includes(subject as MathSubjects)) || 
+    (type === "english" && !englishSubjectsArray.includes(subject as EnglishSubjects))
   ) {
       return Response.json({
         error: "Query parameter must be 'math' or 'english' and subject must be valid"
@@ -30,9 +32,17 @@ export const GET = async (request: Request) => {
     const collectionName = type === "math" ? "math" : "english";
     const collection = db.collection(collectionName);
 
+    const matchObject: MatchObject = {
+      subject
+    }
+
+    if (difficulty == "All") {
+      // Update match object 
+      matchObject.difficulty = difficulty;
+    }
     // The $sample gives questions in random order (so we can retrieve a rand question)
     const questionMeta = await collection.aggregate([
-    { $match: { subject, difficulty } },
+    { $match: matchObject },
     { $sample: { size: 1 } }
     ]).next();
 
