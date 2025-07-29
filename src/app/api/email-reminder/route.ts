@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getWeeklyReminderFromGrok } from '@/lib/email/grok';
+import { getWeeklyReminderFromGrok } from '@/lib/email/groq';
 import dbConnect from '@/lib/email/dbConnect';
 import User from '@/models/User';
-import { divideIntoGroups } from '@/lib/email/groupUsers';
-import { sendToGroup } from '@/lib/email/sendToGroup';
+import { divideIntoGroups, sendToGroup } from '@/lib/email/index';
 
 function getDaysSinceStartDate(startDate: Date): number {
   const today = new Date();
@@ -22,15 +21,12 @@ export async function GET() {
     const users = await User.find({}, 'email').lean();
     const emails: string[] = users.map((user: any) => user.email);
 
-    console.log('Emails to send reminders to:', emails);
 
     if (emails.length === 0) {
       return NextResponse.json({ success: false, message: 'No emails found.' });
     }
 
     const { subject, html } = await getWeeklyReminderFromGrok();
-    console.log('Grok generated subject:', subject);
-    console.log('Grok generated html:', html);
      const numGroups = 14;
       const groups = divideIntoGroups(emails, numGroups);
 
@@ -39,8 +35,6 @@ export async function GET() {
       const todayGroupNum = getTodayGroupNumber(startDate, numGroups);
       const todayGroupName = `Group${todayGroupNum}`;
       const todayGroupEmails = groups[todayGroupName];
-
-      console.log(`📧 Sending to ${todayGroupName} (${todayGroupEmails.length} users)`);
 
       await sendToGroup(todayGroupEmails, subject, html);
 
@@ -53,7 +47,6 @@ export async function GET() {
 
 
   } catch (err) {
-    console.error('Error sending reminders:', err);
-    return NextResponse.json({ success: false, error: (err as Error).message });
+    return NextResponse.json({ success: false, message: (err as Error).message });
   }
 }

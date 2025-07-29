@@ -31,6 +31,8 @@ interface QuestionContentProps {
   showNext: () => void;
   showExplanation: boolean;
   isMarked: boolean;
+  showDesmos: boolean;
+  setShowDesmos: () => void;
 }
 const MARKDOWN_PROPS = {
   remarkPlugins: [remarkMath],
@@ -52,6 +54,8 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   showNext,
   showExplanation,
   isMarked,
+  showDesmos,
+  setShowDesmos,
 }) => {
 
   const isOpen = useCalculatorModalStore(state => state.isOpen);

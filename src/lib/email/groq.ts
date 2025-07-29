@@ -41,8 +41,6 @@ The JSON format must look like this, and must not include any extra explanation:
 
   try {
     const parsed: GrokResponse = JSON.parse(content);
-    console.log("DEBUG");
-    console.log(parsed)
     return parsed;
   } catch (err) {
     console.error("Failed to parse Groq JSON:", content);

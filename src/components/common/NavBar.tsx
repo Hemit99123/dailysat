@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils";
 import { menuItems } from "@/data/common/navbar";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { signIn, signOut } from "@/lib/auth/authClient";
 import { Menu, X } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -23,6 +23,13 @@ const NavBar = () => {
   const [auth, setAuth] = useState<boolean | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const [isPracticeBoxVisible, setIsPracticeBoxVisible] = useState(false);
+  const practiceAreaRef = useRef<HTMLDivElement>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Ref to get the actual height of the navbar
+  const navBarRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const checkAuth = async () => {
       const authStatus = await determineAuthStatus();
@@ -30,6 +37,15 @@ const NavBar = () => {
     };
     checkAuth();
   }, []);
+
+  // Effect to set the CSS variable for navbar height
+  useEffect(() => {
+    if (navBarRef.current) {
+      const height = navBarRef.current.offsetHeight;
+      document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      console.log(`[NavBar Height] --navbar-height set to: ${height}px`);
+    }
+  }, [navBarRef.current, menuOpen]); // Recalculate if menuOpen changes (for mobile height)
 
   const handleAuthClick = async () => {
     setMenuOpen(false);
@@ -54,11 +70,39 @@ const NavBar = () => {
     buttonText: "text-white",
   };
 
+  const handlePracticeAreaMouseEnter = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    if (!isPracticeBoxVisible) {
+      setIsPracticeBoxVisible(true);
+    }
+  };
+
+  const handlePracticeAreaMouseLeave = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+    hideTimeoutRef.current = setTimeout(() => {
+      setIsPracticeBoxVisible(false);
+    }, 200);
+  };
+
+  const handleDropdownLinkClick = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    setIsPracticeBoxVisible(false);
+  };
+
   return (
     <motion.div
+      ref={navBarRef} // Attach ref to the outermost navbar element
       style={{ y, opacity }}
       className={cn(
-        "top-0 z-50 transition-all duration-300 shadow-sm border-b border-white/50 backdrop-blur-md",
+        "top-0 z-50 transition-all duration-300 shadow-sm border-b border-white/50 backdrop-blur-md fixed w-full",
         theme.bg
       )}
     >
@@ -90,18 +134,69 @@ const NavBar = () => {
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-8">
           {menuItems.map((item) => (
-            <Link
+            <div
               key={item.href}
-              href={item.href}
-              className={cn(
-                "text-sm font-medium transition-colors",
-                pathname === item.href
-                  ? "text-blue-600 underline underline-offset-4"
-                  : `${theme.text} ${theme.hover}`
-              )}
+              className="relative"
+              onMouseEnter={item.label === "Practice" ? handlePracticeAreaMouseEnter : undefined}
+              onMouseLeave={item.label === "Practice" ? handlePracticeAreaMouseLeave : undefined}
+              ref={item.label === "Practice" ? practiceAreaRef : null}
             >
-              {item.label}
-            </Link>
+              <Link
+                href={item.href}
+                className={cn(
+                  "text-sm font-medium transition-colors",
+                  pathname === item.href
+                    ? "text-blue-600 underline underline-offset-4"
+                    : `${theme.text} ${theme.hover}`
+                )}
+              >
+                {item.label}
+              </Link>
+
+              {item.label === "Practice" && isPracticeBoxVisible && (
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 mt-3 p-1 bg-white border border-gray-200 rounded-xl shadow-lg w-[200px] z-[9999]"
+                  style={{
+                    filter:
+                      "drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))",
+                  }}
+                >
+                  <div className="absolute left-1/2 -top-[9px] transform -translate-x-1/2 w-4 h-4 bg-white border-t border-l border-gray-200 rotate-45 rounded-sm"></div>
+                  <ul className="text-sm space-y-1 py-2">
+                    <li className="flex items-center space-x-3 px-3 py-2">
+                      <Link
+                        href="/practice/math"
+                        className="text-gray-700 font-semibold text-base flex items-center space-x-2 w-full block rounded-lg hover:bg-gray-100 transition-colors"
+                        onClick={handleDropdownLinkClick}
+                      >
+                        <span className="text-xl">🧮</span> <span>Math</span>
+                      </Link>
+                    </li>
+                    <div className="border-b border-gray-200 my-1"></div>
+                    <li className="flex items-center space-x-3 px-3 py-2">
+                      <div className="flex flex-col w-full">
+                        <Link
+                          href="/practice/english"
+                          className="text-gray-700 font-semibold text-base flex items-center space-x-2 w-full block rounded-lg hover:bg-gray-100 transition-colors"
+                          onClick={handleDropdownLinkClick}
+                        >
+                          <span className="text-xl">📝</span>{" "}
+                          <span>English</span>
+                        </Link>
+                        <Link
+                          href="/practice/vocab"
+                          className="text-gray-500 text-sm mt-0.5 ml-8 flex items-center space-x-1 w-full block rounded-lg hover:bg-gray-100 transition-colors"
+                          onClick={handleDropdownLinkClick}
+                        >
+                          <span className="text-base">📖</span>{" "}
+                          <span>Vocabulary</span>
+                        </Link>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           ))}
         </div>
 
