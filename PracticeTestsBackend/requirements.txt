@@ -1,0 +1,7 @@
+pymongo
+PyMuPDF
+selenium
+webdriver-manager
+svgpathtools
+PyPDF2
+python-dotenv
