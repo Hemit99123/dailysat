@@ -9,6 +9,7 @@ import { englishSubjectsArray } from "@/data/subject";
 import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { capitalizeFirstLetter } from "@/lib/ui";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 const PracticePage = () => {
   const searchParams = useSearchParams();
@@ -22,6 +23,10 @@ const PracticePage = () => {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [maxStreak, setMaxStreak] = useState(0);
 
+  if (!type) {
+    throw new Error("Type query parameter is required")
+  }
+  
   const handleAnswered = (isCorrect: boolean) => {
     if (isCorrect) {
       setCorrectCount((prev) => prev + 1);
@@ -37,41 +42,43 @@ const PracticePage = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6">
-      {/* Sidebar */}
-      <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
-        <SubjectSidebar
-          subject={capitalizeFirstLetter(type) as Type}
-          selectedTopic={selectedTopic}
-          setSelectedTopic={setSelectedTopic}
-          topics={englishSubjectsArray}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
-      </aside>
-
-      {/* Question Content */}
-      <main className="flex-1 flex flex-col space-y-8">
-        <div className="rounded-md p-6 flex-grow overflow-auto">
-          <QuestionContent
-            subject={selectedTopic}
+    <ErrorBoundary>
+      <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6">
+        {/* Sidebar */}
+        <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
+          <SubjectSidebar
+            subject={capitalizeFirstLetter(type) as Type}
+            selectedTopic={selectedTopic}
+            setSelectedTopic={setSelectedTopic}
+            topics={englishSubjectsArray}
             difficulty={difficulty}
-            type={type}
-            onAnswered={handleAnswered}
+            setDifficulty={setDifficulty}
           />
-        </div>
-      </main>
+        </aside>
 
-      {/* Score Panel */}
-      <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
-        <Score
-          correctCount={correctCount}
-          wrongCount={wrongCount}
-          currentStreak={currentStreak}
-          maxStreak={maxStreak}
-        />
-      </aside>
-    </div>
+        {/* Question Content */}
+        <main className="flex-1 flex flex-col space-y-8">
+          <div className="rounded-md p-6 flex-grow overflow-auto">
+            <QuestionContent
+              subject={selectedTopic}
+              difficulty={difficulty}
+              type={type}
+              onAnswered={handleAnswered}
+            />
+          </div>
+        </main>
+
+        {/* Score Panel */}
+        <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
+          <Score
+            correctCount={correctCount}
+            wrongCount={wrongCount}
+            currentStreak={currentStreak}
+            maxStreak={maxStreak}
+          />
+        </aside>
+      </div>
+    </ErrorBoundary>
   );
 };
 
