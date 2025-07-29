@@ -446,8 +446,6 @@ export default function LessonsPage() {
                             {content[selectedTopic]?.practice.map((q, idx) => {
                               const isAnswered = selectedAnswers[idx];
                               const selectedOption = selectedAnswers[idx];
-                              const isCorrect = selectedOption === q.correctAnswer;
-
                               return (
                                 <div key={idx} className="mb-6 p-4 border rounded bg-gray-100">
                                   <p className="font-medium mb-2">{q.question}</p>
