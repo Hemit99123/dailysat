@@ -9,7 +9,6 @@ export const middleware = async (request: NextRequest) => {
   const userResponse = await handleProtectedRoutes(request, protectedUserRoutes);
   if (userResponse) return userResponse;
   
-
   const signinResponse = await handleSignInRoutes(request, protectedLoginRoutes);
   if (signinResponse) return signinResponse;
   
