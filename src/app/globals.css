@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Zen+Dots&display=swap');
 
 /* From codepen. Can't do them in tailwind */
 .fancy-input {

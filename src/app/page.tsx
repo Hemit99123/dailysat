@@ -1,8 +1,11 @@
+import Hero from '@/components/features/Landing-Page/Hero'
 import React from 'react'
 
 const LandingPage = () => {
   return (
-    <div>LandingPage</div>
+    <div>
+        <Hero />
+    </div>
   )
 }
 
