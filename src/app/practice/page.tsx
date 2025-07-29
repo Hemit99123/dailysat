@@ -11,7 +11,7 @@ import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { capitalizeFirstLetter } from "@/lib/ui";
 
 const PracticePageContent = () => {
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
 
   const type = searchParams.get("type") as Type;
   const [selectedTopic, setSelectedTopic] = useState<EnglishSubjects>("All");
