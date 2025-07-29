@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Card } from "../../common/Card";
+import { Card } from "../../../common/Card";
 
 interface Review {
   name: string;

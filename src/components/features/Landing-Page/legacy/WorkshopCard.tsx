@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
-import { Card } from "../../common/Card"
-import { Badge } from "../../common/Badge"
+import { Card } from "../../../common/Card"
+import { Badge } from "../../../common/Badge"
 import Image from "next/image"
 
 interface WorkshopCardProps {

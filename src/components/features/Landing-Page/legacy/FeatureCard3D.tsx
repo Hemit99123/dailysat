@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Card } from "../../common/Card";
+import { Card } from "../../../common/Card";
 
 interface FeatureCard3DProps {
   icon: React.ReactNode;
