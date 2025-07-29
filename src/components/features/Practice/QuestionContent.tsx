@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useCalculatorModalStore } from "@/store/modals";
 import { handleFetchQuestion } from "@/lib/practice/index";
+import { QuestionData } from "@/types/practice/questions";
 
 interface QuestionContentProps {
   subject: EnglishSubjects;
