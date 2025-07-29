@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { menuItems } from "@/data/navbar";
+import { menuItems } from "@/data/common/navbar";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 import { useEffect, useState } from "react";
 import { signIn, signOut } from "@/lib/auth/authClient";

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { mathQuiz, readingWritingQuiz } from "@/data/finalquiz";
+import { mathQuiz, readingWritingQuiz } from "@/data/lessons/finalquiz";
 
 interface FinalQuizProps {
   quizType: "math" | "reading";
