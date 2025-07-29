@@ -11,7 +11,7 @@ import {
   QuestionHistory,
 } from "@/hooks/usePracticeSession";
 
-import { subject2, domainDisplayMapping2 } from "@/data/practice";
+import { subject2, domainDisplayMapping2 } from "@/data/practice/practice";
 import axios from "axios";
 import { encryptPayload } from "@/lib/cryptojs";
 

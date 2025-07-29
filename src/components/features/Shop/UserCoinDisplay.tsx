@@ -11,9 +11,7 @@ export default function UserCoinDisplay() {
   useEffect(() => {
     // Fetch the user doc from the backend using the user's email
     const fetchUserDoc = async () => {
-      alert("running");
       if (!user?.email) return;
-      alert("running line 16");
       try {
         const res = await axios.get("/api/auth/get-user");
         console.log(res);

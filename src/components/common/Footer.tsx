@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Github, Linkedin, Twitter } from "lucide-react"
 import { motion } from "framer-motion"
-import { practiceLinks, resourceLinks, dashboardLinks } from "@/data/footer-links"
+import { practiceLinks, resourceLinks, dashboardLinks } from "@/data/common/footer-links"
 
 export default function Footer() {
   const containerVariants = {

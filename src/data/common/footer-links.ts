@@ -8,6 +8,7 @@ export const resourceLinks = [
   { href: "/team", label: "Our Team" },
   { href: "/contact", label: "Contact" },
   { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/lessons", label: "Lessons"}
 ];
 
 export const dashboardLinks = [

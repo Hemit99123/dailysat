@@ -12,7 +12,7 @@ import {
   QuestionHistory,
 } from "@/hooks/useEnglishPracticeSession";
 
-import { subject, domainDisplayMapping } from "@/data/practice";
+import { subject, domainDisplayMapping } from "@/data/practice/practice";
 import axios from "axios";
 import { encryptPayload } from "@/lib/cryptojs";
 

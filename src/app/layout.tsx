@@ -4,7 +4,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ToastContainer } from "react-toastify";
 import 'katex/dist/katex.min.css';
-import Root from "@/components/common/Root"
+import NavBar from "@/components/common/NavBar";
 
 export const metadata: Metadata = {
   title: "DailySAT",
@@ -19,7 +19,8 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
         >
-          <Root>{children}</Root>
+          <NavBar />
+          {children}
         </GoogleOAuthProvider>
         <Analytics />
         <ToastContainer></ToastContainer>
