@@ -4,7 +4,7 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <div className="w-screen h-[calc(100vh-10rem)] flex flex-col items-center justify-center text-center text-blue-800 font-figtree">
+    <div className="w-screen h-[calc(100vh-10rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree">
     <div className="flex items-center text-sm border border-gray-200 bg-white/70 backdrop-blur-sm shadow-sm px-3 py-1 rounded-full text-gray-800 mb-3">
     <div className="bg-blue-500 text-white rounded-full px-2 py-0.5 font-medium shadow">
         💡 Tip
