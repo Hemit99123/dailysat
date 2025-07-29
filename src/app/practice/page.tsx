@@ -10,8 +10,8 @@ import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { capitalizeFirstLetter } from "@/lib/ui";
 
-const PracticePage = () => {
-  const searchParams = useSearchParams();
+const PracticePageContent = () => {
+    const searchParams = useSearchParams();
 
   const type = searchParams.get("type") as Type;
   const [selectedTopic, setSelectedTopic] = useState<EnglishSubjects>("All");
@@ -39,10 +39,8 @@ const PracticePage = () => {
       setCurrentStreak(0);
     }
   };
-
-  return (
-    <Suspense>
-      <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6">
+  return (      
+    <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6">
         {/* Sidebar */}
         <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
           <SubjectSidebar
@@ -77,6 +75,12 @@ const PracticePage = () => {
           />
         </aside>
       </div>
+      )
+}
+const PracticePage = () => {
+  return (
+    <Suspense>
+      <PracticePageContent />
     </Suspense>
   );
 };
