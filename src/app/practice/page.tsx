@@ -4,12 +4,16 @@ import React, { useState } from "react";
 import SubjectSidebar from "@/components/features/Practice/SubjectSidebar";
 import QuestionContent from "@/components/features/Practice/QuestionContent";
 import Score from "@/components/features/Practice/Score";
-
+import { useSearchParams } from 'next/navigation'
 import { englishSubjectsArray } from "@/data/subject";
 import { Difficulty } from "@/types/practice/difficulty";
-import { EnglishSubjects } from "@/types/practice/subject";
+import { EnglishSubjects, Type } from "@/types/practice/subject";
+import { capitalizeFirstLetter } from "@/lib/ui";
 
-const EnglishPracticePage = () => {
+const PracticePage = () => {
+  const searchParams = useSearchParams();
+
+  const type = searchParams.get("type") as Type;
   const [selectedTopic, setSelectedTopic] = useState<EnglishSubjects>("All");
   const [difficulty, setDifficulty] = useState<Difficulty>("All");
 
@@ -33,11 +37,11 @@ const EnglishPracticePage = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6 bg-gray-50">
+    <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6">
       {/* Sidebar */}
       <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
         <SubjectSidebar
-          subject="english"
+          subject={capitalizeFirstLetter(type) as Type}
           selectedTopic={selectedTopic}
           setSelectedTopic={setSelectedTopic}
           topics={englishSubjectsArray}
@@ -52,7 +56,7 @@ const EnglishPracticePage = () => {
           <QuestionContent
             subject={selectedTopic}
             difficulty={difficulty}
-            type="english"
+            type={type}
             onAnswered={handleAnswered}
           />
         </div>
@@ -71,4 +75,4 @@ const EnglishPracticePage = () => {
   );
 };
 
-export default EnglishPracticePage;
+export default PracticePage;

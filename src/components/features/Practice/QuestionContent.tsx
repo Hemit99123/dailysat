@@ -24,7 +24,6 @@ interface QuestionContentProps {
   type: Type;
   difficulty: Difficulty;
   onAnswered?: (isCorrect: boolean) => void;
-  onNext?: () => void;
 }
 
 const MARKDOWN_PROPS = {
@@ -37,7 +36,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   type,
   difficulty,
   onAnswered,
-  onNext,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
@@ -60,7 +58,7 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
     setShowExplanation(false);
 
     try {
-      const response = await handleFetchQuestion(type, "All", subject as EnglishSubjects);
+      const response = await handleFetchQuestion(type, difficulty as Difficulty, subject as EnglishSubjects);
       setCurrentQuestion(response.data);
     } catch (err) {
       setError("Failed to fetch question. Please try again.");
@@ -88,17 +86,8 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
     setIsSubmitted(true);
     setShowExplanation(true);
     
-    // Notify parent component about the answer
     if (onAnswered) {
       onAnswered(correct);
-    }
-  };
-
-  const showNext = () => {
-    if (onNext) {
-      onNext(); // Notify parent to trigger new question
-    } else {
-      fetchQuestion(); // Fallback to internal fetch
     }
   };
 
@@ -134,15 +123,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
           Try Again
         </button>
       </div>
-    );
-  }
-
-  if (!currentQuestion) {
-    return (
-      <p>
-        No questions found for the selected filters. Please try a different
-        selection.
-      </p>
     );
   }
 
@@ -266,7 +246,7 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
           </button>
         ) : (
           <button
-            onClick={showNext}
+            onClick={fetchQuestion}
             className="rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow hover:bg-blue-700"
           >
             Next <ArrowRight size={16} className="inline ml-1" />
