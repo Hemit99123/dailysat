@@ -9,7 +9,6 @@ import { englishSubjectsArray } from "@/data/subject";
 import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { capitalizeFirstLetter } from "@/lib/ui";
-import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 const PracticePage = () => {
   const searchParams = useSearchParams();
@@ -42,7 +41,6 @@ const PracticePage = () => {
   };
 
   return (
-    <ErrorBoundary>
       <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6">
         {/* Sidebar */}
         <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
@@ -78,7 +76,6 @@ const PracticePage = () => {
           />
         </aside>
       </div>
-    </ErrorBoundary>
   );
 };
 
