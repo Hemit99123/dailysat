@@ -1,4 +1,4 @@
-interface QuestionData {
+export interface QuestionData {
   questionMeta: {
     _id: string;
     key: string;
