@@ -5,7 +5,9 @@
       "dom.iterable",
       "esnext"
     ],
-    "types": ["node"], // ← Add this line
+    "types": [
+      "node"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -15,7 +17,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "preserve", // ✅ Fixed JSX mode
     "incremental": true,
     "plugins": [
       {

@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { JSX } from "react";
 import Link from "next/link";
 import {
   BookOpen,
   SquareSigma,
   ArrowRight,
   List as ListIcon,
+  Search,
+  ChevronDown,
 } from "lucide-react";
 
 interface TopicSidebarProps {
@@ -16,7 +18,7 @@ interface TopicSidebarProps {
   domainDisplayMapping: Record<string, string>;
   difficulty: "All" | "Easy" | "Medium" | "Hard";
   setDifficulty: (diff: "All" | "Easy" | "Medium" | "Hard") => void;
-  subject: "Math" | "English";
+  subject: "Math" | "English" | "Vocab";
 }
 
 const DIFFICULTY_META: Record<
@@ -45,6 +47,15 @@ const DIFFICULTY_META: Record<
   },
 };
 
+// Now using functions to return JSX to avoid JSX.Element assignment error
+const SUBJECT_ICONS: Record<TopicSidebarProps["subject"], () => JSX.Element> = {
+  Math: () => <SquareSigma className="h-5 w-5" />,
+  English: () => <BookOpen className="h-5 w-5" />,
+  Vocab: () => <Search className="h-5 w-5" />,
+};  
+
+const ALL_SUBJECTS: TopicSidebarProps["subject"][] = ["Math", "English", "Vocab"];
+
 export const TopicSidebar: React.FC<TopicSidebarProps> = ({
   selectedDomain,
   setSelectedDomain,
@@ -54,8 +65,7 @@ export const TopicSidebar: React.FC<TopicSidebarProps> = ({
   setDifficulty,
   subject,
 }) => {
-  const otherSubject = subject === "Math" ? "English" : "Math";
-  const switchHref = `/practice/${otherSubject.toLowerCase()}`;
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   const renderTopicButton = (displayName: string, key: string) => {
     const isActive = selectedDomain === displayName;
@@ -78,25 +88,38 @@ export const TopicSidebar: React.FC<TopicSidebarProps> = ({
   return (
     <aside className="w-[250px] space-y-6 rounded-lg bg-slate-50 p-5 shadow">
       {/* ---------------- Subject Heading ---------------- */}
-      {subject === "English" && (
-            <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-              <BookOpen className="h-5 w-5" /> {subject}
-            </h2>
-       )}
-       {subject === "Math" && (
-            <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-              <SquareSigma className="h-5 w-5" /> {subject}
-            </h2>
-       )}
+      <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
+        {SUBJECT_ICONS[subject]()} {subject}
+      </h2>
 
-      {/* ---------------- Subject Switch ------------------ */}
-      <Link
-        href={switchHref}
-        className="flex items-center justify-center gap-1 rounded border border-blue-600 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 shadow hover:bg-blue-100"
-      >
-        Go to {otherSubject}
-        <ArrowRight size={12} />
-      </Link>
+      {/* ---------------- Subject Dropdown Switch ---------------- */}
+      <div className="relative">
+        <button
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          className="w-full flex items-center justify-between rounded border border-blue-600 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 shadow hover:bg-blue-100"
+        >
+          Switch Subject <ChevronDown size={16} />
+        </button>
+
+        {dropdownOpen && (
+          <div className="absolute z-10 mt-1 w-full rounded border bg-white shadow">
+            {ALL_SUBJECTS.map((subj) => (
+              <Link
+                key={subj}
+                href={`/practice/${subj.toLowerCase()}`}
+                className={`flex items-center justify-between px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 ${
+                  subj === subject ? "bg-blue-100 font-semibold" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {SUBJECT_ICONS[subj]()} {subj}
+                </div>
+                {subj !== subject && <ArrowRight size={12} />}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
 
       <hr className="border-slate-300" />
 
@@ -132,7 +155,7 @@ export const TopicSidebar: React.FC<TopicSidebarProps> = ({
                   <span className="text-lg">{meta.emoji}</span>
                 </button>
               );
-            },
+            }
           )}
         </div>
       </section>
