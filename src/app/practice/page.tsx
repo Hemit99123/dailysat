@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import SubjectSidebar from "@/components/features/Practice/SubjectSidebar";
 import QuestionContent from "@/components/features/Practice/QuestionContent";
 import Score from "@/components/features/Practice/Score";
@@ -41,6 +41,7 @@ const PracticePage = () => {
   };
 
   return (
+    <Suspense>
       <div className="flex flex-col md:flex-row min-h-screen gap-6 px-4 md:px-10 py-6">
         {/* Sidebar */}
         <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
@@ -76,6 +77,7 @@ const PracticePage = () => {
           />
         </aside>
       </div>
+    </Suspense>
   );
 };
 
