@@ -13,9 +13,9 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
       <body>
-        <Providers
-          children={children}
-        />
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
