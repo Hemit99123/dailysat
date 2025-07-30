@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import { NextRequest, NextResponse } from "next/server"; // Importing types from Next.js server API
+import axios from "axios"; // HTTP client to make API requests
 
 // Define the POST handler for the API route
 export async function POST(req: NextRequest) {
