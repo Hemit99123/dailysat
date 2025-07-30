@@ -351,7 +351,7 @@ export default function LessonsPage() {
                 <div className="flex w-full lg:flex-row flex-col-reverse justify-center items-stretch h-full">
                   {!isFinalQuiz && (
                     <div
-                      className={` bg-white rounded-lg h-full lg:mt-0 mt-4 shadow-lg p-4 border-2 border-gray-200 mr-6 ${sidebarCollapsed ? "w-0 h-48 opacity-0 overflow-hidden p-0 mr-0" : "w-full lg:w-64 bg-red-500"} `}
+                      className={`bg-white rounded-lg h-full lg:mt-0 mt-4 shadow-lg border-2 border-gray-200 ${sidebarCollapsed ? "w-0 h-48 opacity-0 overflow-hidden p-0 mr-0" : "w-full lg:w-64 p-4 shadow-lg mr-6"}`}
                     >
                       <div className="flex justify-between items-center mb-2">
                         <h2 className="text-lg font-bold">
