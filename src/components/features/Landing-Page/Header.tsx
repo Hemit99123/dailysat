@@ -2,25 +2,28 @@ import { Badge } from '@/components/common/Badge'
 import React from 'react'
 
 interface HeaderProps {
-  badgeText: string
-  text: string
-  description: string
+    badgeText: string;
+    text: string;
+    gradientText?: string;
+    description: string
 }
 
-const Header: React.FC<HeaderProps> = ({ badgeText, text, description }) => {
+const Header: React.FC<HeaderProps> = ({ badgeText, text, gradientText, description}) => {
   return (
-    <div className="flex items-center justify-center px-4 mb-12">
-        <div className="flex flex-col items-center justify-center text-center max-w-2xl">
-            <Badge className="px-4 py-1.5 bg-blue-100 text-blue-700 border-blue-100 rounded-lg mb-4 hover:bg-blue-200 duration-300">
+    <div>
+        <Badge className="px-3 py-1 bg-blue-100 text-blue-700 border-blue-200 rounded-full mb-2 hover:bg-blue-200 duration-300">
             {badgeText}
-            </Badge>
-            <h2 className="text-blue-900 text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-5xl mb-3">
+        </Badge>
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
             {text}
-            </h2>
-            <p className="mx-auto text-gray-800 leading-relaxed">
+            <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+                {" "}
+                {gradientText}
+            </span>
+        </h2>
+        <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl mt-4">
             {description}
-            </p>
-        </div>
+        </p>
     </div>
   )
 }
