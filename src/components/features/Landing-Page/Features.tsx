@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import FeatureItem from './FeatureItem'
-import { featureList } from '@/data/features'
+import { featureList } from '@/data/landing-page/features'
 
 
 const Features = () => {
@@ -13,7 +13,7 @@ const Features = () => {
         description="Not just tools—your sidekicks for smashing goals, staying curious, and doing it all your way."
       />
 
-      <div className="space-y-10 mt-12">
+      <div className="space-y-5">
         {featureList.map((feature, index) => (
           <FeatureItem 
             key={index}
