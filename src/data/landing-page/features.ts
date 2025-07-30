@@ -20,7 +20,7 @@ export const featureList: Feature[] = [
   {
     badgeText: 'Lessons',
     title: 'Learn with curated lessons',
-    description: 'Rxplore structured lessons tailored to your goals, at your own pace or with others.',
+    description: 'Explore structured lessons tailored to your goals, at your own pace or with others.',
     toolTip1: 'Interactive content',
     toolTip2: 'Collaborative learning',
     gif:"lessons"
