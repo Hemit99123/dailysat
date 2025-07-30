@@ -7,9 +7,6 @@ export async function POST(req: NextRequest) {
     // Parse the JSON body from the incoming request
     const { prompt } = await req.json();
 
-    // Debug log to confirm the endpoint is reached
-    console.log("here");
-
     // Send POST request to OpenRouter's chat completions endpoint
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -36,12 +33,6 @@ export async function POST(req: NextRequest) {
         },
       }
     );
-
-    // Log that we're about to respond, for debugging
-    console.log("RESPONDING");
-
-    // Log full API response for debugging
-    console.log(response.data);
 
     // Extract the assistant's message content from the API response
     const message = response.data?.choices?.[0]?.message?.content;
