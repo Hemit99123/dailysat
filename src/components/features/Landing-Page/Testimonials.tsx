@@ -5,7 +5,7 @@ import { testimonialList } from '@/data/landing-page/testimonials';
 
 const Testimonials = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center flex-col">
       <Header
         badgeText="Testimonials"
         text="What Others Think About Us"
