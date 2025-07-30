@@ -31,6 +31,8 @@ interface QuestionContentProps {
   showNext: () => void;
   showExplanation: boolean;
   isMarked: boolean;
+  showDesmos: boolean;
+  setShowDesmos: () => void;
 }
 const MARKDOWN_PROPS = {
   remarkPlugins: [remarkMath],
@@ -52,6 +54,8 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
   showNext,
   showExplanation,
   isMarked,
+  showDesmos,
+  setShowDesmos,
 }) => {
 
   const isOpen = useCalculatorModalStore(state => state.isOpen);
@@ -141,9 +145,18 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
       )}
 
       {/* Question stem*/}
+      {subject != "vocab" && (
       <div className="mb-5 text-base font-bold text-black">
         {markdown(currentQuestion.question.question)}
       </div>
+      )}
+
+      {subject === "vocab" && (
+      <div className="mb-5 text-base font-bold text-black">
+        Which of the following options is best described by the following defenition?
+        <span className="mb-5 text-base font-normal">{markdown(currentQuestion.question.question)}</span>
+      </div>
+      )}
 
       {/* Answer choices*/}
       <div className="mb-5">
