@@ -6,7 +6,9 @@ export async function POST(req: NextRequest) {
   try {
     // Parse the JSON body from the incoming request
     const { prompt } = await req.json();
-
+    if (!process.env.OPENROUTER_API_KEY) {
+      throw new Error("Missing OPENROUTER_API_KEY environment variable");
+    }
     // Send POST request to OpenRouter's chat completions endpoint
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
