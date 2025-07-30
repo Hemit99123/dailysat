@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
-      <body className="antialiased vsc-initialized">
+      <body>
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
         >
