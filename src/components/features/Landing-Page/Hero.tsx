@@ -4,7 +4,7 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <div className="relative w-screen h-[calc(100vh-6rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree overflow-hidden">
+    <div className="relative w-screen h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree overflow-hidden">
       {/* Background blobs */}
       <div
         className="absolute top-10 left-10 w-72 h-72 rounded-full bg-blue-300 opacity-30 filter blur-3xl animate-blob"
