@@ -3,23 +3,24 @@ import { Feature } from "@/types/landing-page/feature";
 export const featureList: Feature[] = [
   {
     badgeText: 'Study Planner',
-    title: 'Plan smarter, not harder',
-    description: 'Organize your schedule with ease and keep track of all your tasks, assignments, and exams.',
-    toolTip1: 'Drag & drop tasks',
-    toolTip2: 'Auto-reminders',
+    title: 'Plan smarter, not harder with AI',
+    description: 'Organize your schedule to actually succeed on the SATs',
+    toolTip1: 'Completely personalized',
+    toolTip2: 'Always accessible',
   },
   {
-    badgeText: 'Progress Tracker',
-    title: 'Track your growth',
-    description: 'Visualize how far you’ve come with charts and stats that make progress fun and motivating.',
-    toolTip1: 'Daily streaks',
-    toolTip2: 'Achievement badges',
+    badgeText: 'Practice',
+    title: 'Sharpen your skills in an intuitive interface',
+    description: 'Stay motivated and level up your learning with a sleek design that makes practice enjoyable.',
+    toolTip1: 'Score tracker',
+    toolTip2: 'Gamified experience',
   },
   {
-    badgeText: 'Quiz Builder',
-    title: 'Create custom quizzes',
-    description: 'Generate quizzes from your notes and challenge yourself or your friends in real-time.',
-    toolTip1: 'Instant feedback',
-    toolTip2: 'Multiplayer mode',
-  },
+    badgeText: 'Lessons',
+    title: 'Learn with curated lessons',
+    description: 'Rxplore structured lessons tailored to your goals, at your own pace or with others.',
+    toolTip1: 'Interactive content',
+    toolTip2: 'Collaborative learning',
+  }
+
 ]
