@@ -34,10 +34,13 @@ export const GET = async (request: Request) => {
     const matchObject: MatchObject = {}
 
     if (difficulty != "All") {
-      // Update match object 
       matchObject.difficulty = difficulty;
-      matchObject.subject = subject;
     }
+
+    if (subject != "All") {
+        matchObject.subject = subject;
+    }
+    
     // The $sample gives questions in random order (so we can retrieve a rand question)
     const questionMeta = await collection.aggregate([
     { $match: matchObject },
