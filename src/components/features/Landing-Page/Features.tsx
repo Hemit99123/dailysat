@@ -13,7 +13,7 @@ const Features = () => {
         description="Not just tools—your sidekicks for smashing goals, staying curious, and doing it all your way."
       />
 
-      <div className="space-y-10 mt-16">
+      <div className="space-y-10 mt-12">
         {featureList.map((feature, index) => (
           <FeatureItem 
             key={index}

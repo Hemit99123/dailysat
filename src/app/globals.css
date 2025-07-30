@@ -3,6 +3,10 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Zen+Dots&display=swap');
 
+#smooth-scrolling {
+    scroll-behavior: smooth;
+}
+
 /* From codepen. Can't do them in tailwind */
 .fancy-input {
     border-radius: 10px;
