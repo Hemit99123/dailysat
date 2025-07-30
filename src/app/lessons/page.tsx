@@ -239,7 +239,7 @@ export default function LessonsPage() {
   return (
     <div className="min-h-screen p-6 flex justify-center">
       <div className="w-full max-w-5xl flex flex-col space-y-10">
-        <div className="relativ" style={flipStyles}>
+        <div className="relative" style={flipStyles}>
           <div
             className={`transition-transform duration-500 ease-in-out w-full min-h-screen`}
             style={
@@ -338,7 +338,7 @@ export default function LessonsPage() {
                       </button>
                     </div>
                   </div>
-
+                  {/* Reset Confirmation Block */}
                   <div className="flex justify-center mt-8">
                     {showResetConfirm ? (
                       <div className="flex flex-col items-center space-y-4">
@@ -386,6 +386,7 @@ export default function LessonsPage() {
               {selectedTopic !== null && (
                 <div className="flex w-full lg:flex-row flex-col-reverse justify-center items-stretch h-full">
                   {!isFinalQuiz && (
+                    /* Units Sidebar */
                     <div
                       className={` bg-white rounded-lg h-full lg:mt-0 mt-4 shadow-lg p-4 border-2 border-gray-200 mr-6 ${sidebarCollapsed ? "w-0 h-48 opacity-0 overflow-hidden p-0 mr-0" : "w-full lg:w-64 bg-red-500"} `}
                     >
@@ -494,6 +495,7 @@ export default function LessonsPage() {
                   )}
 
                   {!isFinalQuiz && sidebarCollapsed && (
+                    /* Add  sidebar expansion */
                     <button
                       onClick={() => setSidebarCollapsed(false)}
                       className="mr-4 bg-blue-200 lg:block flex justify-center lg:mt-0 mt-4 lg:w-[35px] w-full hover:bg-gray-300 h-full p-2 rounded"
