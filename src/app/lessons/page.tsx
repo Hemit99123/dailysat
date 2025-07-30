@@ -622,12 +622,12 @@ export default function LessonsPage() {
                                       </p>
                                       <button
                                         className="p-2 bg-blue-300 rounded-lg"
-                                        id="deepseek-explanation"
+                                        id={`deepseek-explanation-${idx}`}
                                         onClick={async () => {
                                           if (
                                             (
                                               document.getElementById(
-                                                "deepseek-explanation"
+                                                `deepseek-explanation-${idx}`
                                               ) as HTMLButtonElement
                                             ).innerText === "Hide Explanation"
                                           ) {
