@@ -41,13 +41,9 @@ const NavBar = () => {
     }
   };
 
-  const isHome = pathname === "/";
-
   const theme = {
-    bg: isHome
-      ? "bg-gradient-to-br from-blue-100 via-white to-purple-100"
-      : "bg-white",
-    text: isHome ? "text-gray-800" : "text-gray-800",
+    bg: "bg-white",
+    text: "text-gray-800",
     hover: "hover:text-blue-600",
     buttonBg: "bg-blue-600",
     buttonHover: "hover:bg-blue-700",
