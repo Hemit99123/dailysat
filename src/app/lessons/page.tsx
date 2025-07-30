@@ -621,7 +621,7 @@ export default function LessonsPage() {
                                         Simple Explanation: {q.explanation}
                                       </p>
                                       <button
-                                        className="p-2 bg-blue-300 rounded-lg"
+                                        className="p-2 bg-blue-200 border border-blue-400 rounded-lg"
                                         id={`deepseek-explanation-${idx}`}
                                         onClick={async () => {
                                           if (
