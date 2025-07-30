@@ -1,4 +1,6 @@
-export const featureList = [
+import { Feature } from "@/types/landing-page/feature";
+
+export const featureList: Feature[] = [
   {
     badgeText: 'Study Planner',
     title: 'Plan smarter, not harder',

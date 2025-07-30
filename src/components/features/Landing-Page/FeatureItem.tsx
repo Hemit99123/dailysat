@@ -2,17 +2,9 @@
 
 import { Badge } from "@/components/common/Badge";
 import { motion } from "framer-motion";
+import { Feature } from "@/types/landing-page/feature";
 
-interface FeatureItemProps {
-  badgeText: string;
-  title: string;
-  description: string;
-  toolTip1: string;
-  toolTip2: string;
-  flip?: boolean;
-}
-
-const FeatureItem: React.FC<FeatureItemProps> = ({
+const FeatureItem: React.FC<Feature> = ({
   badgeText,
   title,
   description,
