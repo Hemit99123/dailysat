@@ -1,18 +1,11 @@
 import React from 'react';
 import { Star } from 'lucide-react';
+import { Testimonial } from '@/types/landing-page/testimonial';
 
-interface TestimonialCardProps {
-  name: string;
-  title: string;
-  company: string;
-  testimonial: string;
-  rating?: number;
-}
 
-const TestimonialCard: React.FC<TestimonialCardProps> = ({
+const TestimonialCard: React.FC<Testimonial> = ({
   name,
   title,
-  company,
   testimonial,
   rating = 5,
 }) => {
@@ -32,7 +25,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         <div>
           <p className="font-semibold text-black">{name}</p>
           <p className="text-sm text-gray-800">
-            {title} at {company}
+            {title}
           </p>
         </div>
       </div>

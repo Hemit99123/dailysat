@@ -18,7 +18,6 @@ const Testimonials = () => {
             key={index}
             name={testimonial.name}
             title={testimonial.title}
-            company={testimonial.company}
             testimonial={testimonial.testimonial}
             rating={testimonial.rating}
           />
