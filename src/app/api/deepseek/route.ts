@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
             content: prompt || "Solve 2x + 3 = 7 step by step",
           },
         ],
+        timeout: 10000,
       },
       {
         headers: {
@@ -32,7 +33,14 @@ export async function POST(req: NextRequest) {
 
     // Extract the assistant's message content from the API response
     const message = response.data?.choices?.[0]?.message?.content;
-
+    if (!message)
+      return NextResponse.json(
+        {
+          error: "Internal Server Error",
+          details: "Failed to retrieve from Deepseek",
+        },
+        { status: 500 }
+      );
     return NextResponse.json(message);
   } catch (error: any) {
     return NextResponse.json(
