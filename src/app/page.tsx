@@ -1,12 +1,13 @@
 "use client";
 
+import React from 'react'
 import Footer from '@/components/common/Footer'
 import FAQ from '@/components/features/Landing-Page/FAQ';
 import Features from '@/components/features/Landing-Page/Features'
+import FinalCTA from '@/components/features/Landing-Page/FinalCTA';
 import Hero from '@/components/features/Landing-Page/Hero'
 import Testimonials from '@/components/features/Landing-Page/Testimonials'
 import Workshop from '@/components/features/Landing-Page/Workshop';
-import React from 'react'
 
 const LandingPage = () => {
   return (
@@ -17,6 +18,7 @@ const LandingPage = () => {
             <Testimonials />
             <Workshop />
             <FAQ />
+            <FinalCTA />
         </div>
         <Footer />
     </div>
