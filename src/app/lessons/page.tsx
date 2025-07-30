@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // 3D flip effect
 const flipStyles = {
@@ -86,9 +87,25 @@ export default function LessonsPage() {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeRaw as any, rehypeKatex],
   };
-  const markdown = (content: string) => (
-    <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
-  );
+  const markdown = (content: string) => {
+    const SHOW_SKELETON = content === "Loading...";
+    return (
+      <>
+        {SHOW_SKELETON ? (
+          <></>
+        ) : (
+          <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
+        )}
+        {SHOW_SKELETON ? (
+          <div className="mt-2 flex flex-col gap-2">
+            <Skeleton className="w-full h-64 bg-gray-400"></Skeleton>
+          </div>
+        ) : (
+          <></>
+        )}
+      </>
+    );
+  };
   const INIT_STATE_ANS = ["", "", ""];
   const [answers, setAnswers] = useState<Array<string>>(INIT_STATE_ANS);
 
@@ -618,7 +635,7 @@ export default function LessonsPage() {
                                   {isAnswered && (
                                     <>
                                       <p className="mt-2 text-sm text-gray-700">
-                                        Simple Explanation: {q.explanation}
+                                        {q.explanation}
                                       </p>
                                       <button
                                         className="p-2 bg-blue-200 border border-blue-400 rounded-lg"
