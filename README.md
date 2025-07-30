@@ -76,8 +76,8 @@ This setup mirrors our production environment and allows you to continue develop
 
 ## Get Openrouter API Key 
 
-1. Make an acount with [Openrouter](https://openrouter.ai/)
-2. Hover over your profile picture (in the top rigt), and go to "Keys"
+1. Make an account with [Openrouter](https://openrouter.ai/)
+2. Hover over your profile picture (in the top right), and go to "Keys"
 3. On the "Keys" page click "Create API Key"
 4. Put in the name "deepseek-key" and leave Credit Limit blank
 5. Paste this key into your .env file using the template in .env.example
