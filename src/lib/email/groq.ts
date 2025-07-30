@@ -1,3 +1,5 @@
+'use server';
+
 import Groq from "groq-sdk";
 
 interface GrokResponse {
@@ -6,7 +8,7 @@ interface GrokResponse {
 }
 
 const groq = new Groq({
-  apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY!,
+  apiKey: process.env.GROQ_API_KEY!,
 });
 
 export async function getWeeklyReminderFromGrok(): Promise<GrokResponse> {
@@ -20,11 +22,15 @@ Return only valid JSON with exactly these two fields:
 The JSON format must look like this, and must not include any extra explanation:
 {
   "subject": "Important Reminder: {SUBJECT GOES HERE}",
-  "html": "<div style="font-family: Arial, sans-serif; text-align: center; color: #434343;"><h1 style="color: #3182ce; font-size: 28px; margin: 0 0 10px;">DailySAT</h1><p style="font-size: 20px; color: #2d3748; margin: 0 0 20px;">{Catchy 5-8 word header with 1 emoji}</p><p style="font-size: 16px; line-height: 1.5; margin: 0 0 30px;">{2-4 sentence body text for the reminder}</p><a href="https://dailysat.org" style="display: inline-block; padding: 12px 20px; background-color: #3182ce; color: #ffffff; text-decoration: none; border-radius: 4px; font-size: 16px;">Start Practicing</a></div>"
+  "html": "<div style='font-family: Arial, sans-serif; text-align: center; color: #434343;'><h1 style='color: #3182ce; font-size: 28px; margin: 0 0 10px;'>DailySAT</h1><p style='font-size: 20px; color: #2d3748; margin: 0 0 20px;'>{Catchy 5-8 word header with 1 emoji}</p><p style='font-size: 16px; line-height: 1.5; margin: 0 0 30px;'>{2-4 sentence body text for the reminder}</p><a href='https://dailysat.org' style='display: inline-block; padding: 12px 20px; background-color: #3182ce; color: #ffffff; text-decoration: none; border-radius: 4px; font-size: 16px;'>Start Practicing</a></div>"
 }
 `;
   const chatCompletion = await groq.chat.completions.create({
     messages: [
+      {
+        role: "system",
+        content: "You are an AI assistant responsible of creating emails for a company, named DailySAT, which helps students prepare for and ace the SAT Examination. Your goal is to persuade/convince the user you are sending emails to return to the platform to better prepare for the SAT and hopefully ace it.",
+      },
       {
         role: "user",
         content: prompt,
@@ -34,7 +40,6 @@ The JSON format must look like this, and must not include any extra explanation:
   });
 
   const content = chatCompletion.choices[0]?.message?.content;
-
   if (!content) {
     throw new Error("Groq response was empty");
   }
@@ -43,7 +48,6 @@ The JSON format must look like this, and must not include any extra explanation:
     const parsed: GrokResponse = JSON.parse(content);
     return parsed;
   } catch (err) {
-    console.error("Failed to parse Groq JSON:", content);
     throw new Error("Groq returned invalid JSON.");
   }
 }

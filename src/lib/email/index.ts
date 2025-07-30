@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
-import dbConnect from "./dbConnect";
-import  User from "@/models/User";
+import { client } from '@/lib/mongo';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -18,39 +17,45 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
       subject,
       html,
     });
-  } catch (err) {
+
+  } catch (err: any) {
     throw err;
   }
 }
 
 export function divideIntoGroups(emails: string[], numGroups: number): Record<string, string[]> {
-    const groups: Record<string, string[]> = {};
-    for (let i = 0; i < numGroups; i++) {
-        groups[`Group${i + 1}`] = [];
-    }
+  const groups: Record<string, string[]> = {};
+  for (let i = 0; i < numGroups; i++) {
+    groups[`Group${i + 1}`] = [];
+  }
 
-    emails.forEach((email, index) => {
-        const groupIndex = index % numGroups;
-        groups[`Group${groupIndex + 1}`].push(email);
-    });
+  emails.forEach((email, index) => {
+    const groupIndex = index % numGroups;
+    const groupName = `Group${groupIndex + 1}`;
+    groups[groupName].push(email);
+  });
 
-    return groups;
+
+  return groups;
 }
 
 export async function sendToGroup(emails: string[], subject: string, html: string) {
+
   await Promise.all(
     emails.map(async (email) => {
       try {
         await sendEmail(email, subject, html);
       } catch (err) {
-        console.error(`Failed to send to ${email}:`, err);
+        throw err;
       }
     })
   );
 }
 
 export async function getAllUserEmails(): Promise<string[]> {
-    await dbConnect();
-    const users = await User.find({}, 'email').lean();
-    return users.map((user) => user.email as string);
+  await client.connect();
+  const db = client.db();
+  const usersCollection = db.collection('users');
+  const users = await usersCollection.find({}, { projection: { email: 1, _id: 0 } }).toArray();
+  return users.map((user) => user.email);
 }
