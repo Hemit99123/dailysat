@@ -20,8 +20,9 @@ const LandingPage = () => {
             <FAQ />
             <FinalCTA />
         </div>
+        
+        <Footer />
     </div>
-
   )
 }
 
