@@ -4,7 +4,7 @@ import React from 'react'
 
 const FinalCTA = () => {
   return (
-    <div className="bg-gradient-to-r from-blue-200 to-blue-400 text-white p-10 rounded-2xl text-center">
+    <div className="bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400 text-white p-10 rounded-2xl text-center">
       <h1 className="text-4xl md:text-5xl font-bold">
         What are you waiting for? Get started!
       </h1>
