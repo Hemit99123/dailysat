@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ badgeText, text, gradientText, descript
 
       <h2 className="flex justify-self-center text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
         {text}
-        <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+        <span className="ml-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
           {" "}
           {gradientText}
         </span>
