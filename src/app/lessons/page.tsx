@@ -687,17 +687,11 @@ export default function LessonsPage() {
 
                                             setAnswers((prev) => {
                                               const updated = [...prev];
-                                              let expl = res?.data.replaceAll(
-                                                "\\times",
-                                                "*"
-                                              );
-                                              expl = expl.replaceAll(
-                                                "\\boxed",
-                                                ""
-                                              );
+                                              let expl = res?.data
+                                                .replaceAll("\\times", "*")
+                                                ?.replaceAll("\\boxed", "");
                                               updated[idx] =
-                                                res?.data || "No response.";
-                                              console.log(updated);
+                                                expl || "No response.";
                                               return updated;
                                             });
                                           } catch (err) {
