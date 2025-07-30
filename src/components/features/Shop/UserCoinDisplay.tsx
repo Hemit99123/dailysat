@@ -14,7 +14,6 @@ export default function UserCoinDisplay() {
       if (!user?.email) return;
       try {
         const res = await axios.get("/api/auth/get-user");
-        console.log(res);
         const userDoc = await res.data.user;
         setCoins(userDoc.currency ?? -1);
       } catch (err) {

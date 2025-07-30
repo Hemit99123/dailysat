@@ -664,7 +664,6 @@ export default function LessonsPage() {
                                             setAnswers((prev) => {
                                               const updated = [...prev];
                                               updated[idx] = "";
-                                              console.log(updated);
                                               return updated;
                                             });
                                             return;
@@ -672,7 +671,6 @@ export default function LessonsPage() {
                                           setAnswers((prev) => {
                                             const updated = [...prev];
                                             updated[idx] = "Loading...";
-                                            console.log(updated);
                                             return updated;
                                           });
                                           try {
