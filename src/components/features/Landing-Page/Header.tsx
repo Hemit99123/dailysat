@@ -10,7 +10,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ badgeText, text, gradientText, description}) => {
   return (
-    <div>
+    <div className="mb-10">
         <Badge className="flex justify-self-center px-3 py-1 bg-blue-100 text-blue-700 border-blue-200 rounded-full mb-2 hover:bg-blue-200 duration-300">
             {badgeText}
         </Badge>
