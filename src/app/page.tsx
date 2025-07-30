@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
-import Footer from "@/components/common/Footer";
 import { faqs } from "@/data/faqs";
 
 const Home = () => {
@@ -392,8 +391,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-      
-      <Footer />
     </div>
   );
 };
