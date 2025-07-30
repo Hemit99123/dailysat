@@ -11,7 +11,7 @@ import Workshop from '@/components/features/Landing-Page/Workshop';
 
 const LandingPage = () => {
   return (
-    <div id="smooth-scrolling">
+    <div id="smooth-scrolling" className="font-figtree">
         <Hero />
         <div className="space-y-28 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <Features />
