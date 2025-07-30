@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { ToastContainer } from "react-toastify";
 import 'katex/dist/katex.min.css';
 import NavBar from "@/components/common/NavBar";
+import Footer from "@/components/common/Footer";
 
 export const metadata: Metadata = {
   title: "DailySAT",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         >
           <NavBar />
           {children}
+          <Footer />
         </GoogleOAuthProvider>
         <Analytics />
         <ToastContainer></ToastContainer>
