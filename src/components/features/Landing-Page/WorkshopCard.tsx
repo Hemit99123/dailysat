@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
-import { Card } from "../../../common/Card"
-import { Badge } from "../../../common/Badge"
+import { Card } from "../../common/Card"
+import { Badge } from "../../common/Badge"
 import Image from "next/image"
 
 interface WorkshopCardProps {
@@ -32,7 +32,7 @@ export function WorkshopCard({ image, title, partner, attendees, description, cl
           />
         </div>
         <div className="mb-2 flex items-center justify-between">
-          <Badge className="bg-blue-500/10 text-blue-700">{partner}</Badge>
+          <Badge className="bg-blue-500/10 text-blue-700 hover:text-white">{partner}</Badge>
           <span className="text-sm text-gray-500">{attendees} attendees</span>
         </div>
         <h3 className="mb-2 text-lg font-semibold">{title}</h3>
