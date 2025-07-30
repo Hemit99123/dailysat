@@ -622,7 +622,23 @@ export default function LessonsPage() {
                                       </p>
                                       <button
                                         className="p-2 bg-blue-300 rounded-lg"
+                                        id="deepseek-explanation"
                                         onClick={async () => {
+                                          if (
+                                            (
+                                              document.getElementById(
+                                                "deepseek-explanation"
+                                              ) as HTMLButtonElement
+                                            ).innerText === "Hide Explanation"
+                                          ) {
+                                            setAnswers((prev) => {
+                                              const updated = [...prev];
+                                              updated[idx] = "";
+                                              console.log(updated);
+                                              return updated;
+                                            });
+                                            return;
+                                          }
                                           setAnswers((prev) => {
                                             const updated = [...prev];
                                             updated[idx] = "Loading...";
