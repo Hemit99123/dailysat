@@ -89,16 +89,19 @@ export default function LessonsPage() {
   };
   const markdown = (content: string) => {
     const SHOW_SKELETON = content === "Loading...";
+
     return (
       <>
         {SHOW_SKELETON ? (
           <></>
         ) : (
-          <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
+          <div className="bg-blue-200 border border-blue-400 mt-2 p-4 rounded-lg">
+            <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
+          </div>
         )}
         {SHOW_SKELETON ? (
           <div className="mt-2 flex flex-col gap-2">
-            <Skeleton className="w-full h-64 bg-gray-400"></Skeleton>
+            <Skeleton className="w-full h-64 bg-gray-400" />
           </div>
         ) : (
           <></>
@@ -106,6 +109,7 @@ export default function LessonsPage() {
       </>
     );
   };
+
   const INIT_STATE_ANS = ["", "", ""];
   const [answers, setAnswers] = useState<Array<string>>(INIT_STATE_ANS);
 
