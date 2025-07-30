@@ -5,4 +5,5 @@ export interface Feature {
   toolTip1: string;
   toolTip2: string;
   flip?: boolean;
+  gif: string;
 }

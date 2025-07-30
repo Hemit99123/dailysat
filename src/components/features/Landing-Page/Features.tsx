@@ -13,18 +13,20 @@ const Features = () => {
         description="Not just tools—your sidekicks for smashing goals, staying curious, and doing it all your way."
       />
 
-      <div className="space-y-5">
-        {featureList.map((feature, index) => (
-          <FeatureItem 
-            key={index}
-            badgeText={feature.badgeText}
-            title={feature.title}
-            description={feature.description}
-            toolTip1={feature.toolTip1}
-            toolTip2={feature.toolTip2}
-            flip={index % 2 !== 0} // Flip every second item
-          />
-        ))}
+      <div className="space-y-28">
+          {featureList.map((feature, index) => (
+            <div key={index} className={index !== 0 ? "mt-10" : ""}>
+              <FeatureItem 
+                badgeText={feature.badgeText}
+                title={feature.title}
+                description={feature.description}
+                toolTip1={feature.toolTip1}
+                toolTip2={feature.toolTip2}
+                flip={index % 2 === 1}
+                gif={feature.gif}
+              />
+            </div>
+          ))}
       </div>
     </div>
   )

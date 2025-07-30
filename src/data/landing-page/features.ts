@@ -7,6 +7,7 @@ export const featureList: Feature[] = [
     description: 'Organize your schedule to actually succeed on the SATs',
     toolTip1: 'Completely personalized',
     toolTip2: 'Always accessible',
+    gif: "ai-study-planner"
   },
   {
     badgeText: 'Practice',
@@ -14,6 +15,7 @@ export const featureList: Feature[] = [
     description: 'Stay motivated and level up your learning with a sleek design that makes practice enjoyable.',
     toolTip1: 'Score tracker',
     toolTip2: 'Gamified experience',
+    gif: "practice"
   },
   {
     badgeText: 'Lessons',
@@ -21,6 +23,6 @@ export const featureList: Feature[] = [
     description: 'Rxplore structured lessons tailored to your goals, at your own pace or with others.',
     toolTip1: 'Interactive content',
     toolTip2: 'Collaborative learning',
+    gif:"lessons"
   }
-
 ]

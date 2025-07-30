@@ -11,6 +11,7 @@ const FeatureItem: React.FC<Feature> = ({
   toolTip1,
   toolTip2,
   flip = false,
+  gif
 }) => {
   return (
     <div
@@ -28,11 +29,13 @@ const FeatureItem: React.FC<Feature> = ({
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
       >
-        <img
-          src="/assets/ace-sat.png"
-          alt="Workflow Automation UI"
-          className="rounded-2xl w-full max-w-md object-contain"
-        />
+        <div className="flex justify-center items-center w-full max-w-md bg-gray-100 rounded-2xl overflow-hidden">
+          <img
+            src={`/gifs/${gif}.gif`}
+            alt="Workflow Automation UI"
+            className="w-full h-auto object-contain"
+          />
+        </div>
       </motion.div>
 
       <div className={`w-full md:w-1/2 ${flip ? "md:pr-10" : "md:pl-10"}`}>
