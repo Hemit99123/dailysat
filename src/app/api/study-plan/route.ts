@@ -8,6 +8,8 @@ export const POST = async (request: Request) => {
     const { plan } = await request.json()
 
     try {
+        await client.connect()
+
         const session = await handleGetSession()
         const email = session?.user?.email
     
@@ -15,7 +17,6 @@ export const POST = async (request: Request) => {
           return Response.json({ message: "Unauthorized" });
         }
     
-        await client.connect()
         const db: Db = client.db("DailySAT")
         const usersCollection = db.collection("users")
     

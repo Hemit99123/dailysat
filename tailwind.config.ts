@@ -63,7 +63,10 @@ const config: Config = {
   		},
 		  fontFamily: {
 		  },
-  	}
+  	},
+	fontFamily: {
+  		figtree: ['Figtree', 'sans-serif'],
+	},
   },
   plugins: [require("tailwindcss-animate")],
 };
