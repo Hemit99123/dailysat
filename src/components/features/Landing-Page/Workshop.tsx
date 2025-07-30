@@ -9,19 +9,11 @@ const Workshop = () => {
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
 
         <div className="container px-4 md:px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col items-center justify-center space-y-4 text-center"
-          >
             <Header
               badgeText="Workshops"
               text="Learning and Growing Together"
               description="We love educating, sharing, and learning! The best way to do this is hosting workshops for the DailySAT community."
             />
-          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <motion.div

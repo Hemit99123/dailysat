@@ -1,6 +1,7 @@
+import React from 'react';
+import { motion } from 'framer-motion';
 import ArrowSvg from '@/components/common/icons/ArrowSVG';
 import Link from 'next/link';
-import React from 'react';
 
 const Hero = () => {
   return (
@@ -20,26 +21,57 @@ const Hero = () => {
       />
 
       {/* Foreground content */}
-      <div className="relative z-10 flex items-center text-sm border border-gray-200 bg-white/70 backdrop-blur-sm shadow-sm px-3 py-1 rounded-full text-gray-800 mb-3">
+      <motion.div
+        className="relative z-10 flex items-center text-sm border border-gray-200 bg-white/70 backdrop-blur-sm shadow-sm px-3 py-1 rounded-full text-gray-800 mb-3"
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+      >
         <div className="bg-blue-500 text-white rounded-full px-2 py-0.5 font-medium shadow">
           💡 Tip
         </div>
         <span className="ml-2 leading-tight font-medium">
           Practice daily. Score higher.
         </span>
-      </div>
+      </motion.div>
 
-      <h1 className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]">
+      <motion.h1
+        className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        viewport={{ once: true }}
+      >
         The SATs Preparation Made
-      </h1>
-      <h1 className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]">
+      </motion.h1>
+      <motion.h1
+        className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        viewport={{ once: true }}
+      >
         Simple and Effective.
-      </h1>
-      <div className="relative z-10 text-lg text-gray-700 p-4 max-w-xl">
-        DailySAT is your go-to source. It is made for anyone, anywhere, anytime!
-      </div>
+      </motion.h1>
 
-      <div className="relative z-10 flex items-center space-x-2">
+      <motion.div
+        className="relative z-10 text-lg text-gray-700 p-4 max-w-xl"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        viewport={{ once: true }}
+      >
+        DailySAT is your go-to source. It is made for anyone, anywhere, anytime!
+      </motion.div>
+
+      <motion.div
+        className="relative z-10 flex items-center space-x-2"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        viewport={{ once: true }}
+      >
         <Link
           href="/dashboard"
           className="text-sm bg-blue-500 text-white py-2 px-4 rounded-lg flex items-center group"
@@ -57,7 +89,7 @@ const Hero = () => {
         >
           View our team
         </Link>
-      </div>
+      </motion.div>
     </div>
   );
 };
