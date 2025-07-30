@@ -1,6 +1,7 @@
 "use client";
 
 import Footer from '@/components/common/Footer'
+import FAQ from '@/components/features/Landing-Page/FAQ';
 import Features from '@/components/features/Landing-Page/Features'
 import Hero from '@/components/features/Landing-Page/Hero'
 import Testimonials from '@/components/features/Landing-Page/Testimonials'
@@ -15,6 +16,7 @@ const LandingPage = () => {
             <Features />
             <Testimonials />
             <Workshop />
+            <FAQ />
         </div>
         <Footer />
     </div>

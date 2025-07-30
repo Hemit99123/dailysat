@@ -1,4 +1,6 @@
-export const faqs = [
+import { FAQ } from "@/types/landing-page/faq";
+
+export const faqs: FAQ[] = [
   {
     question: "Is Dailysat completely free for everyone to use?",
     answer: "DailySat is completely free for anyone to be able to use, and our code is even open-sourced! We boast many features including a practice section, a shop where you can buy certain items with our pay-to-play model, and also will include all of the official, collegeboard certified, practice tests to truly embody and revolutionize how to study for the digital sat.",
