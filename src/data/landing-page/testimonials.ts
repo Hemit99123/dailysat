@@ -1,34 +1,34 @@
 export const testimonialList = [
   {
-    name: 'James Carter',
-    title: 'CEO',
-    company: 'TechFlow Solutions',
+    name: 'Ava Thompson',
+    title: 'High School Junior',
+    company: 'Springfield High School',
     testimonial:
-      'AI automation transformed our operations by eliminating repetitive tasks and improving efficiency. Scaling our workflow has never been easier!',
+      'I went from dreading SAT prep to actually looking forward to my practice sessions. The app makes studying way less stressful and actually fun!',
     rating: 5,
   },
   {
-    name: 'Sophia Lee',
-    title: 'Head of Product',
-    company: 'InnovaTech',
+    name: 'Jason Rivera',
+    title: 'Senior Student',
+    company: 'Lincoln High',
     testimonial:
-      'We’ve seen a 40% increase in productivity since implementing the AI tools. It’s like having an extra team working 24/7.',
+      'What I love most is how the app breaks down my mistakes and shows me exactly where to improve. It’s like having a personal tutor.',
     rating: 5,
   },
   {
-    name: 'Daniel Kim',
-    title: 'Operations Manager',
-    company: 'SmartWorks Inc.',
+    name: 'Meghan Patel',
+    title: 'Student',
+    company: 'South Forsyth High',
     testimonial:
-      'From tedious manual tasks to intelligent automation—this solution has changed the way we operate.',
+      'My score improved by over 150 points after using the app for just a couple of months. Super impressed by how teen-friendly and effective it is.',
+    rating: 5,
+  },
+  {
+    name: 'John Wallace',
+    title: 'Peer Tutor',
+    company: 'South Forsyth High',
+    testimonial:
+      'This is one of the best student-built tools I’ve seen. It’s engaging, well-designed, and actually helps students retain what they learn.',
     rating: 4,
-  },
-  {
-    name: 'Emily Stone',
-    title: 'CTO',
-    company: 'BrightApps',
-    testimonial:
-      'Reliable, efficient, and seamless integration. Our dev team loves it.',
-    rating: 5,
-  },
+  }
 ];
