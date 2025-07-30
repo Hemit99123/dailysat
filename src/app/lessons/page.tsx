@@ -618,7 +618,7 @@ export default function LessonsPage() {
                                   {isAnswered && (
                                     <>
                                       <p className="mt-2 text-sm text-gray-700">
-                                        {q.explanation}
+                                        Simple Explanation: {q.explanation}
                                       </p>
                                       <button
                                         className="p-2 bg-blue-300 rounded-lg"
@@ -674,7 +674,7 @@ export default function LessonsPage() {
                                         {answers[idx] === "Loading..."
                                           ? "Loading..."
                                           : answers[idx] === ""
-                                            ? "Show Explanation"
+                                            ? "Show Detailed Explanation"
                                             : "Hide Explanation"}
                                       </button>
 
