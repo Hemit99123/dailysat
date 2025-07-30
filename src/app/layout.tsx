@@ -3,7 +3,7 @@ import "./globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ToastContainer } from "react-toastify";
-import 'katex/dist/katex.min.css';
+import "katex/dist/katex.min.css";
 import NavBar from "@/components/common/NavBar";
 
 export const metadata: Metadata = {
