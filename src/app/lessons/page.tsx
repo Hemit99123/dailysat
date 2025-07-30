@@ -8,6 +8,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "react-toastify";
 
 // 3D flip effect
 const flipStyles = {
@@ -674,30 +675,36 @@ export default function LessonsPage() {
                                             console.log(updated);
                                             return updated;
                                           });
-                                          const res = await axios.post(
-                                            "/api/deepseek",
-                                            {
-                                              prompt:
-                                                q.question +
-                                                `Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
-                                            }
-                                          );
+                                          try {
+                                            const res = await axios.post(
+                                              "/api/deepseek",
+                                              {
+                                                prompt:
+                                                  q.question +
+                                                  `Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
+                                              }
+                                            );
 
-                                          setAnswers((prev) => {
-                                            const updated = [...prev];
-                                            let expl = res?.data.replaceAll(
-                                              "\\times",
-                                              "*"
+                                            setAnswers((prev) => {
+                                              const updated = [...prev];
+                                              let expl = res?.data.replaceAll(
+                                                "\\times",
+                                                "*"
+                                              );
+                                              expl = expl.replaceAll(
+                                                "\\boxed",
+                                                ""
+                                              );
+                                              updated[idx] =
+                                                res?.data || "No response.";
+                                              console.log(updated);
+                                              return updated;
+                                            });
+                                          } catch (err) {
+                                            toast.error(
+                                              "Sorry, there was a slight hiccup. Please try again later."
                                             );
-                                            expl = expl.replaceAll(
-                                              "\\boxed",
-                                              ""
-                                            );
-                                            updated[idx] =
-                                              res?.data || "No response.";
-                                            console.log(updated);
-                                            return updated;
-                                          });
+                                          }
                                         }}
                                       >
                                         {answers[idx] === "Loading..."
