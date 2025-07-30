@@ -339,7 +339,7 @@ export default function LessonsPage() {
                     </div>
                   </div>
                   {/* Reset Confirmation Block */}
-                  <div className="flex justify-center mt-8">
+                  <div className="flex justify-center mt-8 pb-10  ">
                     {showResetConfirm ? (
                       <div className="flex flex-col items-center space-y-4">
                         <p className="text-red-600 font-semibold">
