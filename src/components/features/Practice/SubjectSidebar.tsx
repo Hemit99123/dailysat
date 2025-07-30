@@ -8,15 +8,14 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Type } from "@/types/practice/subject";
-import { englishSubjectsArray, mathSubjectsArray } from "@/data/subject";
 import SubjectButton from "./SubjectButton";
 import { DIFFICULTY_META } from "@/data/difficulty-meta";
 
 export interface SubjectSidebarProps {
-  subject: Type;
+  subject: Capitalize<Type>;
   selectedTopic: string;
   setSelectedTopic: (topic: string) => void;
-  topics: string[];
+  subjects: string[];
   difficulty: "All" | "Easy" | "Medium" | "Hard";
   setDifficulty: (diff: "All" | "Easy" | "Medium" | "Hard") => void;
 }
@@ -26,19 +25,18 @@ const SubjectSidebar: React.FC<SubjectSidebarProps> = ({
   selectedTopic,
   setSelectedTopic,
   difficulty,
+  subjects,
   setDifficulty,
 }) => {
-  const otherSubject = subject === "math" ? "english" : "math";
-  const switchHref = `/practice/${otherSubject.toLowerCase()}`;
-
-  const subjects = subject === "math" ? mathSubjectsArray : englishSubjectsArray;
+  const otherSubject = subject === "Math" ? "English" : "Math";
+  const switchHref = `/practice?type=${otherSubject.toLowerCase()}`;
 
 
   return (
     <aside className="w-full md:w-[250px] space-y-6 rounded-lg bg-slate-50 p-5 shadow mb-5 md:mb-0">
       {/* Subject Header */}
       <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-        {subject === "math" ? <SquareSigma className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
+        {subject === "Math" ? <SquareSigma className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
         {subject}
       </h2>
 

@@ -5,7 +5,7 @@ import SubjectSidebar from "@/components/features/Practice/SubjectSidebar";
 import QuestionContent from "@/components/features/Practice/QuestionContent";
 import Score from "@/components/features/Practice/Score";
 import { useSearchParams } from 'next/navigation'
-import { englishSubjectsArray } from "@/data/subject";
+import { englishSubjectsArray, mathSubjectsArray } from "@/data/subject";
 import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { capitalizeFirstLetter } from "@/lib/ui";
@@ -44,10 +44,10 @@ const PracticePageContent = () => {
         {/* Sidebar */}
         <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
           <SubjectSidebar
-            subject={capitalizeFirstLetter(type) as Type}
+            subject={capitalizeFirstLetter(type) as Capitalize<Type>}
             selectedTopic={selectedTopic}
             setSelectedTopic={setSelectedTopic}
-            topics={englishSubjectsArray}
+            subjects={type === "math" ? mathSubjectsArray : englishSubjectsArray}
             difficulty={difficulty}
             setDifficulty={setDifficulty}
           />
