@@ -261,7 +261,9 @@ export default function LessonsPage() {
             >
               {selectedTopic === null && (
                 <>
-                  <div className="flex-1">
+                  <div
+                    className={`flex-1 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
                     <h1 className="text-4xl font-bold mb-6 text-center">
                       Lessons
                     </h1>
@@ -314,7 +316,9 @@ export default function LessonsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white mt-4 rounded-lg shadow-lg p-6 border border-gray-200">
+                  <div
+                    className={`bg-white mt-4 rounded-lg shadow-lg p-6 border border-gray-200 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
                     <h2 className="text-3xl font-bold mb-4 text-center">
                       Final Quizzes
                     </h2>
@@ -339,7 +343,9 @@ export default function LessonsPage() {
                     </div>
                   </div>
                   {/* Reset Confirmation Block */}
-                  <div className="flex justify-center mt-8 pb-10  ">
+                  <div
+                    className={`flex justify-center mt-8 pb-10 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
                     {showResetConfirm ? (
                       <div className="flex flex-col items-center space-y-4">
                         <p className="text-red-600 font-semibold">
