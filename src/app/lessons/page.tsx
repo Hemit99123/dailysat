@@ -1,7 +1,13 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useReducer } from "react";
 import content from "@/data/lessons/lessoncontent";
 import FinalQuiz from "@/components/features/lessons/FinalQuiz";
+import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // 3D flip effect
 const flipStyles = {
@@ -36,6 +42,7 @@ export default function LessonsPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const quizContainerRef = useRef<HTMLDivElement>(null);
   const [quizFinished, setQuizFinished] = useState(false);
+  // rootRef will hold the React root for rendering ReactMarkdown
 
   const lessons = {
     Math: {
@@ -76,6 +83,35 @@ export default function LessonsPage() {
       subtopics.map((sub) => ({ subtopic: sub, topic }))
     )
   );
+  const MARKDOWN_PROPS = {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeRaw as any, rehypeKatex],
+  };
+  const markdown = (content: string) => {
+    const SHOW_SKELETON = content === "Loading...";
+
+    return (
+      <>
+        {SHOW_SKELETON ? (
+          <></>
+        ) : (
+          <div className="bg-blue-200 border border-blue-400 mt-2 p-4 rounded-lg">
+            <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
+          </div>
+        )}
+        {SHOW_SKELETON ? (
+          <div className="mt-2 flex flex-col gap-2">
+            <Skeleton className="w-full h-64 bg-gray-400" />
+          </div>
+        ) : (
+          <></>
+        )}
+      </>
+    );
+  };
+
+  const INIT_STATE_ANS = ["", "", ""];
+  const [answers, setAnswers] = useState<Array<string>>(INIT_STATE_ANS);
 
   const currentSubtopicData = allSubtopics[currentSubtopicIndex];
   const currentTopic = currentSubtopicData?.topic;
@@ -131,7 +167,7 @@ export default function LessonsPage() {
     }, 500);
   };
 
-  const handleAnswerSelect = (questionIndex: number, option: string) => {
+  const handleAnswerSelect = async (questionIndex: number, option: string) => {
     if (selectedAnswers[questionIndex]) return;
     setSelectedAnswers((prev) => ({ ...prev, [questionIndex]: option }));
   };
@@ -203,7 +239,7 @@ export default function LessonsPage() {
   return (
     <div className="min-h-screen p-6 flex justify-center">
       <div className="w-full max-w-5xl flex flex-col space-y-10">
-        <div className="relativ" style={flipStyles}>
+        <div className="relative" style={flipStyles}>
           <div
             className={`transition-transform duration-500 ease-in-out w-full min-h-screen`}
             style={
@@ -225,7 +261,9 @@ export default function LessonsPage() {
             >
               {selectedTopic === null && (
                 <>
-                  <div className="flex-1">
+                  <div
+                    className={`flex-1 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
                     <h1 className="text-4xl font-bold mb-6 text-center">
                       Lessons
                     </h1>
@@ -278,7 +316,9 @@ export default function LessonsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white mt-4 rounded-lg shadow-lg p-6 border border-gray-200">
+                  <div
+                    className={`bg-white mt-4 rounded-lg shadow-lg p-6 border border-gray-200 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
                     <h2 className="text-3xl font-bold mb-4 text-center">
                       Final Quizzes
                     </h2>
@@ -302,8 +342,10 @@ export default function LessonsPage() {
                       </button>
                     </div>
                   </div>
-
-                  <div className="flex justify-center mt-8">
+                  {/* Reset Confirmation Block */}
+                  <div
+                    className={`flex justify-center mt-8 pb-10 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
                     {showResetConfirm ? (
                       <div className="flex flex-col items-center space-y-4">
                         <p className="text-red-600 font-semibold">
@@ -350,6 +392,7 @@ export default function LessonsPage() {
               {selectedTopic !== null && (
                 <div className="flex w-full lg:flex-row flex-col-reverse justify-center items-stretch h-full">
                   {!isFinalQuiz && (
+                    /* Units Sidebar */
                     <div
                       className={`bg-white rounded-lg h-full lg:mt-0 mt-4 shadow-lg border-2 border-gray-200 ${sidebarCollapsed ? "w-0 h-48 opacity-0 overflow-hidden p-0 mr-0" : "w-full lg:w-64 p-4 shadow-lg mr-6"}`}
                     >
@@ -436,7 +479,12 @@ export default function LessonsPage() {
                                     Summary {detail.summary && "✔"}
                                   </button>
                                   <button
-                                    onClick={() => setShowPractice(true)}
+                                    onClick={() =>
+                                      setShowPractice((prev) => {
+                                        setAnswers(INIT_STATE_ANS);
+                                        return true;
+                                      })
+                                    }
                                     className={`text-left px-3 py-1 rounded hover:bg-gray-200 ${
                                       showPractice ? "font-semibold" : ""
                                     }`}
@@ -453,6 +501,7 @@ export default function LessonsPage() {
                   )}
 
                   {!isFinalQuiz && sidebarCollapsed && (
+                    /* Add  sidebar expansion */
                     <button
                       onClick={() => setSidebarCollapsed(false)}
                       className="mr-4 bg-blue-200 lg:block flex justify-center lg:mt-0 mt-4 lg:w-[35px] w-full hover:bg-gray-300 h-full p-2 rounded"
@@ -596,9 +645,70 @@ export default function LessonsPage() {
                                     })}
                                   </div>
                                   {isAnswered && (
-                                    <p className="mt-2 text-sm text-gray-700">
-                                      {q.explanation}
-                                    </p>
+                                    <>
+                                      <p className="mt-2 text-sm text-gray-700">
+                                        {q.explanation}
+                                      </p>
+                                      <button
+                                        className="p-2 bg-blue-200 border border-blue-400 rounded-lg"
+                                        id={`deepseek-explanation-${idx}`}
+                                        onClick={async () => {
+                                          if (
+                                            (
+                                              document.getElementById(
+                                                `deepseek-explanation-${idx}`
+                                              ) as HTMLButtonElement
+                                            ).innerText === "Hide Explanation"
+                                          ) {
+                                            setAnswers((prev) => {
+                                              const updated = [...prev];
+                                              updated[idx] = "";
+                                              console.log(updated);
+                                              return updated;
+                                            });
+                                            return;
+                                          }
+                                          setAnswers((prev) => {
+                                            const updated = [...prev];
+                                            updated[idx] = "Loading...";
+                                            console.log(updated);
+                                            return updated;
+                                          });
+                                          const res = await axios.post(
+                                            "/api/deepseek",
+                                            {
+                                              prompt:
+                                                q.question +
+                                                `Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
+                                            }
+                                          );
+
+                                          setAnswers((prev) => {
+                                            const updated = [...prev];
+                                            let expl = res?.data.replaceAll(
+                                              "\\times",
+                                              "*"
+                                            );
+                                            expl = expl.replaceAll(
+                                              "\\boxed",
+                                              ""
+                                            );
+                                            updated[idx] =
+                                              res?.data || "No response.";
+                                            console.log(updated);
+                                            return updated;
+                                          });
+                                        }}
+                                      >
+                                        {answers[idx] === "Loading..."
+                                          ? "Loading..."
+                                          : answers[idx] === ""
+                                            ? "Show Detailed Explanation"
+                                            : "Hide Explanation"}
+                                      </button>
+
+                                      {answers[idx] && markdown(answers[idx])}
+                                    </>
                                   )}
                                 </div>
                               );
