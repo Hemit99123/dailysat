@@ -185,7 +185,7 @@ const NavBar = () => {
                         </Link>
                         <Link
                           href="/practice/vocab"
-                          className="text-gray-500 text-sm mt-0.5 ml-8 flex items-center space-x-1 w-full block rounded-lg hover:bg-gray-100 transition-colors"
+                          className="text-gray-500 text-sm mt-0.5 ml-8 flex items-center space-x-1 w-5/6 block rounded-lg hover:bg-gray-100 transition-colors"
                           onClick={handleDropdownLinkClick}
                         >
                           <span className="text-base">📖</span>{" "}

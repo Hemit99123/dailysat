@@ -45,9 +45,17 @@ export default function VocabPracticePage() {
       question: {
         question: trimmedSentence,
         paragraph: null,
-        choices: Object.fromEntries(currentQuestion.choices.map((c: string) => [c, c])),
-        explanation: `The correct word was "${currentQuestion.correct_answer}".` + (extraExplanation ? ` (${extraExplanation})` : ""),
-        correct_answer: currentQuestion.correct_answer,
+        choices: Object.fromEntries(
+          currentQuestion.choices.map((choice: string, index: number) => [
+            String.fromCharCode(65 + index), // 65 = 'A'
+            choice,
+          ])
+        ),
+        explanation: `The correct word was "${currentQuestion.correct_answer}". Here is an example of the correct answer used in a sentence: ` + (extraExplanation ? ` (${extraExplanation})` : ""),
+        correct_answer: String.fromCharCode(
+          65 + currentQuestion.choices.findIndex((c: string) => c === currentQuestion.correct_answer)
+        ),
+
       },
       difficulty: "Medium",
     };
