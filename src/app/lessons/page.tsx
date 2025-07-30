@@ -1,7 +1,12 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useReducer } from "react";
 import content from "@/data/lessons/lessoncontent";
 import FinalQuiz from "@/components/features/lessons/FinalQuiz";
+import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 
 // 3D flip effect
 const flipStyles = {
@@ -36,6 +41,7 @@ export default function LessonsPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const quizContainerRef = useRef<HTMLDivElement>(null);
   const [quizFinished, setQuizFinished] = useState(false);
+  // rootRef will hold the React root for rendering ReactMarkdown
 
   const lessons = {
     Math: {
@@ -76,6 +82,15 @@ export default function LessonsPage() {
       subtopics.map((sub) => ({ subtopic: sub, topic }))
     )
   );
+  const MARKDOWN_PROPS = {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeRaw as any, rehypeKatex],
+  };
+  const markdown = (content: string) => (
+    <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
+  );
+  const INIT_STATE_ANS = ["", "", ""];
+  const [answers, setAnswers] = useState<Array<string>>(INIT_STATE_ANS);
 
   const currentSubtopicData = allSubtopics[currentSubtopicIndex];
   const currentTopic = currentSubtopicData?.topic;
@@ -131,7 +146,7 @@ export default function LessonsPage() {
     }, 500);
   };
 
-  const handleAnswerSelect = (questionIndex: number, option: string) => {
+  const handleAnswerSelect = async (questionIndex: number, option: string) => {
     if (selectedAnswers[questionIndex]) return;
     setSelectedAnswers((prev) => ({ ...prev, [questionIndex]: option }));
   };
@@ -436,7 +451,12 @@ export default function LessonsPage() {
                                     Summary {detail.summary && "✔"}
                                   </button>
                                   <button
-                                    onClick={() => setShowPractice(true)}
+                                    onClick={() =>
+                                      setShowPractice((prev) => {
+                                        setAnswers(INIT_STATE_ANS);
+                                        return true;
+                                      })
+                                    }
                                     className={`text-left px-3 py-1 rounded hover:bg-gray-200 ${
                                       showPractice ? "font-semibold" : ""
                                     }`}
@@ -596,9 +616,54 @@ export default function LessonsPage() {
                                     })}
                                   </div>
                                   {isAnswered && (
-                                    <p className="mt-2 text-sm text-gray-700">
-                                      {q.explanation}
-                                    </p>
+                                    <>
+                                      <p className="mt-2 text-sm text-gray-700">
+                                        {q.explanation}
+                                      </p>
+                                      <button
+                                        className="p-2 bg-blue-300 rounded-lg"
+                                        onClick={async () => {
+                                          setAnswers((prev) => {
+                                            const updated = [...prev];
+                                            updated[idx] = "Loading...";
+                                            console.log(updated);
+                                            return updated;
+                                          });
+                                          const res = await axios.post(
+                                            "/api/deepseek",
+                                            {
+                                              prompt:
+                                                q.question +
+                                                `Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
+                                            }
+                                          );
+
+                                          setAnswers((prev) => {
+                                            const updated = [...prev];
+                                            let expl = res?.data.replaceAll(
+                                              "\\times",
+                                              "*"
+                                            );
+                                            expl = expl.replaceAll(
+                                              "\\boxed",
+                                              ""
+                                            );
+                                            updated[idx] =
+                                              res?.data || "No response.";
+                                            console.log(updated);
+                                            return updated;
+                                          });
+                                        }}
+                                      >
+                                        {answers[idx] === "Loading..."
+                                          ? "Loading..."
+                                          : answers[idx] === ""
+                                            ? "Show Explanation"
+                                            : "Hide Explanation"}
+                                      </button>
+
+                                      {answers[idx] && markdown(answers[idx])}
+                                    </>
                                   )}
                                 </div>
                               );
