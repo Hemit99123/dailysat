@@ -143,6 +143,7 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
               <strong>Topic:</strong> {subject} {"  "}
             </span>
           )}
+          <span className="mx-2">|</span>
           <span className="font-bold">Difficulty:</span> {currentQuestion?.questionMeta?.difficulty || difficulty}
         </div>
         
