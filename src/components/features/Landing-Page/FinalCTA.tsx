@@ -38,7 +38,7 @@ const FinalCTA = () => {
                   mt-4
                 "
               >
-                <span>Start your journey</span>
+                <span className="flex text-center">Start your journey</span>
                 <ArrowSvg
                   className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
                   stroke="currentColor"
