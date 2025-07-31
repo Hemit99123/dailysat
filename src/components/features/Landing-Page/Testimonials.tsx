@@ -11,7 +11,7 @@ const Testimonials = () => {
         badgeText="Testimonials"
         text="Other People."
         gradientText='Real Opinions.'
-        description="Real people, real impact"
+        description="The raw impact DailySAT had on the lives of many students, everywhere in the world!"
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
