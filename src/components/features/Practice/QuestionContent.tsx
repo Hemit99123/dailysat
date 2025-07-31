@@ -163,7 +163,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
             </button>
           )}
 
-
           <button 
             onClick={() => {
               setIsLoading(true);
