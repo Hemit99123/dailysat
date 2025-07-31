@@ -23,7 +23,6 @@ export default function CheckoutButton() {
       const itemsToBuy = Object.entries(e.detail.items).filter(
         ([_, val]) => val > 0
       );
-      console.log(itemsToBuy);
       if (itemsToBuy.length === 0) {
         setTimeout(() => {
           toast.error("Please buy items before you continue.", {

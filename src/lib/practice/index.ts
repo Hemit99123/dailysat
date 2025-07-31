@@ -11,6 +11,5 @@ export const handleFetchQuestion = async <T extends Type>(
   const response = await axios.get(
     `/api/get-question?type=${type}&subject=${subject}&difficulty=${difficulty}`
   );
-  console.log(response);
   return response;
 };

@@ -81,9 +81,7 @@ const Home = () => {
     const handleGetUser = async () => {
       try {
         const response = await axios.get("/api/auth/get-user");
-        console.log(response.data);
         const userData: User | undefined = response?.data?.user;
-        console.log(userData);
         setUserCoins(userData?.currency ?? 0);
         getIcon(userData);
         getBanner(userData);

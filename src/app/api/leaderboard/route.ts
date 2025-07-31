@@ -26,9 +26,8 @@ export async function GET(request: NextRequest) {
     const leaderboardData = await db
       .collection("leaderboard")
       .find({ league: league })
-      .sort({ points: -1, wins: -1 })
+      .sort({ score: -1 })
       .toArray();
-
     return NextResponse.json({
       message: "Leaderboard successfully retrieved",
       data: leaderboardData,

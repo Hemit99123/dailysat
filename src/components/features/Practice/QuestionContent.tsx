@@ -68,7 +68,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
         subject as EnglishSubjects
       );
       setCurrentQuestion(response.data);
-      console.log(response.data);
     } catch (err) {
       setError("Failed to fetch question. Please try again.");
     } finally {
