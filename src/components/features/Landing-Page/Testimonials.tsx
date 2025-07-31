@@ -9,7 +9,8 @@ const Testimonials = () => {
     <div className="flex justify-center items-center flex-col">
       <Header
         badgeText="Testimonials"
-        text="What Others Think About Us"
+        text="Other People."
+        gradientText='Real Opinions.'
         description="Real people, real impact"
       />
 
