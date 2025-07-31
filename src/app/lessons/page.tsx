@@ -687,7 +687,7 @@ export default function LessonsPage() {
                                           });
                                           try {
                                             const res = await axios.post(
-                                              "/api/deepseek",
+                                              "/api/mistralai",
                                               {
                                                 prompt:
                                                   sanitizeForPrompt(

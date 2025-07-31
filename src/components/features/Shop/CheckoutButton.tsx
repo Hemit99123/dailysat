@@ -31,7 +31,7 @@ export default function CheckoutButton() {
             pauseOnHover: false,
             autoClose: 300,
           });
-        }, 500);
+        }, 800);
         return;
       }
 

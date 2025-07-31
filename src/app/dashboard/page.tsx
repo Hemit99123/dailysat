@@ -12,6 +12,7 @@ import { useUserStore } from "@/store/user";
 import { User } from "@/types/user";
 import { DisplayBanner } from "@/types/dashboard/banner";
 import RedeemReferral from "@/components/features/Dashboard/RedeemReferral";
+import { toast } from "react-toastify";
 
 const Home = () => {
   const [icon, setIcon] = useState("");
@@ -87,7 +88,9 @@ const Home = () => {
         getIcon(userData);
         getBanner(userData);
         setUser?.(userData ?? null);
-      } catch (error) {}
+      } catch (error) {
+        toast.error("Sorry, we could not get your user data");
+      }
     };
 
     handleGetUser();

@@ -1,103 +1,171 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
-import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
 
+import { Difficulty } from "@/types/practice/difficulty";
+import { EnglishSubjects, Type } from "@/types/practice/subject";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Calculator,
-  Bookmark,
   Check,
   X as CloseIcon,
   ArrowRight,
+  RefreshCcw,
 } from "lucide-react";
+import { useCalculatorModalStore } from "@/store/modals";
+import { handleFetchQuestion } from "@/lib/practice/index";
+import { QuestionData } from "@/types/practice/questions";
+import { handleSubmitQuestion } from "@/lib/server-actions/submitQuestionAction";
+import { toast } from "react-toastify";
 
 interface QuestionContentProps {
-  isLoading: boolean;
-  currentQuestion: Question | null;
-  subject: string;
-  selectedDomain: string;
-  showDesmos?: boolean;
-  setShowDesmos?: (show: boolean) => void;
-  handleMarkForLater: () => void;
-  currentQuestionStatus: QuestionHistory | null;
-  selectedAnswer: string | null;
-  isSubmitted: boolean;
-  isViewingAnsweredHistory: boolean;
-  handleAnswerSelect: (key: string) => void;
-  isCorrect: boolean | null;
-  handleSubmit: () => void;
-  showNext: () => void;
-  showExplanation: boolean;
-  isMarked: boolean;
+  subject: EnglishSubjects;
+  type: Type;
+  difficulty: Difficulty;
+  onAnswered?: (isCorrect: boolean) => void;
 }
+
 const MARKDOWN_PROPS = {
   remarkPlugins: [remarkMath],
   rehypePlugins: [rehypeRaw as any, rehypeKatex],
 };
 
-export const QuestionContent: React.FC<QuestionContentProps> = ({
-  isLoading,
-  currentQuestion,
+const QuestionContent: React.FC<QuestionContentProps> = ({
   subject,
-  selectedDomain,
-  showDesmos,
-  setShowDesmos,
-  handleMarkForLater,
-  currentQuestionStatus,
-  selectedAnswer,
-  isSubmitted,
-  isViewingAnsweredHistory,
-  handleAnswerSelect,
-  isCorrect,
-  handleSubmit,
-  showNext,
-  showExplanation,
-  isMarked,
+  type,
+  difficulty,
+  onAnswered,
 }) => {
-  if (isLoading)
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(
+    null
+  );
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const isOpen = useCalculatorModalStore((state) => state.isOpen);
+  const openModal = useCalculatorModalStore((state) => state.openModal);
+  const closeModal = useCalculatorModalStore((state) => state.closeModal);
+
+  const fetchQuestion = async () => {
+    setError(null);
+    setSelectedAnswer(null);
+    setIsSubmitted(false);
+    setIsCorrect(null);
+    setShowExplanation(false);
+
+    try {
+      const response = await handleFetchQuestion(
+        type,
+        difficulty as Difficulty,
+        subject as EnglishSubjects
+      );
+      setCurrentQuestion(response.data);
+      console.log(response.data);
+    } catch (err) {
+      setError("Failed to fetch question. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // No need to set isLoading to true as the component mounted with that val
+    fetchQuestion();
+  }, [type, difficulty, subject]);
+
+  const handleAnswerSelect = (key: string) => {
+    if (!isSubmitted) {
+      setSelectedAnswer(key);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!selectedAnswer || !currentQuestion) return;
+    const isCorrect =
+      selectedAnswer === currentQuestion.questionMeta.question.correct_answer;
+
+    handleSubmitQuestion(isCorrect)
+      .then(() => {
+        toast.success("Question submitted!");
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+
+    setIsCorrect(isCorrect);
+    setIsSubmitted(true);
+    setShowExplanation(true);
+
+    if (onAnswered) {
+      onAnswered(isCorrect);
+    }
+  };
+
+  if (isLoading) {
     return (
-      <>
-        <div className="flex justify-center items-center h-full">
-          <iframe
-            src="https://lottie.host/embed/825cda49-268f-442e-98ac-4225c480da21/NRYYcydDJE.lottie"
-            className="w-64 h-64"
-            title="Loading animation"
-          ></iframe>
-        </div>
-      </>
+      <div>
+        <Skeleton className="w-full h-[50px] bg-black/20 mb-5" />
+        <Skeleton className="w-full h-[30px] mb-2 bg-black/30" />
+        {[1, 2, 3, 4].map((item, index) => (
+          <Skeleton key={index} className="w-full h-[50px] mb-2" />
+        ))}
+        <Skeleton className="w-28 h-12 mb-2 bg-black/50" />
+      </div>
     );
-  if (!currentQuestion)
+  }
+
+  if (error) {
     return (
-      <p>
-        No questions found for the selected filters. Please try a different
-        selection.
-      </p>
+      <div className="text-center py-8">
+        <p className="text-red-600 mb-4">{error}</p>
+        <button
+          onClick={fetchQuestion}
+          className="rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow hover:bg-blue-700"
+        >
+          Try Again
+        </button>
+      </div>
     );
+  }
+
   const markdown = (content: string) => (
     <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
   );
+
   return (
     <>
-      {/* Metadata bar (topic, difficulty, actions)*/}
+      {/* Metadata bar */}
       <div className="flex flex-col md:flex-row md:mb-4 items-center justify-between rounded-md bg-blue-50 p-3 text-sm shadow md:gap-3 md:p-3">
         <div className="text-black">
-          {!(subject === "English" && selectedDomain === "All") && (
-            <span>
-              <strong>Topic:</strong> {currentQuestion.domain} |{" "}
-            </span>
-          )}
+          {!(type === "english" && subject === "All") &&
+            currentQuestion?.questionMeta?.subject && (
+              <>
+                <strong>Topic:</strong> {subject} {"  "}
+                <span className="mx-2">|</span>
+              </>
+            )}
           <span className="font-bold">Difficulty:</span>{" "}
-          {currentQuestion.difficulty}
+          {currentQuestion?.questionMeta?.difficulty || difficulty}
         </div>
-        <div className="flex gap-2">
-          {subject === "Math" && (
+
+        {/* Btn section */}
+        <div className="flex space-x-2">
+          {type === "math" && (
             <button
-              type="button"
-              onClick={() => setShowDesmos?.(!showDesmos)}
+              onClick={() => {
+                if (isOpen) closeModal();
+                else openModal();
+              }}
               className={`flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all ${
-                showDesmos
+                isOpen
                   ? "border-blue-500 bg-blue-100 text-blue-700 hover:bg-blue-200"
                   : "border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
               }`}
@@ -108,112 +176,103 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
           )}
 
           <button
-            onClick={handleMarkForLater}
-            className={`flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all ${
-              isMarked
-                ? "border-yellow-400 bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-                : "border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
-            }`}
-            title="Mark for Review"
+            onClick={() => {
+              setIsLoading(true);
+              fetchQuestion();
+            }}
+            className="flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
           >
-            <Bookmark
-              className={`h-4 w-4 ${isMarked ? "fill-yellow-600 stroke-yellow-600" : ""}`}
-            />
-            {isMarked ? "Marked" : "Mark for Review"}
+            <RefreshCcw size={16} />
+            Get new question
           </button>
         </div>
       </div>
 
-      {/* English passage / paragraph (can be raw HTML + markdown)*/}
-      {subject === "English" && currentQuestion.question.paragraph && (
-        <div className="mb-5 max-h-52 overflow-y-auto rounded border border-gray-300 bg-gray-100 p-4 leading-relaxed text-base">
-          {markdown(currentQuestion.question.paragraph)}
-        </div>
-      )}
+      {/* English paragraph */}
+      {type === "english" &&
+        currentQuestion?.questionMeta?.question?.paragraph && (
+          <div className="mb-5 max-h-52 overflow-y-auto rounded border border-gray-300 bg-gray-100 p-4 leading-relaxed text-base">
+            {markdown(currentQuestion.questionMeta.question.paragraph)}
+          </div>
+        )}
 
-      {/* Question stem*/}
+      {/* Question */}
       <div className="mb-5 text-base font-bold text-black">
-        {markdown(currentQuestion.question.question)}
+        {currentQuestion?.questionMeta?.question?.question &&
+          markdown(currentQuestion.questionMeta.question.question)}
       </div>
 
-      {/* Answer choices*/}
+      {/* Choices */}
       <div className="mb-5">
-        {Object.entries(currentQuestion.question.choices).map(
-          ([key, value]) => {
-            const isSelected = selectedAnswer === key;
-            const isCorrectChoice =
-              key === currentQuestion.question.correct_answer;
+        {(currentQuestion?.questionMeta?.question?.choices &&
+          Object.entries(currentQuestion.questionMeta.question.choices).map(
+            ([key, value]) => {
+              const isSelected = selectedAnswer === key;
+              const isCorrectChoice =
+                key === currentQuestion.questionMeta.question.correct_answer;
 
-            let borderColor = "border-gray-300";
-            let backgroundColor = "bg-white";
-            let textColor = "text-black";
+              let borderColor = "border-gray-300";
+              let backgroundColor = "bg-white";
+              let textColor = "text-black";
 
-            if (isViewingAnsweredHistory || isSubmitted) {
-              if (isCorrectChoice) {
-                borderColor = "border-green-500";
-                backgroundColor = "bg-green-50";
-                textColor = "text-green-800";
-              }
-              if (isSelected) {
+              if (isSubmitted) {
                 if (isCorrectChoice) {
                   borderColor = "border-green-500";
                   backgroundColor = "bg-green-50";
                   textColor = "text-green-800";
-                } else {
-                  borderColor = "border-red-500";
-                  backgroundColor = "bg-red-50";
-                  textColor = "text-red-800";
                 }
+                if (isSelected) {
+                  if (isCorrectChoice) {
+                    borderColor = "border-green-500";
+                    backgroundColor = "bg-green-50";
+                    textColor = "text-green-800";
+                  } else {
+                    borderColor = "border-red-500";
+                    backgroundColor = "bg-red-50";
+                    textColor = "text-red-800";
+                  }
+                }
+              } else if (isSelected) {
+                borderColor = "border-blue-500";
+                backgroundColor = "bg-blue-100";
               }
-            } else if (isSelected) {
-              borderColor = "border-blue-500";
-              backgroundColor = "bg-blue-100";
-            }
 
-            return (
-              <button
-                key={key}
-                onClick={() =>
-                  !isViewingAnsweredHistory &&
-                  !isSubmitted &&
-                  handleAnswerSelect(key)
-                }
-                disabled={isViewingAnsweredHistory || isSubmitted}
-                className={`mb-2 relative block w-full rounded border px-4 py-3 text-left text-base shadow transition-opacity ${borderColor} ${backgroundColor} ${textColor} ${
-                  isViewingAnsweredHistory || isSubmitted
-                    ? "cursor-default"
-                    : "hover:opacity-90"
-                }`}
-              >
-                <ReactMarkdown
-                  {...MARKDOWN_PROPS}
-                  components={{
-                    p: ({ children }) => (
-                      <span className="inline">{children}</span>
-                    ),
-                  }}
+              return (
+                <button
+                  key={key}
+                  onClick={() => handleAnswerSelect(key)}
+                  disabled={isSubmitted}
+                  className={`mb-2 relative block w-full rounded border px-4 py-3 text-left text-base shadow transition-opacity ${borderColor} ${backgroundColor} ${textColor} ${
+                    isSubmitted ? "cursor-default" : "hover:opacity-90"
+                  }`}
                 >
-                  {`${key}. ${value}`}
-                </ReactMarkdown>
+                  <ReactMarkdown
+                    {...MARKDOWN_PROPS}
+                    components={{
+                      p: ({ children }) => (
+                        <span className="inline">{children}</span>
+                      ),
+                    }}
+                  >
+                    {`${key}. ${value}`}
+                  </ReactMarkdown>
 
-                {(isViewingAnsweredHistory || isSubmitted) &&
-                  isCorrectChoice && (
+                  {isSubmitted && isCorrectChoice && (
                     <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-green-600" />
                   )}
-                {(isViewingAnsweredHistory || isSubmitted) &&
-                  isSelected &&
-                  !isCorrectChoice && (
+                  {isSubmitted && isSelected && !isCorrectChoice && (
                     <CloseIcon className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-red-600" />
                   )}
-              </button>
-            );
-          }
-        )}
+                </button>
+              );
+            }
+          )) ||
+          null}
       </div>
 
-      {/* Action buttons (Submit / Next)*/}
+      {/* Submit / Next buttons */}
       <div className="flex gap-3">
-        {!isViewingAnsweredHistory && !isSubmitted ? (
+        {!isSubmitted ? (
           <button
             onClick={handleSubmit}
             disabled={!selectedAnswer}
@@ -227,7 +286,7 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
           </button>
         ) : (
           <button
-            onClick={showNext}
+            onClick={fetchQuestion}
             className="rounded bg-blue-600 px-6 py-3 text-base font-bold text-white shadow hover:bg-blue-700"
           >
             Next <ArrowRight size={16} className="inline ml-1" />
@@ -235,8 +294,8 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
         )}
       </div>
 
-      {/* Explanation panel*/}
-      {(showExplanation || isViewingAnsweredHistory) && (
+      {/* Explanation */}
+      {showExplanation && (
         <div className="mt-5 rounded border border-gray-300 bg-gray-100 p-4 text-black">
           {isCorrect ? (
             <div className="mb-2 font-bold text-green-600">Correct!</div>
@@ -250,10 +309,11 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
               <div className="mb-2">
                 Correct answer:{" "}
                 <span className="font-bold text-green-600">
-                  {currentQuestion.question.correct_answer}
+                  {currentQuestion?.questionMeta?.question?.correct_answer}
                 </span>
               </div>
-              {markdown(currentQuestion.question.explanation)}
+              {currentQuestion?.questionMeta?.question?.explanation &&
+                markdown(currentQuestion.questionMeta.question.explanation)}
             </>
           )}
         </div>
@@ -261,3 +321,5 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
     </>
   );
 };
+
+export default QuestionContent;

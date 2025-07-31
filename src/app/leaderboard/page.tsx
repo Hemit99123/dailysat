@@ -83,35 +83,37 @@ const HomePage: React.FC = () => {
           <TableRow className="bg-[#2563EA] hover:bg-[#2563EA] text-white">
             <TableHead className="text-white rounded-tl-lg">Username</TableHead>
             <TableHead className="text-white">Score</TableHead>
+            <TableHead className="text-white ">Rank</TableHead>
             <TableHead className="text-white rounded-tr-lg">League</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-8">
+              <TableCell colSpan={4} className="text-center py-8">
                 Loading...
               </TableCell>
             </TableRow>
           ) : error ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center bg-gray-100 py-8">
+              <TableCell colSpan={4} className="text-center bg-gray-100 py-8">
                 {error}
               </TableCell>
             </TableRow>
           ) : leaderboardData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center bg-gray-100 py-8">
+              <TableCell colSpan={4} className="text-center bg-gray-100 py-8">
                 No data available for {selectedLeague} league
               </TableCell>
             </TableRow>
           ) : (
-            leaderboardData.map((entry) => (
+            leaderboardData.map((entry, idx) => (
               <TableRow key={entry._id}>
                 <TableCell className="max-w-[200px] overflow-hidden">
                   {entry.username}
                 </TableCell>
                 <TableCell>{entry.score}</TableCell>
+                <TableCell>{idx + 1}</TableCell>
                 <TableCell>{entry.league}</TableCell>
               </TableRow>
             ))

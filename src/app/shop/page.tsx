@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
 import { User } from "@/types/user";
+import { toast } from "react-toastify";
 
 export default function Shop() {
   const user = useUserStore((s) => s.user);
@@ -21,7 +22,11 @@ export default function Shop() {
         const response = await axios.get("/api/auth/get-user");
         const userData: User | undefined = response?.data?.user;
         setUser?.(userData ?? null);
-      } catch (error) {}
+      } catch (error) {
+        toast.error(
+          "Sorry, we couldn't retrieve your user account, please try again later"
+        );
+      }
     };
     handleGetUser();
   }, []);
