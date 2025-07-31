@@ -9,8 +9,9 @@ const Testimonials = () => {
     <div className="flex justify-center items-center flex-col">
       <Header
         badgeText="Testimonials"
-        text="What Others Think About Us"
-        description="Real people, real impact"
+        text="Other People."
+        gradientText='Real Opinions.'
+        description="The raw impact DailySAT had on the lives of many students, everywhere in the world!"
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
@@ -24,7 +25,7 @@ const Testimonials = () => {
           >
             <TestimonialCard
               name={testimonial.name}
-              title={testimonial.title}
+              image_path={testimonial.image_path}
               testimonial={testimonial.testimonial}
               rating={testimonial.rating}
             />
