@@ -7,13 +7,10 @@ interface ErrorBoundaryProps {
 
 const ErrorBoundary:React.FC<ErrorBoundaryProps> = ({ children, fallback }) => {
   const [hasError, setHasError] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       setHasError(true);
-      setError(event.error || new Error('Unknown error'));
-      console.error('ErrorBoundary caught an error:', event.error || event.message);
     };
 
     window.addEventListener('error', handleError);
