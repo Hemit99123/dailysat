@@ -679,7 +679,7 @@ export default function LessonsPage() {
                                               {
                                                 prompt:
                                                   q.question +
-                                                  `Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
+                                                  `. Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
                                               }
                                             );
 
