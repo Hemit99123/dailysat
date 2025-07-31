@@ -2,21 +2,21 @@
 
 import React from "react";
 import {
-  Target,
   CheckCircle2,
   XCircle,
   Flame,
   Trophy,
 } from "lucide-react";
+import { IconProgress } from "@tabler/icons-react";
 
-interface ScoreProps {
+interface SessionProgressProps {
   correctCount: number;
   wrongCount: number;
   currentStreak: number;
   maxStreak: number;
 }
 
-const Score: React.FC<ScoreProps> = ({
+const SessionProgress: React.FC<SessionProgressProps> = ({
   correctCount,
   wrongCount,
   currentStreak,
@@ -32,8 +32,8 @@ const Score: React.FC<ScoreProps> = ({
       className="flex w-full rounded-t-lg items-center justify-between bg-blue-200 px-4 py-2 text-left text-sm font-bold text-slate-900"
       >
       <span className="flex items-center gap-2">
-        <Target size={16} className="text-blue-800" />
-        Accuracy
+        <IconProgress size={16} className="text-blue-800" />
+        Progress
       </span>
     </div>
         <div className="space-y-4 px-4 py-4 text-slate-900">
@@ -82,4 +82,4 @@ const Score: React.FC<ScoreProps> = ({
   );
 };
 
-export default Score;
+export default SessionProgress;

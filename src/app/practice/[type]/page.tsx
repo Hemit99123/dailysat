@@ -3,7 +3,7 @@
 import React, { Suspense, useState } from "react";
 import SubjectSidebar from "@/components/features/Practice/SubjectSidebar";
 import QuestionContent from "@/components/features/Practice/QuestionContent";
-import Score from "@/components/features/Practice/Score";
+import SessionProgress from "@/components/features/Practice/SessionProgress";
 import { englishSubjectsArray, mathSubjectsArray } from "@/data/subject";
 import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
@@ -71,7 +71,7 @@ const PracticePageContent = () => {
 
         {/* Score Panel */}
         <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
-          <Score
+          <SessionProgress
             correctCount={correctCount}
             wrongCount={wrongCount}
             currentStreak={currentStreak}
