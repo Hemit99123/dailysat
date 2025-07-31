@@ -14,6 +14,7 @@ import {
   Check,
   X as CloseIcon,
   ArrowRight,
+  RefreshCcw,
 } from "lucide-react";
 import { useCalculatorModalStore } from "@/store/modals";
 import { handleFetchQuestion } from "@/lib/practice/index";
@@ -145,21 +146,33 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
           )}
           <span className="font-bold">Difficulty:</span> {currentQuestion?.questionMeta?.difficulty || difficulty}
         </div>
+        
+        {/* Btn section */}
+        <div className="flex space-x-2">
+          {type === "math" && (
+            <button
+              onClick={() => { if (isOpen) closeModal(); else openModal(); }}
+              className={`flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all ${
+                isOpen
+                  ? "border-blue-500 bg-blue-100 text-blue-700 hover:bg-blue-200"
+                  : "border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <Calculator size={16} />
+              Calculator
+            </button>
+          )}
 
-        {type === "math" && (
-          <button
-            type="button"
-            onClick={() => { if (isOpen) closeModal(); else openModal(); }}
-            className={`flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all ${
-              isOpen
-                ? "border-blue-500 bg-blue-100 text-blue-700 hover:bg-blue-200"
-                : "border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
-            }`}
+
+          <button 
+            onClick={fetchQuestion}
+            className="flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
           >
-            <Calculator size={16} />
-            Calculator
+            <RefreshCcw size={16} />
+            Get new question
           </button>
-        )}
+        </div>
+        
       </div>
 
       {/* English paragraph */}
