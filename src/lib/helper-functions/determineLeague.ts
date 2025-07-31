@@ -1,5 +1,5 @@
 // Helper function to determine league based on points
-const determineLeague = (points: number): string => {
+export const determineLeague = (points: number): string => {
   if (points >= 200) return "Platinum";
   if (points >= 100) return "Gold";
   if (points >= 50) return "Silver";

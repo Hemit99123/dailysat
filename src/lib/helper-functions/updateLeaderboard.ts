@@ -1,5 +1,5 @@
 // Helper function to update leaderboard
-const updateLeaderboard = async (
+export const updateLeaderboard = async (
   db: any,
   league: string,
   userData: {
