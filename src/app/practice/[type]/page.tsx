@@ -4,16 +4,20 @@ import React, { Suspense, useState } from "react";
 import SubjectSidebar from "@/components/features/Practice/SubjectSidebar";
 import QuestionContent from "@/components/features/Practice/QuestionContent";
 import Score from "@/components/features/Practice/Score";
-import { useSearchParams } from 'next/navigation'
 import { englishSubjectsArray, mathSubjectsArray } from "@/data/subject";
 import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { capitalizeFirstLetter } from "@/lib/ui";
+import { useParams } from "next/navigation";
 
 const PracticePageContent = () => {
-  const searchParams = useSearchParams();
+  const params = useParams();
+  const { type } = params;
 
-  const type = searchParams.get("type") as Type;
+  if (type !== "math" && type !== "english") {
+    throw new Error("Proper slug is not provided. Try again.")
+  }
+
   const [selectedTopic, setSelectedTopic] = useState<EnglishSubjects>("All");
   const [difficulty, setDifficulty] = useState<Difficulty>("All");
 
@@ -44,7 +48,7 @@ const PracticePageContent = () => {
         {/* Sidebar */}
         <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
           <SubjectSidebar
-            subject={capitalizeFirstLetter(type) as Capitalize<Type>}
+            subject={capitalizeFirstLetter(type as string) as Capitalize<Type>}
             selectedTopic={selectedTopic}
             setSelectedTopic={setSelectedTopic}
             subjects={type === "math" ? mathSubjectsArray : englishSubjectsArray}
@@ -59,7 +63,7 @@ const PracticePageContent = () => {
             <QuestionContent
               subject={selectedTopic}
               difficulty={difficulty}
-              type={type}
+              type={type as Type}
               onAnswered={handleAnswered}
             />
           </div>
