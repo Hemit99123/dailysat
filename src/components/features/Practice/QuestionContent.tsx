@@ -82,7 +82,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
 
   const handleSubmit = () => {
     if (!selectedAnswer || !currentQuestion) return;
-
     const isCorrect = selectedAnswer === currentQuestion.questionMeta.question.correct_answer;
 
     handleSubmitQuestion(isCorrect)
