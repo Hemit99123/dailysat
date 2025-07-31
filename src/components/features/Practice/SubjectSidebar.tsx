@@ -31,7 +31,6 @@ const SubjectSidebar: React.FC<SubjectSidebarProps> = ({
   const otherSubject = subject === "Math" ? "English" : "Math";
   const switchHref = `/practice/${otherSubject.toLowerCase()}`;
 
-
   return (
     <aside className="w-full md:w-[250px] space-y-6 rounded-lg bg-slate-50 p-5 shadow mb-5 md:mb-0">
       {/* Subject Header */}
