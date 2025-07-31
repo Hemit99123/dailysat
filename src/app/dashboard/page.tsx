@@ -7,7 +7,7 @@ import Option from "@/components/features/Dashboard/Option";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { Book, Calendar, EqualApproximately } from "lucide-react";
+import { Book, Calendar, Sigma } from "lucide-react";
 import { useUserStore } from "@/store/user";
 import { User } from "@/types/user";
 import { DisplayBanner } from "@/types/dashboard/banner";
@@ -80,15 +80,15 @@ const Home = () => {
     const handleGetUser = async () => {
       try {
         const response = await axios.get("/api/auth/get-user");
+        console.log(response.data);
         const userData: User | undefined = response?.data?.user;
-
+        console.log(userData);
         setUserCoins(userData?.currency ?? 0);
-
-        if (userData?.investors) {
+        if (response?.data?.user?.investors) {
           const result = await axios.post("/api/investor");
-          setUserCoins(result?.data?.totalQuantity ?? 0);
+          const { totalQuantity } = result.data;
+          setUserCoins(totalQuantity);
         }
-
         getIcon(userData);
         getBanner(userData);
         setUser?.(userData ?? null);
@@ -148,11 +148,7 @@ const Home = () => {
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
           {user ? (
-            <Option
-              icon={<EqualApproximately />}
-              header="Math"
-              redirect="/practice/math"
-            />
+            <Option icon={<Sigma />} header="Math" redirect="/practice/math" />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}

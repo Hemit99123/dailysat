@@ -20,7 +20,6 @@ export function CalculatorOptions() {
 
   const isOpen = useCalculatorModalStore((state) => state.isOpen);
   const closeModal = useCalculatorModalStore((state) => state.closeModal);
-  const openModal = useCalculatorModalStore((state) => state.openModal);
 
   const handleMouseDown = useCallback(
     (

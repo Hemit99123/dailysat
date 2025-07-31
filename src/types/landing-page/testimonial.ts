@@ -1,6 +1,6 @@
 export interface Testimonial {
   name: string;
-  title: string;
+  image_path: string;
   testimonial: string;
   rating?: number;
 }

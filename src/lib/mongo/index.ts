@@ -1,5 +1,3 @@
-// src/lib/mongo/index.ts
-
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 const mongoUrl = process.env.MONGO_URL;
@@ -17,3 +15,5 @@ export const client: MongoClient = new MongoClient(mongoUrl, {
     deprecationErrors: true,
   },
 });
+
+export const db = client.db("DailySAT")

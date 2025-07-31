@@ -1,5 +1,5 @@
 import { client } from "@/lib/mongo";
-import { Db, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { BONUS_REFERRED_PERSON, BONUS_REFERRER } from "@/data/constant";
 import { handleGetSession } from "@/lib/auth/authActions";
 

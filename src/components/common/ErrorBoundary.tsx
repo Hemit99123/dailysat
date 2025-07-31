@@ -10,12 +10,10 @@ const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
   fallback,
 }) => {
   const [hasError, setHasError] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       setHasError(true);
-      setError(event.error || new Error("Unknown error"));
     };
 
     window.addEventListener("error", handleError);
