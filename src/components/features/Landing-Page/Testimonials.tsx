@@ -24,7 +24,7 @@ const Testimonials = () => {
           >
             <TestimonialCard
               name={testimonial.name}
-              title={testimonial.title}
+              image_path={testimonial.image_path}
               testimonial={testimonial.testimonial}
               rating={testimonial.rating}
             />
