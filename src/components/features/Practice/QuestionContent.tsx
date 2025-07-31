@@ -18,6 +18,8 @@ import {
 import { useCalculatorModalStore } from "@/store/modals";
 import { handleFetchQuestion } from "@/lib/practice/index";
 import { QuestionData } from "@/types/practice/questions";
+import { handleSubmitQuestion } from "@/lib/server-actions/submitQuestionAction";
+import { toast } from "react-toastify";
 
 interface QuestionContentProps {
   subject: EnglishSubjects;
@@ -81,13 +83,22 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   const handleSubmit = () => {
     if (!selectedAnswer || !currentQuestion) return;
 
-    const correct = selectedAnswer === currentQuestion.questionMeta.question.correct_answer;
-    setIsCorrect(correct);
+    const isCorrect = selectedAnswer === currentQuestion.questionMeta.question.correct_answer;
+
+    handleSubmitQuestion(isCorrect)
+      .then(() => {
+        toast.success("Question submitted!")
+      })
+      .catch((error) => {
+        toast.error(error);
+      })
+
+    setIsCorrect(isCorrect);
     setIsSubmitted(true);
     setShowExplanation(true);
     
     if (onAnswered) {
-      onAnswered(correct);
+      onAnswered(isCorrect);
     }
   };
 
