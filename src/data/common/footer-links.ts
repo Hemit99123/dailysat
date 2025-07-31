@@ -11,6 +11,6 @@ export const dashboardLinks = [
 ]; 
 
 export const practiceLinks = [
-  { href: "/practice?type=math", label: "Practice - Math" },
-  { href: "/practice?type=english", label: "Practice - English" }
+  { href: "/practice/math", label: "Practice - Math" },
+  { href: "/practice/english", label: "Practice - English" }
 ];
