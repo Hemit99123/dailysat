@@ -40,7 +40,7 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   difficulty,
   onAnswered,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -53,7 +53,7 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   const closeModal = useCalculatorModalStore(state => state.closeModal);
 
   const fetchQuestion = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     setError(null);
     setSelectedAnswer(null);
     setIsSubmitted(false);
@@ -65,9 +65,8 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
       setCurrentQuestion(response.data);
     } catch (err) {
       setError("Failed to fetch question. Please try again.");
-      console.error("Error fetching question:", err);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   };
 
