@@ -27,7 +27,7 @@ export default function Footer() {
 
   return (
     <motion.footer 
-      className="w-full bg-gradient-to-b from-white to-blue-50 border-t px-6 py-12 md:px-16 md:py-16"
+      className="w-full bg-gradient-to-b from-white to-blue-50 border-t px-6 py-12 md:px-16 md:py-16 mt-12"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
