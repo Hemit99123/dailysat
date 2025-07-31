@@ -29,7 +29,7 @@ const SubjectSidebar: React.FC<SubjectSidebarProps> = ({
   setDifficulty,
 }) => {
   const otherSubject = subject === "Math" ? "English" : "Math";
-  const switchHref = `/practice?type=${otherSubject.toLowerCase()}`;
+  const switchHref = `/practice/${otherSubject.toLowerCase()}`;
 
 
   return (
