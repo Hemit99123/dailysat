@@ -102,14 +102,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
     }
   };
 
-  const handleOpenCalculator = () => {
-    if (isOpen) {
-      closeModal();
-    } else {
-      openModal();
-    }
-  };
-
   if (isLoading) {
     return (
       <div>
@@ -157,7 +149,7 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
         {type === "math" && (
           <button
             type="button"
-            onClick={handleOpenCalculator}
+            onClick={() => { if (isOpen) closeModal(); else openModal(); }}
             className={`flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all ${
               isOpen
                 ? "border-blue-500 bg-blue-100 text-blue-700 hover:bg-blue-200"
