@@ -7,7 +7,6 @@ import SessionProgress from "@/components/features/Practice/SessionProgress";
 import { englishSubjectsArray, mathSubjectsArray } from "@/data/subject";
 import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
-import { capitalizeFirstLetter } from "@/lib/ui";
 import { useParams } from "next/navigation";
 
 const PracticePageContent = () => {
@@ -48,7 +47,7 @@ const PracticePageContent = () => {
         {/* Sidebar */}
         <aside className="w-full md:w-72 rounded-md p-4 overflow-y-auto">
           <SubjectSidebar
-            subject={capitalizeFirstLetter(type as string) as Capitalize<Type>}
+            subject={type === "math" ? "Math" : "English"}
             selectedTopic={selectedTopic}
             setSelectedTopic={setSelectedTopic}
             subjects={type === "math" ? mathSubjectsArray : englishSubjectsArray}
