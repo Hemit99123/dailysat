@@ -9,7 +9,7 @@ import { Difficulty } from "@/types/practice/difficulty";
 import { EnglishSubjects, Type } from "@/types/practice/subject";
 import { useParams } from "next/navigation";
 
-const PracticePageContent = () => {
+const PracticePage = () => {
   const params = useParams();
   const { type } = params;
 
@@ -80,12 +80,5 @@ const PracticePageContent = () => {
       </div>
       )
 }
-const PracticePage = () => {
-  return (
-    <Suspense>
-      <PracticePageContent />
-    </Suspense>
-  );
-};
 
 export default PracticePage;
