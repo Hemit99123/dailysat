@@ -53,7 +53,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   const closeModal = useCalculatorModalStore(state => state.closeModal);
 
   const fetchQuestion = async () => {
-    setIsLoading(true)
     setError(null);
     setSelectedAnswer(null);
     setIsSubmitted(false);
@@ -71,6 +70,7 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   };
 
   useEffect(() => {
+    // No need to set isLoading to true as the component mounted with that val
     fetchQuestion();
   }, [type, difficulty, subject]);
 
@@ -164,7 +164,10 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
 
 
           <button 
-            onClick={fetchQuestion}
+            onClick={() => {
+              setIsLoading(true);
+              fetchQuestion();
+            }}
             className="flex items-center gap-1 rounded border px-3 py-1 text-xs font-bold shadow transition-all border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
           >
             <RefreshCcw size={16} />
