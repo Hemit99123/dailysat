@@ -7,7 +7,7 @@ import Option from "@/components/features/Dashboard/Option";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { Book, Calendar, EqualApproximately } from "lucide-react";
+import { Book, Calendar, Sigma } from "lucide-react";
 import { useUserStore } from "@/store/user";
 import { User } from "@/types/user";
 import { DisplayBanner } from "@/types/dashboard/banner";
@@ -141,7 +141,7 @@ const Home = () => {
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
           {user ? (
-            <Option icon={<EqualApproximately />} header="Math" redirect="/practice/math" />
+            <Option icon={<Sigma />} header="Math" redirect="/practice/math" />
           ) : (
             <Skeleton className="w-full h-[64px] bg-gray-700/60" />
           )}
