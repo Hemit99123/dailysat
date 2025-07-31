@@ -43,7 +43,7 @@ const Hero = () => {
         transition={{ duration: 0.6, delay: 0.1 }}
         viewport={{ once: true }}
       >
-        The SATs Preparation Made
+        SATs Preparation Made
       </motion.h1>
       <motion.h1
         className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]"
