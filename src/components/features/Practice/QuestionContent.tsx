@@ -139,11 +139,11 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
       <div className="flex flex-col md:flex-row md:mb-4 items-center justify-between rounded-md bg-blue-50 p-3 text-sm shadow md:gap-3 md:p-3">
         <div className="text-black">
           {!(type === "english" && subject === "All") && currentQuestion?.questionMeta?.subject && (
-            <span>
+            <>
               <strong>Topic:</strong> {subject} {"  "}
-            </span>
+              <span className="mx-2">|</span>
+            </>
           )}
-          <span className="mx-2">|</span>
           <span className="font-bold">Difficulty:</span> {currentQuestion?.questionMeta?.difficulty || difficulty}
         </div>
         
