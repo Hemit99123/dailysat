@@ -25,7 +25,7 @@ export const handleSubmitQuestion = async (isCorrect: boolean) => {
       { projection: { investors: 1 } } 
     );
 
-    // Calculate earnings for each investor
+    // Calculate earnings for each investor item
     investorItem?.investors.map((investor) => {
         const amnt = investor.amnt ?? 1;
         const reward = investor.reward ?? 0;
