@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useShop } from "@/hooks/useShop";
 import { ShopItem } from "@/types/shop/shopItem";
 import { useUserStore } from "@/store/user";
+import { useEffect } from "react";
 
 // Component Props Interface
 interface ComponentShopItem {
@@ -27,7 +28,8 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
 }) => {
   const { state, increment, decrement } = useShop();
   const user = useUserStore((s) => s.user);
-  window.addEventListener("get-items-to-buy", (e) => {
+  const handleGetItems = (e: Event) => {
+    console.log(state);
     window.dispatchEvent(
       new CustomEvent("buy-items", {
         detail: {
@@ -35,7 +37,9 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
         },
       })
     );
-  });
+  };
+  window.addEventListener("get-items-to-buy", handleGetItems);
+
   // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
     diamondbanner: {

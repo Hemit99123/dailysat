@@ -566,7 +566,10 @@ export default function LessonsPage() {
                               {content[selectedTopic]?.summary}
                             </p>
                             <button
-                              onClick={() => setShowPractice(true)}
+                              onClick={() => {
+                                setAnswers(INIT_STATE_ANS);
+                                setShowPractice(true);
+                              }}
                               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                             >
                               Start Practice →

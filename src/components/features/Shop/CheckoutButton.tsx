@@ -23,11 +23,15 @@ export default function CheckoutButton() {
       const itemsToBuy = Object.entries(e.detail.items).filter(
         ([_, val]) => val > 0
       );
+      console.log(itemsToBuy);
       if (itemsToBuy.length === 0) {
-        toast.error("Please buy items before you continue.", {
-          position: "bottom-right",
-          pauseOnHover: false,
-        });
+        setTimeout(() => {
+          toast.error("Please buy items before you continue.", {
+            position: "bottom-right",
+            pauseOnHover: false,
+            autoClose: 300,
+          });
+        }, 500);
         return;
       }
 
