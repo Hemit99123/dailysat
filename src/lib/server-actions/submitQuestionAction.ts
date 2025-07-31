@@ -26,12 +26,11 @@ export const handleSubmitQuestion = async (isCorrect: boolean) => {
     );
 
     // Calculate earnings for each investor item
-    investorItem?.investors.map((investor) => {
+    investorRewardBonus = investorItem?.investors.reduce((total, investor) => {
         const amnt = investor.amnt ?? 1;
         const reward = investor.reward ?? 0;
-        const quantity = amnt * reward;
-        investorRewardBonus += quantity;
-    });
+        return total + (amnt * reward);
+    }, 0) ?? 0;
     
     await usersColl.updateOne(
       { email },
