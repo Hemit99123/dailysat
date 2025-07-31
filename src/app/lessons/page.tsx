@@ -11,20 +11,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "react-toastify";
 
 // 3D flip effect
-const flipStyles = {
+const flipStyles: React.CSSProperties = {
   perspective: "1200px",
-} as any;
-const flipInnerStyles = {
+};
+const flipInnerStyles: React.CSSProperties = {
   transformStyle: "preserve-3d",
-} as any;
-const backfaceHidden = {
+};
+const backfaceHidden: React.CSSProperties = {
   backfaceVisibility: "hidden",
-} as any;
-const rotateY180 = {
+};
+const rotateY180: React.CSSProperties = {
   transform: "rotateY(180deg)",
-} as any;
+};
 
 export default function LessonsPage() {
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const [flipState, setFlipState] = useState<"none" | "flipping" | "flipped">(
     "none"
   );
@@ -167,7 +169,10 @@ export default function LessonsPage() {
       setFlipState("flipped");
     }, 500);
   };
-
+  const sanitizeForPrompt = (text: string): string => {
+    // Remove potential injection attempts
+    return text.replace(/[<>]/g, "").slice(0, 1000); // Also limit length
+  };
   const handleAnswerSelect = async (questionIndex: number, option: string) => {
     if (selectedAnswers[questionIndex]) return;
     setSelectedAnswers((prev) => ({ ...prev, [questionIndex]: option }));
@@ -664,6 +669,7 @@ export default function LessonsPage() {
                                               ) as HTMLButtonElement
                                             ).innerText === "Hide Explanation"
                                           ) {
+                                            abortControllerRef.current?.abort();
                                             setAnswers((prev) => {
                                               const updated = [...prev];
                                               updated[idx] = "";
@@ -671,6 +677,9 @@ export default function LessonsPage() {
                                             });
                                             return;
                                           }
+                                          abortControllerRef.current?.abort();
+                                          abortControllerRef.current =
+                                            new AbortController();
                                           setAnswers((prev) => {
                                             const updated = [...prev];
                                             updated[idx] = "Loading...";
@@ -681,8 +690,16 @@ export default function LessonsPage() {
                                               "/api/deepseek",
                                               {
                                                 prompt:
-                                                  q.question +
+                                                  sanitizeForPrompt(
+                                                    q.question
+                                                  ) +
                                                   `. Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
+                                              },
+                                              {
+                                                signal:
+                                                  abortControllerRef.current
+                                                    .signal,
+                                                timeout: 30000, // 30s timeout
                                               }
                                             );
 
@@ -696,6 +713,16 @@ export default function LessonsPage() {
                                               return updated;
                                             });
                                           } catch (err) {
+                                            if (axios.isCancel(err)) {
+                                              // Request was cancelled, do nothing
+                                              return;
+                                            }
+
+                                            setAnswers((prev) => {
+                                              const updated = [...prev];
+                                              updated[idx] = "";
+                                              return updated;
+                                            });
                                             toast.error(
                                               "Sorry, there was a slight hiccup. Please try again later."
                                             );

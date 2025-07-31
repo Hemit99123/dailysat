@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 // @ts-ignore
 import { convert } from "html-to-text";
+import { toast } from "react-toastify";
 const DATA_URL =
   "https://api.jsonsilo.com/public/942c3c3b-3a0c-4be3-81c2-12029def19f5";
 const QUESTION_LIST_URL =
@@ -197,7 +198,11 @@ export const usePracticeSession = () => {
         if (apiQuestion) {
           newQuestion = apiQuestion;
         }
-      } catch (error) {}
+      } catch (error) {
+        toast.error(
+          "Sorry, we had a little bit of trouble getting a question for you. Try again later."
+        );
+      }
 
       if (
         !newQuestion ||
@@ -289,30 +294,4 @@ export const usePracticeSession = () => {
   };
 };
 
-export type Question = {
-  id: string;
-  domain: string;
-  visuals: { type: string; svg_content: string };
-  question: {
-    choices: Record<string, string>;
-    question: string;
-    paragraph: string | null;
-    explanation: string;
-    correct_answer: string;
-  };
-  difficulty: "Easy" | "Medium" | "Hard" | string;
-};
-
-export type Data = {
-  math: Question[];
-  english: Question[];
-};
-
-export type QuestionHistory = {
-  id: number;
-  question: Question;
-  userAnswer: string | null;
-  isCorrect: boolean | null;
-  isMarkedForLater: boolean;
-  isAnswered: boolean;
-};
+import { Question, Data, QuestionHistory } from "@/types/hooks/practice";

@@ -88,6 +88,9 @@ const Home = () => {
           const result = await axios.post("/api/investor");
           const { totalQuantity } = result.data;
           setUserCoins(totalQuantity);
+          if (userData) {
+            setUser?.({ ...userData, currency: totalQuantity });
+          }
         }
         getIcon(userData);
         getBanner(userData);

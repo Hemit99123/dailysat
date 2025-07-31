@@ -98,7 +98,7 @@ export const useShop = () => {
   };
 
   const clear = () => {
-    setCartState({});
+    setCartState(initialState);
   };
 
   return {

@@ -210,18 +210,25 @@ export const POST = async (request: Request) => {
     await client.connect();
 
     const db = client.db("DailySAT");
+    const clientSession = client.startSession();
     const usersColl = db.collection("users");
-    await usersColl.updateOne(
-      { email },
-      {
-        $inc: {
-          currency: isCorrect ? QUESTION_IS_CORRECT_POINTS : 0,
-          correctAnswered: isCorrect ? 1 : 0,
-          wrongAnswered: !isCorrect ? 1 : 0,
-          points: isCorrect ? 1 : -1,
-        },
-      }
-    );
+    try {
+      clientSession.withTransaction(async () => {
+        await usersColl.updateOne(
+          { email },
+          {
+            $inc: {
+              currency: isCorrect ? QUESTION_IS_CORRECT_POINTS : 0,
+              correctAnswered: isCorrect ? 1 : 0,
+              wrongAnswered: !isCorrect ? 1 : 0,
+              points: isCorrect ? 1 : -1,
+            },
+          }
+        );
+      });
+    } catch (err) {
+      await clientSession.endSession();
+    }
     // Get updated user data for leaderboard
     const updatedUser = await usersColl.findOne({ email });
     if (updatedUser) {

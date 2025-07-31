@@ -7,14 +7,13 @@ import { TopicSidebar } from "@/components/features/Practice/TopicSidebar";
 import { QuestionContent } from "@/components/features/Practice/QuestionContent";
 import ScoreAndProgress from "@/components/features/Practice/ScoreAndProgress";
 
-import {
-  usePracticeSession,
-  QuestionHistory,
-} from "@/hooks/useEnglishPracticeSession";
+import { usePracticeSession } from "@/hooks/useEnglishPracticeSession";
 
 import { subject, domainDisplayMapping } from "@/data/practice/practice";
 import axios from "axios";
 import { encryptPayload } from "@/lib/cryptojs";
+import { toast } from "react-toastify";
+import { QuestionHistory } from "@/types/hooks/practice";
 
 // Defines the shape of the user's interaction state with a question.
 interface InteractionState {
@@ -121,7 +120,10 @@ export default function EnglishPracticePage() {
       await axios.post("/api/practice", {
         encryptedPayload,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed to submit answer:", error);
+      toast.error("Failed to submit answer");
+    }
 
     // Update scores and streaks based on the answer's correctness.
     if (correct) {

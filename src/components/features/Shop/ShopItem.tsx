@@ -28,17 +28,23 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
 }) => {
   const { state, increment, decrement } = useShop();
   const user = useUserStore((s) => s.user);
-  const handleGetItems = (e: Event) => {
-    console.log(state);
-    window.dispatchEvent(
-      new CustomEvent("buy-items", {
-        detail: {
-          items: state,
-        },
-      })
-    );
-  };
-  window.addEventListener("get-items-to-buy", handleGetItems);
+  useEffect(() => {
+    const handleGetItems = (e: Event) => {
+      window.dispatchEvent(
+        new CustomEvent("buy-items", {
+          detail: {
+            items: state,
+          },
+        })
+      );
+    };
+
+    window.addEventListener("get-items-to-buy", handleGetItems);
+
+    return () => {
+      window.removeEventListener("get-items-to-buy", handleGetItems);
+    };
+  }, [state]);
 
   // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
