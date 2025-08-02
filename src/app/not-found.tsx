@@ -1,6 +1,6 @@
 const NotFound = () => {
   return (
-    <div className="flex flex-col justify-center items-center h-screen px-4 text-center">
+    <div className="flex flex-col justify-center items-center h-[calc(100vh-5rem)] px-4 text-center">
       <p className="text-sm font-semibold text-blue-600">404 error</p>
       <h1 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
         Page not found 😕
