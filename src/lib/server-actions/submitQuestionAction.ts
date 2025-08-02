@@ -4,8 +4,8 @@ import { QUESTION_IS_CORRECT_POINTS } from "@/data/constant";
 import { client } from "@/lib/mongo";
 import { handleGetSession } from "@/lib/auth/authActions";
 import { InvestorItem } from "@/types/server-actions/investor-item";
-import { determineLeague } from "@/lib/helper-functions/determineLeague";
-import { updateLeaderboard } from "@/lib/helper-functions/updateLeaderboard";
+import { determineLeague } from "@/lib/leaderboard/determineLeague";
+import { updateLeaderboard } from "@/lib/leaderboard/updateLeaderboard";
 export const handleSubmitQuestion = async (isCorrect: boolean) => {
   try {
     await client.connect();

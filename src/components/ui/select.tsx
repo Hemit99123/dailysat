@@ -262,7 +262,9 @@ const SelectItem = React.forwardRef<
 
   React.useEffect(() => {
     if (isActive) {
-      (ref as any)?.current?.focus();
+      if (isActive && ref && typeof ref !== "function" && ref.current) {
+        ref.current.focus();
+      }
     }
   }, [isActive, ref]);
 
