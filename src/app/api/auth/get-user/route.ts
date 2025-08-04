@@ -2,7 +2,7 @@ import { handleGetSession } from "@/lib/auth/authActions";
 import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/mongo";
 import { NextResponse } from "next/server";
-import { handleRatelimitSuccess } from "@/lib/performance/rate-limiter";
+import { handleRatelimitSuccess } from "@/lib/rate-limiter";
 
 /**
  * @swagger
