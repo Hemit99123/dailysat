@@ -11,7 +11,7 @@ import {
   Trophy,
   ListChecks,
 } from "lucide-react";
-import { Question, QuestionHistory } from "@/hooks/usePracticeSession";
+import { Question, QuestionHistory } from "@/types/practice/questions";
 
 interface ScoreAndProgressProps {
   correctCount: number;
