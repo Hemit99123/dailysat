@@ -9,6 +9,7 @@ export const resourceLinks = [
 export const dashboardLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/dashboard/study-plan", label: "AI Study Planner" },
+  { href: "/lessons", label: "Lessons"}
 ]; 
 
 export const practiceLinks = [
