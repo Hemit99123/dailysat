@@ -4,7 +4,6 @@ import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 
 export const POST = async (request: Request) => {
-
     const { plan } = await request.json()
 
     try {
@@ -38,22 +37,23 @@ export const POST = async (request: Request) => {
       }
 }
 
-export const GET = async () => {
-    try {
-        const session = await handleGetSession()
-        const email = session?.user?.email
-    
-        if (!email) {
-          return Response.json({ message: "Unauthorized" });
-        }
-    
-        await client.connect()
-        const user = await handleGetUser(session);
 
-        return Response.json({ message: "Found study plan", plan: user?.plan })
-      } catch (error) {
-        return Response.json({ message: "Internal Server Error", error })
-      } finally {
-        await client.close()
-      }
-}
+export const GET = async () => {
+  try {
+    const session = await handleGetSession();
+    const email = session?.user?.email;
+
+    if (!email) {
+      return Response.json({ message: "Unauthorized" });
+    }
+
+    await client.connect();
+    const user = await handleGetUser(session);
+
+    return Response.json({ message: "Found study plan", plan: user?.plan });
+  } catch (error) {
+    return Response.json({ message: "Internal Server Error", error });
+  } finally {
+    await client.close();
+  }
+};

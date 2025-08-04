@@ -11,49 +11,56 @@ export const GET = async (request: Request) => {
 
   if (!type || !subject || !difficulty) {
     return Response.json({
-        error: "You must provide a query paramater of type, subject, and difficulty"
-    })
+      error:
+        "You must provide a query paramater of type, subject, and difficulty",
+    });
   }
 
   if (
     (type !== "math" && type !== "english") ||
-    (type === "math" && !mathSubjectsArray.includes(subject as MathSubjects)) || 
-    (type === "english" && !englishSubjectsArray.includes(subject as EnglishSubjects))
+    (type === "math" && !mathSubjectsArray.includes(subject as MathSubjects)) ||
+    (type === "english" &&
+      !englishSubjectsArray.includes(subject as EnglishSubjects))
   ) {
-      return Response.json({
-        error: "Query parameter must be 'math' or 'english' and subject must be valid"
-      })
-  } 
+    return Response.json({
+      error:
+        "Query parameter must be 'math' or 'english' and subject must be valid",
+    });
+  }
 
   try {
     await client.connect();
-    
+
     const collectionName = type === "math" ? "math" : "english";
     const collection = db.collection(collectionName);
 
-    const matchObject: MatchObject = {}
+    const matchObject: MatchObject = {};
 
     if (difficulty != "All") {
       matchObject.difficulty = difficulty;
     }
 
     if (subject != "All") {
-        matchObject.subject = subject;
+      matchObject.subject = subject;
     }
-    
+
     // The $sample gives questions in random order (so we can retrieve a rand question)
-    const questionMeta = await collection.aggregate([
-    { $match: matchObject },
-    { $sample: { size: 1 } }
-    ]).next();
+    const questionMeta = await collection
+      .aggregate([{ $match: matchObject }, { $sample: { size: 1 } }])
+      .next();
 
-    return Response.json({
-        questionMeta
-    }, { status: 200 });
-
-  } catch(error) {
-    return Response.json({ 
-        result: "Server error" 
-    }, { status: 500 });
+    return Response.json(
+      {
+        questionMeta,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return Response.json(
+      {
+        result: "Server error",
+      },
+      { status: 500 }
+    );
   }
-}
+};

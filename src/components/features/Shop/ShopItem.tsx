@@ -2,10 +2,12 @@
 import { Minus, Plus } from "lucide-react";
 
 // Types
-import { ShopItem } from "@/types/shop/shopItem";
 import { DisplayBanner } from "@/types/dashboard/banner";
 import Image from "next/image";
 import { useShop } from "@/hooks/useShop";
+import { ShopItem } from "@/types/shop/shopItem";
+import { useUserStore } from "@/store/user";
+import { useEffect } from "react";
 
 // Component Props Interface
 interface ComponentShopItem {
@@ -13,11 +15,6 @@ interface ComponentShopItem {
   purpose: string;
   price: number;
   dispatch?: (_action: { type: string; payload?: string }) => void;
-  state: {
-    [key: string]: number | string;
-  };
-  coins: { [key: string]: number };
-  userItemsBought: ShopItem[];
 }
 
 /**
@@ -28,12 +25,26 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
   name,
   purpose,
   price,
-  state,
-  coins,
-  userItemsBought,
 }) => {
+  const { state, increment, decrement } = useShop();
+  const user = useUserStore((s) => s.user);
+  useEffect(() => {
+    const handleGetItems = (e: Event) => {
+      window.dispatchEvent(
+        new CustomEvent("buy-items", {
+          detail: {
+            items: state,
+          },
+        })
+      );
+    };
 
-  const { handleDispatch } = useShop();
+    window.addEventListener("get-items-to-buy", handleGetItems);
+
+    return () => {
+      window.removeEventListener("get-items-to-buy", handleGetItems);
+    };
+  }, [state]);
 
   // Banner styles mapping for different banner types
   const bannerMap: { [key: string]: DisplayBanner } = {
@@ -102,7 +113,14 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                   onClick={() => {
                     if (state[name.toLowerCase().replace(/\s/g, "")] === 0)
                       return;
-                    handleDispatch?.("decrement", name);
+                    decrement(name);
+                    window.dispatchEvent(
+                      new CustomEvent("user-updated", {
+                        detail: {
+                          price: price,
+                        },
+                      })
+                    );
                   }}
                   disabled={state[name.toLowerCase().replace(/\s/g, "")] === 0}
                   className={
@@ -132,13 +150,13 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                 <button
                   onClick={() => {
                     if (
-                      price > coins.amnt ||
-                      (!name
-                        .toLowerCase()
-                        .replace(/\s/g, "")
-                        .includes("investor") &&
-                        userItemsBought &&
-                        userItemsBought.some((item) => item.name === name)) ||
+                      !user ||
+                      price > user?.currency! ||
+                      (!name.toLowerCase().includes("investor") &&
+                        user?.itemsBought &&
+                        user?.itemsBought.some(
+                          (item: ShopItem) => item.name === name
+                        )) ||
                       (!name
                         .toLowerCase()
                         .replace(/\s/g, "")
@@ -146,16 +164,28 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                         state[name.toLowerCase().replace(/\s/g, "")] === 1)
                     )
                       return;
-                    handleDispatch?.("increment", name)
+
+                    increment(name);
+
+                    window.dispatchEvent(
+                      new CustomEvent("user-updated", {
+                        detail: {
+                          price: -price,
+                        },
+                      })
+                    );
                   }}
                   className={
-                    price > coins.amnt ||
+                    !user ||
+                    price > user?.currency! ||
                     (!name
                       .toLowerCase()
                       .replace(/\s/g, "")
                       .includes("investor") &&
-                      userItemsBought &&
-                      userItemsBought.some((item) => item.name === name)) ||
+                      user?.itemsBought &&
+                      user?.itemsBought.some(
+                        (item: ShopItem) => item.name === name
+                      )) ||
                     (!name
                       .toLowerCase()
                       .replace(/\s/g, "")
@@ -167,13 +197,16 @@ const ShopItemDisplay: React.FC<ComponentShopItem> = ({
                 >
                   <Plus
                     color={
-                      price > coins.amnt ||
+                      !user ||
+                      price > user?.currency! ||
                       (!name
                         .toLowerCase()
                         .replace(/\s/g, "")
                         .includes("investor") &&
-                        userItemsBought &&
-                        userItemsBought.some((item) => item.name === name)) ||
+                        user?.itemsBought &&
+                        user?.itemsBought.some(
+                          (item: ShopItem) => item.name === name
+                        )) ||
                       (!name
                         .toLowerCase()
                         .replace(/\s/g, "")

@@ -1,28 +1,41 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useReducer } from "react";
 import content from "@/data/lessons/lessoncontent";
 import FinalQuiz from "@/components/features/lessons/FinalQuiz";
+import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "react-toastify";
 
 // 3D flip effect
-const flipStyles = {
-  perspective: '1200px',
-} as any;
-const flipInnerStyles = {
-  transformStyle: 'preserve-3d',
-} as any;
-const backfaceHidden = {
-  backfaceVisibility: 'hidden',
-} as any;
-const rotateY180 = {
-  transform: 'rotateY(180deg)',
-} as any;
+const flipStyles: React.CSSProperties = {
+  perspective: "1200px",
+};
+const flipInnerStyles: React.CSSProperties = {
+  transformStyle: "preserve-3d",
+};
+const backfaceHidden: React.CSSProperties = {
+  backfaceVisibility: "hidden",
+};
+const rotateY180: React.CSSProperties = {
+  transform: "rotateY(180deg)",
+};
 
 export default function LessonsPage() {
-  const [flipState, setFlipState] = useState<'none' | 'flipping' | 'flipped'>('none');
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const [flipState, setFlipState] = useState<"none" | "flipping" | "flipped">(
+    "none"
+  );
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [panesVisible, setPanesVisible] = useState(false);
   const [showPractice, setShowPractice] = useState<boolean>(false);
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+  const [selectedAnswers, setSelectedAnswers] = useState<
+    Record<number, string>
+  >({});
   const [currentSubtopicIndex, setCurrentSubtopicIndex] = useState<number>(0);
   const [completedSubtopics, setCompletedSubtopics] = useState<string[]>([]);
   const [completedDetails, setCompletedDetails] = useState<
@@ -32,6 +45,7 @@ export default function LessonsPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const quizContainerRef = useRef<HTMLDivElement>(null);
   const [quizFinished, setQuizFinished] = useState(false);
+  // rootRef will hold the React root for rendering ReactMarkdown
 
   const lessons = {
     Math: {
@@ -41,17 +55,29 @@ export default function LessonsPage() {
         "Percentages",
         "Interpreting Graphs",
       ],
-      "Advanced Math": ["Functions", "Polynomials", "Exponential & Rational Equations"],
+      "Advanced Math": [
+        "Functions",
+        "Polynomials",
+        "Exponential & Rational Equations",
+      ],
     },
     "Reading & Writing": {
       "Information & Ideas": ["Main Ideas", "Supporting Details", "Inferences"],
-      "Craft & Structure": ["Word Choice", "Text Structure", "Author's Purpose"],
+      "Craft & Structure": [
+        "Word Choice",
+        "Text Structure",
+        "Author's Purpose",
+      ],
       "Expression of Ideas": [
         "Clarity & Precision",
         "Logical Progression",
         "Effective Transitions",
       ],
-      "Standard English Conventions": ["Grammar & Usage", "Sentence Structure", "Punctuation"],
+      "Standard English Conventions": [
+        "Grammar & Usage",
+        "Sentence Structure",
+        "Punctuation",
+      ],
     },
   };
 
@@ -60,6 +86,35 @@ export default function LessonsPage() {
       subtopics.map((sub) => ({ subtopic: sub, topic }))
     )
   );
+  const MARKDOWN_PROPS = {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeRaw as any, rehypeKatex],
+  };
+  const markdown = (content: string) => {
+    const SHOW_SKELETON = content === "Loading...";
+
+    return (
+      <>
+        {SHOW_SKELETON ? (
+          <></>
+        ) : (
+          <div className="bg-blue-200 border border-blue-400 mt-2 p-4 rounded-lg">
+            <ReactMarkdown {...MARKDOWN_PROPS}>{content}</ReactMarkdown>
+          </div>
+        )}
+        {SHOW_SKELETON ? (
+          <div className="mt-2 flex flex-col gap-2">
+            <Skeleton className="w-full h-64 bg-gray-400" />
+          </div>
+        ) : (
+          <></>
+        )}
+      </>
+    );
+  };
+
+  const INIT_STATE_ANS = ["", "", ""];
+  const [answers, setAnswers] = useState<Array<string>>(INIT_STATE_ANS);
 
   const currentSubtopicData = allSubtopics[currentSubtopicIndex];
   const currentTopic = currentSubtopicData?.topic;
@@ -75,7 +130,10 @@ export default function LessonsPage() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("completedSubtopics", JSON.stringify(completedSubtopics));
+    localStorage.setItem(
+      "completedSubtopics",
+      JSON.stringify(completedSubtopics)
+    );
   }, [completedSubtopics]);
 
   useEffect(() => {
@@ -83,7 +141,7 @@ export default function LessonsPage() {
   }, [completedDetails]);
 
   const handleSubtopicClick = (subtopic: string) => {
-    setFlipState('flipping');
+    setFlipState("flipping");
     setTimeout(() => {
       const index = allSubtopics.findIndex((s) => s.subtopic === subtopic);
       setCurrentSubtopicIndex(index);
@@ -97,27 +155,34 @@ export default function LessonsPage() {
           practice: prev[subtopic]?.practice ?? false,
         },
       }));
-      setFlipState('flipped');
+      setFlipState("flipped");
     }, 500);
   };
 
-  const handleOpenFinalQuiz = (quizType: 'FinalMathQuiz' | 'FinalReadingWritingQuiz') => {
-    setFlipState('flipping');
+  const handleOpenFinalQuiz = (
+    quizType: "FinalMathQuiz" | "FinalReadingWritingQuiz"
+  ) => {
+    setFlipState("flipping");
     setTimeout(() => {
       setSelectedTopic(quizType);
       setShowPractice(false);
-      setFlipState('flipped');
+      setFlipState("flipped");
     }, 500);
   };
-
-  const handleAnswerSelect = (questionIndex: number, option: string) => {
+  const sanitizeForPrompt = (text: string): string => {
+    // Remove potential injection attempts
+    return text.replace(/[<>]/g, "").slice(0, 1000); // Also limit length
+  };
+  const handleAnswerSelect = async (questionIndex: number, option: string) => {
     if (selectedAnswers[questionIndex]) return;
     setSelectedAnswers((prev) => ({ ...prev, [questionIndex]: option }));
   };
 
   const handleNextSubtopic = () => {
     const nextSubtopics = allSubtopics.filter((s) => s.topic === currentTopic);
-    const currentInTopicIndex = nextSubtopics.findIndex((s) => s.subtopic === selectedTopic);
+    const currentInTopicIndex = nextSubtopics.findIndex(
+      (s) => s.subtopic === selectedTopic
+    );
 
     if (!completedSubtopics.includes(selectedTopic!)) {
       setCompletedSubtopics([...completedSubtopics, selectedTopic!]);
@@ -151,19 +216,22 @@ export default function LessonsPage() {
   );
 
   const topicProgress = Math.round(
-    (topicSubtopics.filter((s) => completedSubtopics.includes(s.subtopic)).length /
+    (topicSubtopics.filter((s) => completedSubtopics.includes(s.subtopic))
+      .length /
       topicSubtopics.length) *
       100
   );
 
-  const isFinalQuiz = selectedTopic === "FinalMathQuiz" || selectedTopic === "FinalReadingWritingQuiz";
+  const isFinalQuiz =
+    selectedTopic === "FinalMathQuiz" ||
+    selectedTopic === "FinalReadingWritingQuiz";
 
   const handleBackToLessons = () => {
-    setFlipState('flipping');
+    setFlipState("flipping");
     setTimeout(() => {
       setSelectedTopic(null);
       setShowPractice(false);
-      setFlipState('none');
+      setFlipState("none");
     }, 500);
   };
 
@@ -175,25 +243,36 @@ export default function LessonsPage() {
   }, [quizFinished]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 flex justify-center">
+    <div className="min-h-screen p-6 flex justify-center">
       <div className="w-full max-w-5xl flex flex-col space-y-10">
-        <div className="relative" style={flipStyles}> 
+        <div className="relative" style={flipStyles}>
           <div
-            className={`transition-transform duration-500 ease-in-out w-full h-full`}
-            style={{
-              ...flipInnerStyles,
-              transform: flipState === 'flipped' ? 'rotateY(180deg)' : 'none',
-            } as any}
+            className={`transition-transform duration-500 ease-in-out w-full min-h-screen`}
+            style={
+              {
+                ...flipInnerStyles,
+                transform: flipState === "flipped" ? "rotateY(180deg)" : "none",
+              } as any
+            }
           >
             {/* Front: Lessons Page */}
             <div
               className="absolute w-full h-full top-0 left-0"
-              style={{ ...backfaceHidden, pointerEvents: flipState === 'flipped' ? 'none' : 'auto' } as any}
+              style={
+                {
+                  ...backfaceHidden,
+                  pointerEvents: flipState === "flipped" ? "none" : "auto",
+                } as any
+              }
             >
               {selectedTopic === null && (
                 <>
-                  <div className="flex-1">
-                    <h1 className="text-4xl font-bold mb-6 text-center">Lessons</h1>
+                  <div
+                    className={`flex-1 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
+                    <h1 className="text-4xl font-bold mb-6 text-center">
+                      Lessons
+                    </h1>
 
                     <div className="mb-6">
                       <div className="w-full bg-gray-300 h-4 rounded">
@@ -202,16 +281,22 @@ export default function LessonsPage() {
                           style={{ width: `${overallProgress}%` }}
                         ></div>
                       </div>
-                      <p className="text-center mt-2">{overallProgress}% Completed</p>
+                      <p className="text-center mt-2">
+                        {overallProgress}% Completed
+                      </p>
                     </div>
 
-                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 transition-opacity duration-700 ${panesVisible ? 'opacity-100' : 'opacity-0'}`}> 
+                    <div
+                      className={`grid grid-cols-1 lg:grid-cols-2 gap-8 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                    >
                       {Object.entries(lessons).map(([section, topics]) => (
                         <div
                           key={section}
                           className="bg-white rounded-lg shadow-lg p-6 border border-gray-200"
                         >
-                          <h2 className="text-2xl font-semibold mb-4 text-center">{section}</h2>
+                          <h2 className="text-2xl font-semibold mb-4 text-center">
+                            {section}
+                          </h2>
                           {Object.entries(topics).map(([topic, subtopics]) => (
                             <div key={topic} className="mb-4">
                               <h3 className="font-medium mb-2">{topic}</h3>
@@ -237,12 +322,16 @@ export default function LessonsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-                    <h2 className="text-3xl font-bold mb-4 text-center">Final Quizzes</h2>
+                  <div
+                    className={`bg-white mt-4 rounded-lg shadow-lg p-6 border border-gray-200 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
+                    <h2 className="text-3xl font-bold mb-4 text-center">
+                      Final Quizzes
+                    </h2>
                     <p className="text-center text-gray-600 mb-6">
                       These quizzes test your skills from all subtopics!
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       <button
                         onClick={() => handleOpenFinalQuiz("FinalMathQuiz")}
                         className="px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center text-xl"
@@ -250,15 +339,19 @@ export default function LessonsPage() {
                         Math Final Quiz (20 Questions)
                       </button>
                       <button
-                        onClick={() => handleOpenFinalQuiz("FinalReadingWritingQuiz")}
+                        onClick={() =>
+                          handleOpenFinalQuiz("FinalReadingWritingQuiz")
+                        }
                         className="px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center text-xl"
                       >
                         Reading & Writing Final Quiz (20 Questions)
                       </button>
                     </div>
                   </div>
-
-                  <div className="flex justify-center mt-8">
+                  {/* Reset Confirmation Block */}
+                  <div
+                    className={`flex justify-center mt-8 pb-10 transition-opacity duration-700 ${panesVisible ? "opacity-100" : "opacity-0"}`}
+                  >
                     {showResetConfirm ? (
                       <div className="flex flex-col items-center space-y-4">
                         <p className="text-red-600 font-semibold">
@@ -293,21 +386,26 @@ export default function LessonsPage() {
             </div>
             {/* Back: Learning Interface */}
             <div
-              className="absolute inset-0 w-full h-full"
-              style={{
-                ...backfaceHidden,
-                ...rotateY180,
-                pointerEvents: flipState === 'flipped' ? 'auto' : 'none',
-              } as any}
+              className=" inset-0 w-full h-full"
+              style={
+                {
+                  ...backfaceHidden,
+                  ...rotateY180,
+                  pointerEvents: flipState === "flipped" ? "auto" : "none",
+                } as any
+              }
             >
               {selectedTopic !== null && (
-                <div className="flex w-full justify-center">
+                <div className="flex w-full lg:flex-row flex-col-reverse justify-center items-stretch h-full">
                   {!isFinalQuiz && (
+                    /* Units Sidebar */
                     <div
-                      className={`transition-all duration-300 bg-white rounded-lg shadow-lg p-4 border border-gray-200 mr-6 relative ${sidebarCollapsed ? 'w-0 overflow-hidden p-0 mr-0' : 'w-64'}`}
+                      className={`bg-white rounded-lg h-full lg:mt-0 mt-4 shadow-lg border-2 border-gray-200 ${sidebarCollapsed ? "w-0 h-48 opacity-0 overflow-hidden p-0 mr-0" : "w-full lg:w-64 p-4 shadow-lg mr-6"}`}
                     >
                       <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-lg font-bold">{currentTopic} Units</h2>
+                        <h2 className="text-lg font-bold">
+                          {currentTopic} Units
+                        </h2>
                         <button
                           onClick={() => setSidebarCollapsed(true)}
                           className="ml-2 p-1 rounded bg-gray-200 hover:bg-gray-300"
@@ -315,12 +413,31 @@ export default function LessonsPage() {
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 text-gray-700"
-                            fill="none"
+                            width="24"
+                            height="24"
                             viewBox="0 0 24 24"
+                            fill="none"
                             stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-chevron-left-icon lucide-chevron-left h-5 lg:block hidden w-5 text-gray-700"
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            <path d="m15 18-6-6 6-6" />
+                          </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-chevron-up-icon text-[12px] lucide-chevron-up h-5 lg:hidden block  w-5 text-gray-700"
+                          >
+                            <path d="m18 15-6-6-6 6" />
                           </svg>
                         </button>
                       </div>
@@ -339,8 +456,10 @@ export default function LessonsPage() {
 
                       <ol className="space-y-2">
                         {topicSubtopics.map((s, idx) => {
-                          const detail =
-                            completedDetails[s.subtopic] || { summary: false, practice: false };
+                          const detail = completedDetails[s.subtopic] || {
+                            summary: false,
+                            practice: false,
+                          };
                           return (
                             <li key={s.subtopic}>
                               <button
@@ -349,8 +468,8 @@ export default function LessonsPage() {
                                   s.subtopic === selectedTopic
                                     ? "bg-blue-100"
                                     : completedSubtopics.includes(s.subtopic)
-                                    ? "bg-green-100 border-green-300"
-                                    : ""
+                                      ? "bg-green-100 border-green-300"
+                                      : ""
                                 }`}
                               >
                                 Unit {idx + 1}: {s.subtopic}
@@ -366,7 +485,12 @@ export default function LessonsPage() {
                                     Summary {detail.summary && "✔"}
                                   </button>
                                   <button
-                                    onClick={() => setShowPractice(true)}
+                                    onClick={() =>
+                                      setShowPractice((prev) => {
+                                        setAnswers(INIT_STATE_ANS);
+                                        return true;
+                                      })
+                                    }
                                     className={`text-left px-3 py-1 rounded hover:bg-gray-200 ${
                                       showPractice ? "font-semibold" : ""
                                     }`}
@@ -383,40 +507,74 @@ export default function LessonsPage() {
                   )}
 
                   {!isFinalQuiz && sidebarCollapsed && (
+                    /* Add  sidebar expansion */
                     <button
                       onClick={() => setSidebarCollapsed(false)}
-                      className="mr-4 bg-gray-200 hover:bg-gray-300 p-2 rounded"
+                      className="mr-4 bg-blue-200 lg:block flex justify-center lg:mt-0 mt-4 lg:w-[35px] w-full hover:bg-gray-300 h-full p-2 rounded"
                       title="Expand Sidebar"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-gray-700"
+                        className="h-5 lg:block hidden w-5 text-gray-700"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-chevron-down-icon text-[12px] lucide-chevron-down h-5 lg:hidden block  w-5 text-gray-700"
+                      >
+                        <path d="m6 9 6 6 6-6" />
                       </svg>
                     </button>
                   )}
 
-                  <div className="flex-1">
-                    <div className="bg-white p-6 overflow-y-auto w-full rounded-lg shadow-lg border border-gray-200" ref={isFinalQuiz ? quizContainerRef : undefined}>
+                  <div className="flex-1 h-full">
+                    <div
+                      className="bg-white p-6 overflow-y-auto w-full rounded-lg shadow-lg border border-gray-200 h-full"
+                      ref={isFinalQuiz ? quizContainerRef : undefined}
+                    >
                       <div className="w-full max-w-3xl mx-auto">
                         {isFinalQuiz ? (
                           <FinalQuiz
-                            quizType={selectedTopic === "FinalMathQuiz" ? "math" : "reading"}
+                            quizType={
+                              selectedTopic === "FinalMathQuiz"
+                                ? "math"
+                                : "reading"
+                            }
                             onBack={handleBackToLessons}
                           />
                         ) : !showPractice ? (
                           <div className="flex flex-col items-center justify-center text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-                            <h2 className="text-3xl font-bold mb-2">Summary of Topic</h2>
-                            <h3 className="text-2xl font-semibold mb-4">{selectedTopic}</h3>
+                            <h2 className="text-3xl font-bold mb-2">
+                              Summary of Topic
+                            </h2>
+                            <h3 className="text-2xl font-semibold mb-4">
+                              {selectedTopic}
+                            </h3>
                             <p className="mb-8 text-xl text-gray-700 max-w-2xl">
                               {content[selectedTopic]?.summary}
                             </p>
                             <button
-                              onClick={() => setShowPractice(true)}
+                              onClick={() => {
+                                setAnswers(INIT_STATE_ANS);
+                                setShowPractice(true);
+                              }}
                               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                             >
                               Start Practice →
@@ -446,9 +604,17 @@ export default function LessonsPage() {
                             {content[selectedTopic]?.practice.map((q, idx) => {
                               const isAnswered = selectedAnswers[idx];
                               const selectedOption = selectedAnswers[idx];
+                              const isCorrect =
+                                selectedOption === q.correctAnswer;
+
                               return (
-                                <div key={idx} className="mb-6 p-4 border rounded bg-gray-100">
-                                  <p className="font-medium mb-2">{q.question}</p>
+                                <div
+                                  key={idx}
+                                  className="mb-6 p-4 border rounded bg-gray-100"
+                                >
+                                  <p className="font-medium mb-2">
+                                    {q.question}
+                                  </p>
                                   <div className="space-y-2">
                                     {q.options.map((opt) => {
                                       const selected = selectedOption === opt;
@@ -456,27 +622,122 @@ export default function LessonsPage() {
                                       return (
                                         <button
                                           key={opt}
-                                          onClick={() => handleAnswerSelect(idx, opt)}
+                                          onClick={() =>
+                                            handleAnswerSelect(idx, opt)
+                                          }
                                           className={`flex items-center justify-between w-full text-left px-3 py-1 rounded border text-sm ${
                                             !isAnswered
                                               ? "hover:bg-gray-200"
                                               : correct
-                                              ? "bg-green-200 border-green-400"
-                                              : selected
-                                              ? "bg-red-200 border-red-400"
-                                              : "bg-white"
+                                                ? "bg-green-200 border-green-400"
+                                                : selected
+                                                  ? "bg-red-200 border-red-400"
+                                                  : "bg-white"
                                           }`}
                                           disabled={!!isAnswered}
                                         >
                                           <span>{opt}</span>
-                                          {isAnswered && correct && <span className="text-green-600 font-bold">✔</span>}
-                                          {isAnswered && selected && !correct && <span className="text-red-600 font-bold">✖</span>}
+                                          {isAnswered && correct && (
+                                            <span className="text-green-600 font-bold">
+                                              ✔
+                                            </span>
+                                          )}
+                                          {isAnswered &&
+                                            selected &&
+                                            !correct && (
+                                              <span className="text-red-600 font-bold">
+                                                ✖
+                                              </span>
+                                            )}
                                         </button>
                                       );
                                     })}
                                   </div>
                                   {isAnswered && (
-                                    <p className="mt-2 text-sm text-gray-700">{q.explanation}</p>
+                                    <>
+                                      <p className="mt-2 text-sm text-gray-700">
+                                        {q.explanation}
+                                      </p>
+                                      <button
+                                        className="p-2 bg-blue-200 border border-blue-400 rounded-lg"
+                                        id={`deepseek-explanation-${idx}`}
+                                        onClick={async () => {
+                                          if (
+                                            (
+                                              document.getElementById(
+                                                `deepseek-explanation-${idx}`
+                                              ) as HTMLButtonElement
+                                            ).innerText === "Hide Explanation"
+                                          ) {
+                                            abortControllerRef.current?.abort();
+                                            setAnswers((prev) => {
+                                              const updated = [...prev];
+                                              updated[idx] = "";
+                                              return updated;
+                                            });
+                                            return;
+                                          }
+                                          abortControllerRef.current?.abort();
+                                          abortControllerRef.current =
+                                            new AbortController();
+                                          setAnswers((prev) => {
+                                            const updated = [...prev];
+                                            updated[idx] = "Loading...";
+                                            return updated;
+                                          });
+                                          try {
+                                            const res = await axios.post(
+                                              "/api/mistralai",
+                                              {
+                                                prompt:
+                                                  sanitizeForPrompt(
+                                                    q.question
+                                                  ) +
+                                                  `. Here are the answer choices: ${q.options}. The correct answer is ${q.correctAnswer}. Indicate the correct answer in bold and explain why it's right.`,
+                                              },
+                                              {
+                                                signal:
+                                                  abortControllerRef.current
+                                                    .signal,
+                                                timeout: 30000, // 30s timeout
+                                              }
+                                            );
+
+                                            setAnswers((prev) => {
+                                              const updated = [...prev];
+                                              let expl = res?.data
+                                                .replaceAll("\\times", "*")
+                                                ?.replaceAll("\\boxed", "");
+                                              updated[idx] =
+                                                expl || "No response.";
+                                              return updated;
+                                            });
+                                          } catch (err) {
+                                            if (axios.isCancel(err)) {
+                                              // Request was cancelled, do nothing
+                                              return;
+                                            }
+
+                                            setAnswers((prev) => {
+                                              const updated = [...prev];
+                                              updated[idx] = "";
+                                              return updated;
+                                            });
+                                            toast.error(
+                                              "Sorry, there was a slight hiccup. Please try again later."
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        {answers[idx] === "Loading..."
+                                          ? "Loading..."
+                                          : answers[idx] === ""
+                                            ? "Show Detailed Explanation"
+                                            : "Hide Explanation"}
+                                      </button>
+
+                                      {answers[idx] && markdown(answers[idx])}
+                                    </>
                                   )}
                                 </div>
                               );
@@ -486,7 +747,11 @@ export default function LessonsPage() {
                               onClick={handleNextSubtopic}
                               className="self-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                             >
-                              {topicSubtopics.findIndex((s) => s.subtopic === selectedTopic) + 1 < topicSubtopics.length
+                              {topicSubtopics.findIndex(
+                                (s) => s.subtopic === selectedTopic
+                              ) +
+                                1 <
+                              topicSubtopics.length
                                 ? "Next Unit"
                                 : "Finish"}
                             </button>

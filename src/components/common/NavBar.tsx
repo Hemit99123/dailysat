@@ -2,7 +2,12 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import { cn } from "@/lib/utils";
 import { menuItems } from "@/data/common/navbar";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
@@ -37,7 +42,9 @@ const NavBar = () => {
       await signOut();
       router.push("/auth/success");
     } else {
-      await signIn.social({ provider: "google" });
+      await signIn.social({
+        provider: "google",
+      });
     }
   };
 
@@ -54,15 +61,14 @@ const NavBar = () => {
     <motion.div
       style={{ y, opacity }}
       className={cn(
-        "top-0 z-50 transition-all duration-300 shadow-sm border-b border-white/50 backdrop-blur-md",
+        "top-0 z-50 transition-all p-4 duration-300 shadow-sm border-b border-white/50 backdrop-blur-md",
         theme.bg
       )}
     >
-      <nav className="mx-auto flex items-center justify-between px-6 py-4 max-w-7xl">
-        {/* Logo */}
+      <nav className="w-full flex items-center justify-between">
         <Link
           href="/"
-          className={cn("flex items-center text-xl font-extrabold", theme.text)}
+          className="flex items-center text-xl font-bold text-blue-600"
         >
           <Image
             src="/logo/dailysat.png"
@@ -77,14 +83,14 @@ const NavBar = () => {
         {/* Mobile Toggle */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className={cn("md:hidden p-2", theme.text)}
+          className={cn("lg:hidden p-2", theme.text)}
           aria-label="Toggle menu"
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden lg:flex items-center space-x-8">
           {menuItems.map((item) => (
             <Link
               key={item.href}

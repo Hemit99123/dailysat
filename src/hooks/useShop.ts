@@ -1,98 +1,112 @@
-"use client";
-
-import { useEffect, useReducer, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { useUserStore } from "@/store/user";
-import { useGridStore } from "@/store/grid"; // <-- added
-import { ShopItem } from "@/types/shop/shopItem";
-import { Items } from "@/data/shop";
 
-const initialState: { [key: string]: number } = {
-    coininvestori: 0,
-    coininvestorii: 0,
-    coininvestoriii: 0,
-    coininvestoriv: 0,
-    owlicon: 0,
-    tigericon: 0,
-    sharkicon: 0,
-    cheetahicon: 0,
-    bronzebanner: 0,
-    goldbanner: 0,
-    emeraldbanner: 0,
-    diamondbanner: 0,
+// Define the item counts (shop cart state) type
+type CartState = { [key: string]: number };
+
+// Map of item IDs to their names and prices
+const namePriceMap: { [key: string]: [string, number, string] } = {
+  coininvestori: ["Coin Investor I", 120, "Earn 5 coins daily"],
+  coininvestorii: ["Coin Investor II", 230, "Earn 10 coins daily"],
+  coininvestoriii: ["Coin Investor III", 350, "Earn 15 coins daily"],
+  coininvestoriv: ["Coin Investor IV", 460, "Earn 20 coins daily"],
+  owlicon: ["Owl Icon", 300, "Display an owl icon on your profile"],
+  tigericon: ["Tiger Icon", 400, "Display a tiger icon on your profile"],
+  sharkicon: ["Shark Icon", 350, "Display a shark icon on your profile"],
+  cheetahicon: ["Cheetah Icon", 250, "Display a cheetah icon on your profile"],
+  bronzebanner: [
+    "Bronze Banner",
+    1000,
+    "Display a bronze banner on your profile",
+  ],
+  goldbanner: ["Gold Banner", 2000, "Display a gold banner on your profile"],
+  diamondbanner: [
+    "Diamond Banner",
+    3000,
+    "Display a diamond banner on your profile",
+  ],
+  emeraldbanner: [
+    "Emerald Banner",
+    5000,
+    "Display an emerald banner on your profile",
+  ],
 };
 
-function reducer(
-    state: typeof initialState,
-    action: { type: string; payload?: string; matchedItem?: ShopItem }
-) {
-    switch (action.type) {
-        case "increment":
-            return {
-                ...state,
-                [action.payload as string]: state[action.payload as string] + 1,
-            };
-        case "decrement":
-            return {
-                ...state,
-                [action.payload as string]: Math.max(
-                    0,
-                    state[action.payload as string] - 1
-                ),
-            };
-        default:
-            return state;
-    }
-}
-
+const initialState: CartState = {
+  coininvestori: 0,
+  coininvestorii: 0,
+  coininvestoriii: 0,
+  coininvestoriv: 0,
+  owlicon: 0,
+  tigericon: 0,
+  sharkicon: 0,
+  cheetahicon: 0,
+  bronzebanner: 0,
+  goldbanner: 0,
+  diamondbanner: 0,
+  emeraldbanner: 0,
+};
+// Custom hook to manage shop state and user currency
 export const useShop = () => {
-    const user = useUserStore((state) => state.user);
-    const setUser = useUserStore((state) => state.setUser);
+  const [cartState, setCartState] = useState<CartState>(initialState);
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
 
-    const grid = useGridStore((state) => state.grid);
+  const incrementItem = (key: string) => {
+    const itemKey = key.toLowerCase().replace(/\s/g, "");
+    const [name, price] = namePriceMap[itemKey] || [];
 
-    const [coins, setCoins] = useState({ amnt: -1 });
-    const [state, dispatch] = useReducer(reducer, initialState);
+    // If item doesn't exist or user doesn't have enough coins, don't proceed
+    if (!name || !user || user.currency < price) {
+      return;
+    }
 
-    useEffect(() => {
-        const handleGetUserAuth = async () => {
-            try {
-                // TEMP FOR NOW 
-                const userResponse = await axios.get("/api/auth/get-user");
+    setCartState((prev) => ({
+      ...prev,
+      [itemKey]: (prev[itemKey] || 0) + 1,
+    }));
 
-                const response = await axios.get("/api/auth/view-currency");
-            
-                setUser?.(userResponse.data.user);
-                setCoins({ amnt: response.data.user?.currency });
-            } catch (error) {
-                console.error("Error fetching user:", (error as Error).message);
-            }
-        };
+    if (setUser && user) {
+      setUser({
+        ...user,
+        currency: user.currency - price,
+      });
+    }
+  };
 
-        handleGetUserAuth();
-    }, [setUser]);
+  const decrementItem = (key: string) => {
+    const itemKey = key.toLowerCase().replace(/\s/g, "");
+    const [name, price] = namePriceMap[itemKey] || [];
+    const currentCount = cartState[itemKey] || 0;
 
-    const handleDispatch = (type: "increment" | "decrement", payload: string) => {
-        const matchedItem = Items[grid]?.find(
-            (item) => item.name.toLowerCase().replace(/\s/g, "") === payload
-        );
+    // If item doesn't exist or no items in cart, don't proceed
+    if (!name || !user || currentCount <= 0) {
+      return;
+    }
 
-        if (matchedItem) {
-            if (type === "increment") {
-                setCoins((prev) => ({ amnt: prev.amnt - matchedItem.price }));
-            } else {
-                setCoins((prev) => ({ amnt: prev.amnt + matchedItem.price }));
-            }
-        }
+    setCartState((prev) => ({
+      ...prev,
+      [itemKey]: currentCount - 1,
+    }));
 
-        dispatch({ type, payload });
-    };
+    if (setUser && user) {
+      setUser({
+        ...user,
+        currency: user.currency + price,
+      });
+    }
+  };
 
-    return {
-        coins,
-        setCoins,
-        state,
-        user,
-        handleDispatch,
-    };
-}
+  const clear = () => {
+    setCartState(initialState);
+  };
+
+  return {
+    state: cartState,
+    increment: incrementItem,
+    decrement: decrementItem,
+    clear,
+    user,
+    setUser,
+  };
+};

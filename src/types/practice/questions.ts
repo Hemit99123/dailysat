@@ -18,3 +18,14 @@ export interface QuestionData {
     subject: string;
   };
 }
+
+export interface RawStemQuestion {
+  choices: Record<string, string>;
+  question: string;
+  paragraph?: string;
+  explanation: string;
+  correct_answer: string;
+  stemHtml: string;
+  stem: string;
+  prompt: string;
+}
