@@ -33,17 +33,12 @@ export default function VocabPracticePage() {
   const adaptedQuestion = useMemo(() => {
     if (!currentQuestion) return null;
 
-    const fullSentence = currentQuestion.question;
-    const match = fullSentence.match(/\(([^)]+)\)\s*$/);
-    const extraExplanation = match ? match[1] : null;
-    const trimmedSentence = match ? fullSentence.replace(/\s*\(([^)]+)\)\s*$/, "") : fullSentence;
-
     return {
       id: currentQuestion.id,
       domain: "Vocab",
       visuals: { type: "none", svg_content: "" },
       question: {
-        question: trimmedSentence,
+        question: currentQuestion.question,
         paragraph: null,
         choices: Object.fromEntries(
           currentQuestion.choices.map((choice: string, index: number) => [
@@ -51,7 +46,7 @@ export default function VocabPracticePage() {
             choice,
           ])
         ),
-        explanation: `The correct word was "${currentQuestion.correct_answer}". Here is an example of the correct answer used in a sentence: ` + (extraExplanation ? ` (${extraExplanation})` : ""),
+        explanation: `The correct word was "${currentQuestion.correct_answer}".`, // <-- FIX 1: Simplified explanations
         correct_answer: String.fromCharCode(
           65 + currentQuestion.choices.findIndex((c: string) => c === currentQuestion.correct_answer)
         ),
@@ -68,7 +63,7 @@ export default function VocabPracticePage() {
   const handleSubmit = () => {
     if (!interaction.selectedAnswer || !currentQuestion || !adaptedQuestion) return;
 
-    const isCorrect = interaction.selectedAnswer === currentQuestion.correct_answer;
+    const isCorrect = interaction.selectedAnswer === adaptedQuestion.question.correct_answer;
 
     setInteraction(prev => ({
       ...prev,

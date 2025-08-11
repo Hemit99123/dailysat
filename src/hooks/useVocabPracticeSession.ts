@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 
-const DATA_URL = "https://api.jsonsilo.com/public/adc25e60-df9f-48b2-a1ac-82e5fc8ce524"; // put your actual URL or local path
+const DATA_URL = "https://api.jsonsilo.com/public/bda3abc2-70d7-471d-a991-c79bc4ca77b1"; // put your actual URL or local path
 
 export type VocabItem = {
   word: string;
-  sentence: string;
+  definition: string;
 };
 
 export type Question = {
@@ -50,7 +50,7 @@ export const useVocabPracticeSession = () => {
 
     setCurrentQuestion({
       id: Date.now().toString(),
-      question: correctItem.sentence,
+      question: correctItem.definition,
       choices,
       correct_answer: correctAnswer,
     });

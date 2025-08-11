@@ -153,8 +153,10 @@ export const QuestionContent: React.FC<QuestionContentProps> = ({
 
       {subject === "vocab" && (
       <div className="mb-5 text-base font-bold text-black">
-        Which of the following options is best described by the following defenition?
-        <span className="mb-5 text-base font-normal">{markdown(currentQuestion.question.question)}</span>
+        <p className="font-bold">Which of the following words best fits this definition?</p>
+       <blockquote className="mt-2 border-l-4 border-gray-300 pl-4 text-base font-normal italic text-gray-700">
+        {markdown(currentQuestion.question.question)}
+     </blockquote>
       </div>
       )}
 
