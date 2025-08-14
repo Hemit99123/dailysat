@@ -3,7 +3,7 @@ import { signOut } from "@/lib/auth/authClient";
 import { determineAuthStatus } from "@/lib/auth/authStatus";
 
 const AuthButton = () => {
-  const [status, setStatus] = useState<boolean | null>(null);
+  const [status, setStatus] = useState<boolean>(false);
 
   useEffect(() => {
     const handleGetAuthStatus = async () => {
