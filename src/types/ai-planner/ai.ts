@@ -20,12 +20,14 @@ export interface DebugPlan {
     isDebug: true
     rawResponse: string
 }
-  
+
 export interface ErrorPlan {
     isError: true
     error: string
     rawResponse?: string
 }
+
+export type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan
 
 export interface StudyPlanRequest {
   currentScore: number
