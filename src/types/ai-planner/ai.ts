@@ -1,27 +1,27 @@
-export interface Activity {
+interface Activity {
     topic: string
     description: string
     duration: number
     type: "review" | "practice" | "lecture" | string
 }
   
-export interface StudyDay {
+interface StudyDay {
     date?: string
     activities: Activity[]
 }
   
-export interface ValidPlan {
+interface ValidPlan {
     isDebug?: false
     isError?: false
     days: StudyDay[]
 }
   
-export interface DebugPlan {
+interface DebugPlan {
     isDebug: true
     rawResponse: string
 }
 
-export interface ErrorPlan {
+interface ErrorPlan {
     isError: true
     error: string
     rawResponse?: string
