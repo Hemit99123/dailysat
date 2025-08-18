@@ -1,43 +1,38 @@
 export interface Activity {
-    topic: string
-    description: string
-    duration: number
-    type: "review" | "practice" | "lecture" | string
+    topic: string;
+    description: string;
+    duration: number;
+    type: "review" | "practice" | "lecture" | string;
 }
-  
+
 export interface StudyDay {
-    date?: string
-    activities: Activity[]
+    date?: string;
+    activities: Activity[];
 }
-  
+
 export interface ValidPlan {
-    isDebug?: false
-    isError?: false
-    days: StudyDay[]
+    isDebug?: false;
+    isError?: false;
+    days: StudyDay[];
 }
-  
+
 export interface DebugPlan {
-    isDebug: true
-    rawResponse: string
+    isDebug: true;
+    rawResponse: string;
 }
-  
+
 export interface ErrorPlan {
-    isError: true
-    error: string
-    rawResponse?: string
+    isError: true;
+    error: string;
+    rawResponse?: string;
 }
+
+export type StudyPlanData = ValidPlan | DebugPlan | ErrorPlan;
 
 export interface StudyPlanRequest {
-  currentScore: number
-  targetScore: number
-  testDate: string
-  debug?: boolean
-  personalization: string;
-}
-
-export interface Activity {
-  topic: string;
-  type: string;
-  duration: number;
-  description: string;
+    currentScore: number;
+    targetScore: number;
+    testDate: string;
+    debug?: boolean;
+    personalization: string;
 }
