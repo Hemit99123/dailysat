@@ -1,7 +1,7 @@
 export const runtime = "edge";
 
 import { Ratelimit } from "@upstash/ratelimit";
-import { client } from "./redis";
+import { client } from "../redis";
 
 const ratelimit = new Ratelimit({
   redis: client,
