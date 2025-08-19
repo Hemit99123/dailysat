@@ -96,22 +96,30 @@
   white-space: pre-wrap;
 }
 
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
+@layer utilities {
+  .triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
 }
 
-.animate-blob {
-  animation: blob 8s infinite;
+@keyframes wander {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(var(--x1), var(--y1)) rotate(120deg);
+  }
+  66% {
+    transform: translate(var(--x2), var(--y2)) rotate(240deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+.animate-wander {
+  animation-name: wander;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
 
