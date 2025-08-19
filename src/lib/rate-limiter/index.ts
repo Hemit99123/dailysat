@@ -13,5 +13,5 @@ export const handleRatelimitSuccess = async (session: any | null) => {
   const email = session?.user?.email;
 
   const { success } = await ratelimit.limit(email as string);
-  return success;
+  return success ? "not-reached" : "reached";
 };

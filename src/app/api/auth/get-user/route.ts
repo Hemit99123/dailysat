@@ -84,7 +84,6 @@ import { handleRatelimitSuccess } from "@/lib/rate-limiter";
  */
 
 export const GET = async () => {
-  await client.connect();
   const session = await handleGetSession();
   const email = session?.user?.email;
 
@@ -93,6 +92,10 @@ export const GET = async () => {
     try {
         if (!session || !session.user?.email) {
             throw new Error("Session is invalid or user email is missing.");
+        }
+
+        if (rateLimitStatus === "reached") {
+            throw new Error("Rate limit reached. Please try again later.");
         }
 
         await client.connect();
@@ -121,8 +124,8 @@ export const GET = async () => {
             user = await usersCollection.findOne({ _id: result.insertedId });
         }
         
-      return NextResponse.json({ user, cached: rateLimitStatus });
+      return NextResponse.json({ user });
     } catch (error) {
-      return Response.json({ error });
+      return NextResponse.json({ error });
   }
 };
