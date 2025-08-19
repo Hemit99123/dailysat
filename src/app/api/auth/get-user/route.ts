@@ -90,7 +90,6 @@ export const GET = async () => {
 
   const rateLimitStatus = await handleRatelimitSuccess(email as string);
 
-  try {
     try {
         if (!session || !session.user?.email) {
             throw new Error("Session is invalid or user email is missing.");
