@@ -1,5 +1,4 @@
 import { handleGetSession } from "@/lib/auth/authActions";
-import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/mongo";
 import { Db } from "mongodb";
 
@@ -41,14 +40,13 @@ export const POST = async (request: Request) => {
 export const GET = async () => {
   try {
     const session = await handleGetSession();
-    const email = session?.user?.email;
-
-    if (!email) {
-      return Response.json({ message: "Unauthorized" });
-    }
 
     await client.connect();
-    const user = await handleGetUser(session);
+    const db = client.db("DailySAT");
+    const usersCollection = db.collection("users");
+
+    // Find the user
+    const user = await usersCollection.findOne({ email: session?.user.email });
 
     return Response.json({ message: "Found study plan", plan: user?.plan });
   } catch (error) {
