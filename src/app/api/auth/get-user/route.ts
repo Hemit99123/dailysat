@@ -121,6 +121,7 @@ export const GET = async () => {
             // Retrieve the newly created user for returning
             user = await usersCollection.findOne({ _id: result.insertedId });
         }
+        
       return NextResponse.json({ user, cached: rateLimitStatus });
     } catch (error) {
       return Response.json({ error });
