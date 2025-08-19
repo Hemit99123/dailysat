@@ -90,10 +90,6 @@ export const GET = async () => {
   const rateLimitStatus = await handleRatelimitSuccess(email as string);
 
     try {
-        if (!session || !session.user?.email) {
-            throw new Error("Session is invalid or user email is missing.");
-        }
-
         if (rateLimitStatus === "reached") {
             throw new Error("Rate limit reached. Please try again later.");
         }
@@ -103,15 +99,15 @@ export const GET = async () => {
         const usersCollection = db.collection("users");
 
         // Find the user
-        let user = await usersCollection.findOne({ email: session.user.email });
+        let user = await usersCollection.findOne({ email: session?.user.email });
 
         // If user doesn't exist, create a new record
         if (!user) {
             const newUser = {
-                email: session.user.email,
-                name: session.user.name,
-                image: session.user.image,
-                id: session.user.id,
+                email: session?.user.email,
+                name: session?.user.name,
+                image: session?.user.image,
+                id: session?.user.id,
                 currency: 0,
                 wrongAnswered: 0,
                 correctAnswered: 0,
