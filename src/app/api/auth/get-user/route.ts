@@ -1,5 +1,4 @@
 import { handleGetSession } from "@/lib/auth/authActions";
-import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/mongo";
 import { NextResponse } from "next/server";
 import { handleRatelimitSuccess } from "@/lib/rate-limiter";
@@ -92,6 +91,7 @@ export const GET = async () => {
   const rateLimitStatus = await handleRatelimitSuccess(email as string);
 
   try {
+    try {
         if (!session || !session.user?.email) {
             throw new Error("Session is invalid or user email is missing.");
         }
@@ -121,7 +121,7 @@ export const GET = async () => {
             // Retrieve the newly created user for returning
             user = await usersCollection.findOne({ _id: result.insertedId });
         }
-
+        
       return NextResponse.json({ user, cached: rateLimitStatus });
     } catch (error) {
       return Response.json({ error });
