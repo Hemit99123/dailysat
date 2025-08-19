@@ -92,13 +92,38 @@ export const GET = async () => {
   const rateLimitStatus = await handleRatelimitSuccess(email as string);
 
   try {
-    try {
-      const user = await handleGetUser(session);
+        if (!session || !session.user?.email) {
+            throw new Error("Session is invalid or user email is missing.");
+        }
+
+        await client.connect();
+        const db = client.db("DailySAT");
+        const usersCollection = db.collection("users");
+
+        // Find the user
+        let user = await usersCollection.findOne({ email: session.user.email });
+
+        // If user doesn't exist, create a new record
+        if (!user) {
+            const newUser = {
+                email: session.user.email,
+                name: session.user.name,
+                image: session.user.image,
+                id: session.user.id,
+                currency: 0,
+                wrongAnswered: 0,
+                correctAnswered: 0,
+                isReferred: false,
+                itemsBought: []
+            };
+
+            const result = await usersCollection.insertOne(newUser);
+            // Retrieve the newly created user for returning
+            user = await usersCollection.findOne({ _id: result.insertedId });
+        }
+
       return NextResponse.json({ user, cached: rateLimitStatus });
     } catch (error) {
       return Response.json({ error });
-    }
-  } catch (error) {
-    return Response.json({ error });
   }
 };
