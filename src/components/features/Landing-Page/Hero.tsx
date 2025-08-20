@@ -1,9 +1,25 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ArrowSvg from '@/components/common/icons/ArrowSVG';
 import Link from 'next/link';
 
 const Hero = () => {
+  const phrases = [
+    'a 1500+ warrior',
+    'struggling with SAT English',
+    'procrastinating starting studying',
+    "can't get a grip on SAT math",
+  ];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setIndex((i) => (i + 1) % phrases.length),
+      2500
+    );
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative w-screen h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree overflow-hidden">
       {/* Background blobs */}
@@ -62,7 +78,22 @@ const Hero = () => {
         transition={{ duration: 0.5, delay: 0.3 }}
         viewport={{ once: true }}
       >
-        DailySAT is your go-to source. It is made for anyone, anywhere, anytime!
+        <span>Whether you're </span>
+        <span className="relative inline-block h-[1.2em] overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={phrases[index]}
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '-100%', opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="block"
+            >
+              {phrases[index]}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+        <span>, we've got you with a plan, motivation, support, and results.</span>
       </motion.div>
 
       <motion.div
