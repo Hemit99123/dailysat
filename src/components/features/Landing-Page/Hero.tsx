@@ -6,20 +6,6 @@ import Link from 'next/link';
 const Hero = () => {
   return (
     <div className="relative w-screen h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree overflow-hidden">
-      {/* Background blobs */}
-      <div
-        className="absolute top-10 left-10 w-72 h-72 rounded-full bg-blue-300 opacity-30 filter blur-3xl animate-blob"
-        style={{ animationDelay: '0s' }}
-      />
-      <div
-        className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-indigo-300 opacity-20 filter blur-3xl animate-blob"
-        style={{ animationDelay: '2s' }}
-      />
-      <div
-        className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full bg-purple-300 opacity-25 filter blur-2xl animate-blob"
-        style={{ animationDelay: '4s' }}
-      />
-
       {/* Foreground content */}
       <motion.div
         className="relative z-10 flex items-center text-sm border border-gray-200 bg-white/70 backdrop-blur-sm shadow-sm px-3 py-1 rounded-full text-gray-800 mb-3"

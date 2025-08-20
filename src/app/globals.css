@@ -96,3 +96,30 @@
   white-space: pre-wrap;
 }
 
+@layer utilities {
+  .triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+}
+
+@keyframes wander {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(var(--x1), var(--y1)) rotate(120deg);
+  }
+  66% {
+    transform: translate(var(--x2), var(--y2)) rotate(240deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+.animate-wander {
+  animation-name: wander;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
