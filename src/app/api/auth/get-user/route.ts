@@ -1,5 +1,4 @@
 import { handleGetSession } from "@/lib/auth/authActions";
-import { handleGetUser } from "@/lib/auth/getUser";
 import { client } from "@/lib/mongo";
 import { NextResponse } from "next/server";
 import { handleRatelimitSuccess } from "@/lib/rate-limiter";
@@ -85,20 +84,44 @@ import { handleRatelimitSuccess } from "@/lib/rate-limiter";
  */
 
 export const GET = async () => {
-  await client.connect();
   const session = await handleGetSession();
   const email = session?.user?.email;
 
   const rateLimitStatus = await handleRatelimitSuccess(email as string);
 
-  try {
     try {
-      const user = await handleGetUser(session);
-      return NextResponse.json({ user, cached: rateLimitStatus });
+        if (rateLimitStatus === "reached") {
+            throw new Error("Rate limit reached. Please try again later.");
+        }
+
+        await client.connect();
+        const db = client.db("DailySAT");
+        const usersCollection = db.collection("users");
+
+        // Find the user
+        let user = await usersCollection.findOne({ email: session?.user.email });
+
+        // If user doesn't exist, create a new record
+        if (!user) {
+            const newUser = {
+                email: session?.user.email,
+                name: session?.user.name,
+                image: session?.user.image,
+                id: session?.user.id,
+                currency: 0,
+                wrongAnswered: 0,
+                correctAnswered: 0,
+                isReferred: false,
+                itemsBought: []
+            };
+
+            const result = await usersCollection.insertOne(newUser);
+            // Retrieve the newly created user for returning
+            user = await usersCollection.findOne({ _id: result.insertedId });
+        }
+        
+      return NextResponse.json({ user });
     } catch (error) {
-      return Response.json({ error });
-    }
-  } catch (error) {
-    return Response.json({ error });
+      return NextResponse.json({ error });
   }
 };

@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { generateStudyPlan } from "@/lib/ai/generateStudyPlan"
 import { StudyPlan } from "@/components/features/AI-Planner/StudyPlan"
-import { StudyPlanData, StudyDay } from "@/types/ai-planner/ai"
+import { StudyPlanData, StudyDay, DebugPlan, ValidPlan } from "@/types/ai-planner/ai"
 import {toast} from "react-toastify"
 
 const AI = () => {

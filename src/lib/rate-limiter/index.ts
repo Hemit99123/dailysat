@@ -1,7 +1,7 @@
 export const runtime = "edge";
 
 import { Ratelimit } from "@upstash/ratelimit";
-import { client } from "./redis";
+import { client } from "../redis";
 
 const ratelimit = new Ratelimit({
   redis: client,
@@ -13,5 +13,5 @@ export const handleRatelimitSuccess = async (session: any | null) => {
   const email = session?.user?.email;
 
   const { success } = await ratelimit.limit(email as string);
-  return success;
+  return success ? "not-reached" : "reached";
 };
