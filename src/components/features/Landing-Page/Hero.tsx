@@ -79,7 +79,9 @@ const Hero = () => {
         viewport={{ once: true }}
       >
         <span>Whether you're </span>
-        <span className="relative inline-block h-[1.2em] overflow-hidden">
+        <span
+          className="relative inline-flex w-64 h-[1.6em] items-center justify-center overflow-hidden bg-gray-100 border border-gray-300 rounded-md mx-1"
+        >
           <AnimatePresence mode="wait">
             <motion.span
               key={phrases[index]}
@@ -87,7 +89,7 @@ const Hero = () => {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: '-100%', opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="block"
+              className="block w-full text-center"
             >
               {phrases[index]}
             </motion.span>
