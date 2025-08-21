@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ArrowSvg from '@/components/common/icons/ArrowSVG';
 import Link from 'next/link';
 
@@ -75,6 +77,7 @@ const Hero = () => {
         viewport={{ once: true }}
       >
         SAT Preparation Made
+        SAT Preparation Made
       </motion.h1>
       <motion.h1
         className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]"
@@ -135,6 +138,7 @@ const Hero = () => {
           href="/dashboard"
           className="text-sm bg-blue-500 text-white py-2 px-4 rounded-lg flex items-center group"
         >
+          Start Your Journey
           Start Your Journey
           <ArrowSvg
             className="w-4 h-4 ml-2 transition-transform duration-300 -rotate-45 group-hover:rotate-0"
