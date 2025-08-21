@@ -80,7 +80,7 @@ const Hero = () => {
       >
         <span>Whether you're </span>
         <span
-          className="relative inline-flex w-64 h-[1.6em] items-center justify-center overflow-hidden bg-gray-100 border border-gray-300 rounded-md mx-1"
+          className="relative inline-flex w-80 h-[1.6em] items-center justify-center overflow-hidden bg-gray-100 border border-gray-300 rounded-md mx-1"
         >
           <AnimatePresence mode="wait">
             <motion.span
@@ -109,7 +109,7 @@ const Hero = () => {
           href="/dashboard"
           className="text-sm bg-blue-500 text-white py-2 px-4 rounded-lg flex items-center group"
         >
-          Dashboard
+          Start Your Journey
           <ArrowSvg
             className="w-4 h-4 ml-2 transition-transform duration-300 -rotate-45 group-hover:rotate-0"
             stroke="white"
@@ -117,10 +117,10 @@ const Hero = () => {
         </Link>
 
         <Link
-          href="/team"
+          href="#how-it-works"
           className="text-sm border border-gray-600 text-black py-2 px-4 rounded-lg flex items-center group"
         >
-          View our team
+          See How It Works
         </Link>
       </motion.div>
     </div>
