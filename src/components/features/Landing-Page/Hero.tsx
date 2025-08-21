@@ -1,22 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import ArrowSvg from '@/components/common/icons/ArrowSVG';
 import Link from 'next/link';
 
 const Hero = () => {
   const slides = [
-    {
-      text: 'a 1500+ warrior',
-      img: '/doodles/1500-warrior.png',
-      alt: 'Student reaching for a 1600 score banner',
-    },
-    {
-      text: 'struggling with SAT English',
-      img: '/doodles/struggling-sat-english.png',
-      alt: 'Student frustrated while studying English',
-    },
     {
       text: 'procrastinating starting studying',
       img: '/doodles/procrastinating-starting-studying.png',
@@ -76,7 +64,6 @@ const Hero = () => {
         transition={{ duration: 0.6, delay: 0.1 }}
         viewport={{ once: true }}
       >
-        SAT Preparation Made
         SAT Preparation Made
       </motion.h1>
       <motion.h1
@@ -139,7 +126,6 @@ const Hero = () => {
           className="text-sm bg-blue-500 text-white py-2 px-4 rounded-lg flex items-center group"
         >
           Start Your Journey
-          Start Your Journey
           <ArrowSvg
             className="w-4 h-4 ml-2 transition-transform duration-300 -rotate-45 group-hover:rotate-0"
             stroke="white"
@@ -150,7 +136,6 @@ const Hero = () => {
           href="/#how-it-works"
           className="text-sm border border-gray-600 text-black py-2 px-4 rounded-lg flex items-center group"
         >
-          See How It Works
           See How It Works
         </Link>
       </motion.div>
