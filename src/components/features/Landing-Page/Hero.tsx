@@ -1,9 +1,40 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ArrowSvg from '@/components/common/icons/ArrowSVG';
 import Link from 'next/link';
 
 const Hero = () => {
+  const slides = [
+    {
+      text: 'a 1500+ warrior',
+      img: '/doodles/1500-warrior.png',
+      alt: 'Student reaching for a 1600 score banner',
+    },
+    {
+      text: 'struggling with SAT English',
+      img: '/doodles/struggling-sat-english.png',
+      alt: 'Student frustrated while studying English',
+    },
+    {
+      text: 'procrastinating starting studying',
+      img: '/doodles/procrastinating-starting-studying.png',
+      alt: 'Student distracted by phone instead of studying',
+    },
+    {
+      text: "can't get a grip on SAT math",
+      img: '/doodles/cant-get-a-grip-on-sat-math.png',
+      alt: 'Student overwhelmed by math problems',
+    },
+  ];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setIndex((i) => (i + 1) % slides.length),
+      2500
+    );
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="relative w-screen h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree overflow-hidden">
       {/* Background blobs */}
@@ -43,7 +74,7 @@ const Hero = () => {
         transition={{ duration: 0.6, delay: 0.1 }}
         viewport={{ once: true }}
       >
-        SATs Preparation Made
+        SAT Preparation Made
       </motion.h1>
       <motion.h1
         className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]"
@@ -61,10 +92,38 @@ const Hero = () => {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
         viewport={{ once: true }}
-      >
-        DailySAT is your go-to source. It is made for anyone, anywhere, anytime!
+      ><span>Whether you're </span>
+        <span
+          className="relative inline-flex w-80 h-[1.6em] items-center justify-center overflow-hidden bg-gray-100 border border-gray-300 rounded-md mx-1"
+        >
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={slides[index].text}
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '-100%', opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="block w-full text-center"
+            >
+              {slides[index].text}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+        <span>, we've got you with a plan, motivation, support, and results.</span>
       </motion.div>
 
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={slides[index].img}
+          src={slides[index].img}
+          alt={slides[index].alt}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="absolute right-10 top-1/2 -translate-y-1/2 w-40 h-auto z-0"
+        />
+      </AnimatePresence>
       <motion.div
         className="relative z-10 flex items-center space-x-2"
         initial={{ opacity: 0, y: 20 }}
@@ -76,7 +135,7 @@ const Hero = () => {
           href="/dashboard"
           className="text-sm bg-blue-500 text-white py-2 px-4 rounded-lg flex items-center group"
         >
-          Dashboard
+          Start Your Journey
           <ArrowSvg
             className="w-4 h-4 ml-2 transition-transform duration-300 -rotate-45 group-hover:rotate-0"
             stroke="white"
@@ -84,10 +143,11 @@ const Hero = () => {
         </Link>
 
         <Link
-          href="/team"
+          href="/#how-it-works"
           className="text-sm border border-gray-600 text-black py-2 px-4 rounded-lg flex items-center group"
         >
-          View our team
+          See How It Works
+          See How It Works
         </Link>
       </motion.div>
     </div>
