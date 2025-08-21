@@ -6,7 +6,7 @@ import { featureList } from '@/data/landing-page/features'
 
 const Features = () => {
   return (
-    <div>
+    <div id="how-it-works">
       <Header 
         badgeText="Our Features"
         text="Tools designed for teens"
