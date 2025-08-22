@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 
 const shapeTypes = ['circle', 'square', 'triangle'] as const;
-const colors = ['bg-blue-300', 'bg-indigo-300', 'bg-pink-300', 'bg-purple-300'];
+const colors = ['bg-blue-400', 'bg-indigo-400', 'bg-pink-400', 'bg-purple-400'];
 
 type ShapeType = typeof shapeTypes[number];
 
@@ -20,7 +20,7 @@ const PAD = 64;   // extra space inside the wrapper for the blur halo
 const GAP = 16;   // viewport padding so blobs don’t kiss the edges
 
 const rand = (min: number, max: number) => Math.random() * (max - min) + min;
-const dist = (a: {x:number;y:number}, b:{x:number;y:number}) => Math.hypot(a.x - b.x, a.y - b.y);
+const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y);
 
 function generateShapes(count: number, vw: number, vh: number): Shape[] {
   // size range responsive to the viewport (keeps things from overwhelming height on laptops/phones)
@@ -50,12 +50,12 @@ function generateShapes(count: number, vw: number, vh: number): Shape[] {
     // Placement ranges that won’t collapse (so animation never pushes outside viewport)
     const minLeft = GAP + maxTravelX;
     const maxLeft = Math.max(minLeft, vw - wrapperW - GAP - maxTravelX);
-    const minTop  = GAP + maxTravelY;
-    const maxTop  = Math.max(minTop, vh - wrapperH - GAP - maxTravelY);
+    const minTop = GAP + maxTravelY;
+    const maxTop = Math.max(minTop, vh - wrapperH - GAP - maxTravelY);
 
     // Pick a spot; gently avoid big overlaps
     let left = rand(minLeft, maxLeft);
-    let top  = rand(minTop,  maxTop);
+    let top = rand(minTop, maxTop);
     const cx = () => left + wrapperW / 2;
     const cy = () => top + wrapperH / 2;
 
@@ -66,7 +66,7 @@ function generateShapes(count: number, vw: number, vh: number): Shape[] {
       centers.some(c => dist({ x: cx(), y: cy() }, c) < Math.max(MIN_SEP, (c.r + size / 2) * 0.6))
     ) {
       left = rand(minLeft, maxLeft);
-      top  = rand(minTop,  maxTop);
+      top = rand(minTop, maxTop);
       tries++;
     }
     centers.push({ x: cx(), y: cy(), r: size / 2 });
@@ -79,7 +79,7 @@ function generateShapes(count: number, vw: number, vh: number): Shape[] {
       y1: rand(-maxTravelY * 1.4, maxTravelY * 1.4),
       x2: rand(-maxTravelX * 1.4, maxTravelX * 1.4),
       y2: rand(-maxTravelY * 1.4, maxTravelY * 1.4),
-      duration: rand(3, 7),
+      duration: rand(2.5, 6),
       delay: 0,
       topPx: top,
       leftPx: left,
@@ -90,6 +90,7 @@ function generateShapes(count: number, vw: number, vh: number): Shape[] {
 
 const Background = () => {
   const [shapes, setShapes] = useState<Shape[]>([]);
+  const [fadeOpacity, setFadeOpacity] = useState<number>(1);
 
   useEffect(() => {
     const place = () => setShapes(generateShapes(4, window.innerWidth, window.innerHeight));
@@ -98,11 +99,54 @@ const Background = () => {
     return () => window.removeEventListener('resize', place);
   }, []);
 
+  // Fade out the background once the user scrolls past the fold.
+  useEffect(() => {
+    let mounted = true;
+    let ticking = false;
+
+    const update = () => {
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const vh = Math.max(1, window.innerHeight);
+      const start = 0; // starat fading immediately when the user scrolls
+      const end = vh * 0.3; // fully faded after 0.3 viewports later
+      let opacity = 1;
+      if (scrollY <= start) opacity = 1;
+      else if (scrollY >= end) opacity = 0;
+      else opacity = 1 - (scrollY - start) / (end - start);
+      if (mounted) setFadeOpacity(opacity);
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
+      }
+    };
+
+    // initialize and attach listeners
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden>
+    <div
+      className="fixed inset-0 z-0 overflow-hidden pointer-events-none"
+      aria-hidden
+      style={{ opacity: fadeOpacity, transition: 'opacity 160ms linear' }}
+    >
       {shapes.map((shape, idx) => {
         const wrapperStyle: React.CSSProperties & {
-          ['--x1']?: string; ['--y1']?: string; ['--x2']?: string; ['--y2']?: string;
+          ['--x1']?: string;['--y1']?: string;['--x2']?: string;['--y2']?: string;
         } = {
           top: `${shape.topPx}px`,
           left: `${shape.leftPx}px`,
@@ -117,11 +161,25 @@ const Background = () => {
         };
 
         return (
+
           <div
             key={idx}
             className="absolute animate-wander transform-gpu will-change-transform opacity-30 filter blur-3xl"
             style={wrapperStyle}
           >
+            {/* Static Background blobs */}
+            <div
+              className="absolute top-10 left-10 w-72 h-72 rounded-full bg-blue-300 opacity-30 filter blur-3xl animate-blob"
+              style={{ animationDelay: '0s' }}
+            />
+            <div
+              className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-indigo-300 opacity-20 filter blur-3xl animate-blob"
+              style={{ animationDelay: '2s' }}
+            />
+            <div
+              className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full bg-purple-300 opacity-25 filter blur-2xl animate-blob"
+              style={{ animationDelay: '4s' }}
+            />
             <div
               className={[
                 'absolute',
