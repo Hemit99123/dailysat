@@ -11,6 +11,7 @@ import { useUserStore } from "@/store/user";
 import axios from "axios";
 import { User } from "@/types/user";
 import { toast } from "react-toastify";
+import { handleShowError } from "@/lib/errors";
 
 export default function Shop() {
   const user = useUserStore((s) => s.user);
@@ -23,9 +24,7 @@ export default function Shop() {
         const userData: User | undefined = response?.data?.user;
         setUser?.(userData ?? null);
       } catch (error) {
-        toast.error(
-          "Sorry, we couldn't retrieve your user account, please try again later"
-        );
+        handleShowError(error);
       }
     };
     handleGetUser();
