@@ -54,14 +54,14 @@ Rules:
 
   let retries = 0
 
+
+  // In case AI fails to return valid JSON, we retry up to MAX_RETRIES times
   while (retries <= MAX_RETRIES) {
     try {
-      // Call your existing Mistral API route
       const response = await axios.post("/api/mistralai", {
         prompt: prompt
       })
 
-      // The response from your API route is already the message content
       const text = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
       const jsonMatch = text.match(/\{[\s\S]*\}/)
 
