@@ -84,44 +84,63 @@ import { handleRatelimitSuccess } from "@/lib/rate-limiter";
  */
 
 export const GET = async () => {
-  const session = await handleGetSession();
-  const email = session?.user?.email;
+  try { 
+    await client.connect();
+    const session = await handleGetSession();
+    
+    // Check if session exists
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json(
+        { error: "No valid session found" }, 
+        { status: 400 }
+      );
+    }
 
-  const rateLimitStatus = await handleRatelimitSuccess(email as string);
+    const email = session.user.email;
 
-    try {
-        if (rateLimitStatus === "reached") {
-            throw new Error("Rate limit reached. Please try again later.");
-        }
+    const rateLimitStatus = await handleRatelimitSuccess(email);
 
-        await client.connect();
-        const db = client.db("DailySAT");
-        const usersCollection = db.collection("users");
+    if (rateLimitStatus === "reached") {
+      return NextResponse.json(
+        { error: "Rate limit reached. Please try again later." },
+        { status: 429 }
+      );
+    }
 
-        // Find the user
-        let user = await usersCollection.findOne({ email: session?.user.email });
+    const db = client.db("DailySAT");
+    const usersCollection = db.collection("users");
 
-        // If user doesn't exist, create a new record
-        if (!user) {
-            const newUser = {
-                email: session?.user.email,
-                name: session?.user.name,
-                image: session?.user.image,
-                id: session?.user.id,
-                currency: 0,
-                wrongAnswered: 0,
-                correctAnswered: 0,
-                isReferred: false,
-                itemsBought: []
-            };
+    // Find the user
+    let user = await usersCollection.findOne({ email: session.user.email });
 
-            const result = await usersCollection.insertOne(newUser);
-            // Retrieve the newly created user for returning
-            user = await usersCollection.findOne({ _id: result.insertedId });
-        }
-        
-      return NextResponse.json({ user });
-    } catch (error) {
-      return NextResponse.json({ error });
+    // If user doesn't exist, create a new record
+    if (!user) {
+      const newUser = {
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image,
+        id: session.user.id,
+        currency: 0,
+        wrongAnswered: 0,
+        correctAnswered: 0,
+        isReferred: false,
+        itemsBought: []
+      };
+
+      const result = await usersCollection.insertOne(newUser);
+      // Retrieve the newly created user for returning
+      user = await usersCollection.findOne({ _id: result.insertedId });
+    }
+    
+    return NextResponse.json({ user });
+    
+  } catch (error) {
+    return NextResponse.json(
+      { error }, 
+      { status: 500 }
+    );
+  } finally {
+    // Ensure the client connection is closed
+    await client.close();
   }
 };
