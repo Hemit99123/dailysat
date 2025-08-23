@@ -8,8 +8,6 @@ export const generateStudyPlan = async (data: StudyPlanRequest) => {
   const daysUntilTest = Math.ceil((testDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
   const maxDays = Math.min(daysUntilTest, 30)
 
-  const systemPrompt = "You are an expert SAT coach and a JSON-only response generator."
-
   const prompt = `You are an expert SAT coach and a JSON-only response generator.
 
 Generate a personalized, detailed SAT study plan using the following inputs:
@@ -54,31 +52,17 @@ Rules:
 - The response should be proper JSON that can be parsed by Javascript later on
 `;
 
-  const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
   let retries = 0
 
   while (retries <= MAX_RETRIES) {
     try {
-      const response = await axios.post(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: prompt }
-          ],
-          temperature: 0.7,
-          stream: false
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`
-          }
-        }
-      )
+      // Call your existing Mistral API route
+      const response = await axios.post("/api/mistralai", {
+        prompt: prompt
+      })
 
-      const text = response.data?.choices?.[0]?.message?.content ?? ""
+      // The response from your API route is already the message content
+      const text = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
       const jsonMatch = text.match(/\{[\s\S]*\}/)
 
       if (!jsonMatch) throw new Error("No JSON object found in the response")
