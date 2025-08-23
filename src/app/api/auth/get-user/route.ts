@@ -135,9 +135,8 @@ export const GET = async () => {
     return NextResponse.json({ user });
     
   } catch (error) {
-    console.error("Error in GET /api/auth/get-user:", error);
     return NextResponse.json(
-      { error: "Internal server error" }, 
+      { error }, 
       { status: 500 }
     );
   } finally {

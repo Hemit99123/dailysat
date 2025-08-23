@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import StatDisplay from "@/components/features/Dashboard/StatDisplay";
 import Option from "@/components/features/Dashboard/Option";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { Book, Calendar, Sigma } from "lucide-react";
@@ -87,7 +87,13 @@ const Home = () => {
         getBanner(userData);
         setUser?.(userData ?? null);
       } catch (error) {
-        toast.error("Sorry, we could not get your user data");
+        
+        if (!(error instanceof AxiosError)) {
+          toast.error("Cannot retrieve user data at this time");
+          return;
+        }
+
+        toast.error(error.response?.data.error);
       }
     };
 
