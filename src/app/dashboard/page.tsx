@@ -13,6 +13,7 @@ import { User } from "@/types/user";
 import { DisplayBanner } from "@/types/dashboard/banner";
 import RedeemReferral from "@/components/features/Dashboard/RedeemReferral";
 import { toast } from "react-toastify";
+import { handleShowError } from "@/lib/errors";
 
 const Home = () => {
   const [icon, setIcon] = useState("");
@@ -87,13 +88,7 @@ const Home = () => {
         getBanner(userData);
         setUser?.(userData ?? null);
       } catch (error) {
-        
-        if (!(error instanceof AxiosError)) {
-          toast.error("Cannot retrieve user data at this time");
-          return;
-        }
-
-        toast.error(error.response?.data.error);
+        handleShowError(error);
       }
     };
 
