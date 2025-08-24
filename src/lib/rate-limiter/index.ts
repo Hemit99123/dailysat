@@ -5,7 +5,7 @@ import { client } from "../redis";
 
 const ratelimit = new Ratelimit({
   redis: client,
-  limiter: Ratelimit.tokenBucket(5, "5 m", 5),
+  limiter: Ratelimit.tokenBucket(30, "5 m", 30),
 });
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */

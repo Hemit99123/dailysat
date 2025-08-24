@@ -6,31 +6,28 @@ export const generateStudyPlan = async (data: StudyPlanRequest) => {
   const today = new Date()
   const testDate = new Date(data.testDate)
   const daysUntilTest = Math.ceil((testDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-  const maxDays = Math.min(daysUntilTest, 30)
+  const maxDays = Math.min(daysUntilTest, 30) // cap at 30 days
 
-  const systemPrompt = "You are an expert SAT coach and a JSON-only response generator."
+  const prompt = `
+You are an expert SAT coach and JSON-only response generator.
 
-  const prompt = `You are an expert SAT coach and a JSON-only response generator.
+Generate a personalized SAT study plan that **covers exactly ${maxDays} days**, starting from today (${today.toISOString().split("T")[0]}).  
 
-Generate a personalized, detailed SAT study plan using the following inputs:
+Inputs:
 - Current SAT score: ${data.currentScore}
 - Target SAT score: ${data.targetScore}
 - Days until test: ${daysUntilTest}
+- Personalization: "${data.personalization}"
 
 Requirements:
-1. Create a day-by-day schedule from today until the test date (maximum 30 days).
-2. For each day, include 2–3 unique study activities, each with:
+1. The plan must include **exactly ${maxDays} days** — no fewer, no more.
+2. For each day, include **2–3 unique study activities** with:
    - topic (e.g., "Reading: Main Idea Questions", "Math: Quadratic Equations")
-   - type (must be either "review" or "practice")
+   - type ("review" or "practice")
    - duration in minutes (integer)
-   - description (50–100 words of specific instructions)
-
-3. Ensure that each activity:
-   - Reflects the user's personalization: ${data.personalization}
-   - Includes steps that help achieve their personalization within their prep
-
-Format:
-Return ONLY a valid and complete JSON object in the EXACT structure below — nothing else.
+   - description (50–100 words, step-by-step instructions)
+3. Spread activities across all SAT sections (Math, Reading, Writing) and **avoid repeating the same topic on consecutive days**.
+4. Return ONLY a valid JSON object, structured exactly like this:
 
 {
   "days": [
@@ -39,7 +36,7 @@ Return ONLY a valid and complete JSON object in the EXACT structure below — no
       "activities": [
         {
           "topic": "string",
-          "type": "string - only one word",
+          "type": "review or practice",
           "duration": number,
           "description": "string"
         }
@@ -49,36 +46,17 @@ Return ONLY a valid and complete JSON object in the EXACT structure below — no
 }
 
 Rules:
-- Do NOT include any explanation or notes before or after the JSON.
-- Ensure there are no trailing commas or invalid characters.
-- The response should be proper JSON that can be parsed by Javascript later on
-`;
+- Do NOT include any explanations, notes, or text outside the JSON.
+- Ensure the JSON is properly formatted and parsable in JavaScript.
+`
 
-  const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
+
   let retries = 0
 
   while (retries <= MAX_RETRIES) {
     try {
-      const response = await axios.post(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: prompt }
-          ],
-          temperature: 0.7,
-          stream: false
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`
-          }
-        }
-      )
-
-      const text = response.data?.choices?.[0]?.message?.content ?? ""
+      const response = await axios.post("/api/mistralai", { prompt })
+      const text = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
       const jsonMatch = text.match(/\{[\s\S]*\}/)
 
       if (!jsonMatch) throw new Error("No JSON object found in the response")
@@ -89,7 +67,6 @@ Rules:
       plan.days = plan.days.slice(0, maxDays).map((day: { activities: Activity[] }, index: number) => {
         const date = new Date(currentDate)
         date.setDate(date.getDate() + index)
-
         return {
           ...day,
           date: date.toISOString().split("T")[0],
@@ -100,7 +77,7 @@ Rules:
       return plan
     } catch (error) {
       retries++
-      if (retries > MAX_RETRIES) throw new Error("Failed to generate valid plan after backup retries. Error:" + error)
+      if (retries > MAX_RETRIES) throw new Error("Failed to generate valid plan after retries. Error:" + error)
     }
   }
 }
