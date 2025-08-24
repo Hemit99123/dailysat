@@ -127,3 +127,94 @@
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
 }
+
+/* Running-stroke: outer gradient rectangle + inner content rectangle; gap forms stroke */
+[data-running-stroke] {
+  --rs-width: 4px;         /* stroke thickness */
+  --rs-speed: 3s;          /* rotation duration */
+  --rs-radius: 14px;       /* outer radius */
+  --rs-fill: #0a0a0a;      /* inner fill */
+  --rs-text: #fff;         /* text color */
+  --rs-gradient: #6366f1, #8b5cf6, #0ea5e9, #22d3ee, #6366f1; /* color stops */
+  /* size vars (defaults = md) */
+  --rs-pad-y: 0.5rem;
+  --rs-pad-x: 1.25rem;
+  --rs-font-size: 0.875rem;
+  --rs-gap: var(--rs-width); /* space forming stroke */
+  position: relative;
+  display: inline-block;
+  border: none;
+  padding: 0; /* padding handled by inner */
+  background: none;
+  border-radius: var(--rs-radius);
+  cursor: pointer;
+  overflow: visible; /* allow glow to extend */
+}
+
+[data-running-stroke] .rs-clip {
+  position: relative;
+  display: inline-block;
+  border-radius: var(--rs-radius);
+  overflow: hidden; /* clip rotator, inner */
+}
+
+[data-running-stroke] .rs-rotator {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, var(--rs-gradient));
+  animation: rs-spin-rotator var(--rs-speed) linear infinite;
+  z-index: 1;
+  height: 1000px;
+  top: 50%;
+}
+
+/* Glow (blurred duplicate) */
+[data-running-stroke] .rs-glow {
+  --rs-glow-blur: 10px;
+  --rs-glow-opacity: 0.55;
+  --rs-glow-scale: 1.08;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, var(--rs-gradient));
+  filter: blur(var(--rs-glow-blur)) saturate(140%);
+  opacity: var(--rs-glow-opacity);
+  transform: scale(var(--rs-glow-scale));
+  animation: rs-spin-glow var(--rs-speed) linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+[data-running-stroke] .rs-inner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--rs-gap);
+  padding: var(--rs-pad-y) var(--rs-pad-x);
+  background: var(--rs-fill);
+  color: var(--rs-text);
+  font-size: var(--rs-font-size);
+  border-radius: calc(var(--rs-radius) - var(--rs-width));
+  z-index: 2;
+}
+
+/* Size modifiers via data-size attribute */
+[data-running-stroke][data-size='sm'] { --rs-pad-y: 0.375rem; --rs-pad-x: 0.875rem; --rs-font-size: 0.75rem; }
+[data-running-stroke][data-size='lg'] { --rs-pad-y: 0.625rem; --rs-pad-x: 1.75rem; --rs-font-size: 1rem; }
+[data-running-stroke][data-size='icon'] { --rs-pad-y: 0; --rs-pad-x: 0; }
+[data-running-stroke][data-size='icon'] .rs-inner { width: 2.25rem; height: 2.25rem; padding: 0; }
+
+@keyframes rs-spin-rotator { from {transform:  translate(0, -50%) rotate(0deg);} to { transform:  translate(0, -50%) rotate(360deg); } }
+@keyframes rs-spin-glow { to { transform: rotate(360deg); } }
+
+[data-running-stroke]:hover .rs-rotator,
+[data-running-stroke]:hover .rs-glow { animation-duration: calc(var(--rs-speed) * 0.75); }
+[data-running-stroke]:active .rs-rotator,
+[data-running-stroke]:active .rs-glow { animation-duration: calc(var(--rs-speed) * 0.55); }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-running-stroke] .rs-rotator,
+  [data-running-stroke] .rs-glow { animation-duration: 12s; }
+}

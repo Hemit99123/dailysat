@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ArrowSvg from '@/components/common/icons/ArrowSVG';
 import Link from 'next/link';
+import { Button } from '@/components/common/Button';
 import { init } from 'next/dist/compiled/webpack/webpack';
 import { initialize } from 'next/dist/server/lib/render-server';
+import GradientUnderline from '@/components/ui/GradientUnderline';
 
 const Hero = () => {
   const slides = [
@@ -63,10 +65,10 @@ const Hero = () => {
     return () => window.removeEventListener('resize', check);
   }, []);
   return (
-    <div className="relative w-screen h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree overflow-hidden">
+    <div className="relative w-screen min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center text-blue-900 font-figtree overflow-hidden py-6 md:py-20 space-y-5 md:space-y-7">
       {/* Foreground content */}
       <motion.div
-        className="relative z-10 flex items-center text-sm border border-gray-200 bg-white/70 backdrop-blur-sm shadow-sm px-3 py-1 rounded-full text-gray-800 mb-3"
+        className="relative z-10 flex items-center text-sm border border-gray-200 bg-white/70 backdrop-blur-sm shadow-sm px-3 py-0.5 rounded-full text-gray-800"
         initial={{ opacity: 0, y: -20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -80,27 +82,29 @@ const Hero = () => {
         </span>
       </motion.div>
 
-      <motion.h1
-        className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        viewport={{ once: true }}
-      >
-        SAT Preparation Made
-      </motion.h1>
-      <motion.h1
-        className="relative z-10 text-[45px] sm:text-[70px] font-[600] leading-[1.1em] tracking-[-0.055em]"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        viewport={{ once: true }}
-      >
-        Simple and Effective.
-      </motion.h1>
+      <div className="relative z-10 flex flex-col items-center gap-y-0 sm:gap-y-0.5 leading-tight -mt-3 sm:-mt-4">
+        <motion.h1
+          className="text-[45px] sm:text-[70px] font-[600] leading-[0.88em] tracking-[-0.055em]"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          viewport={{ once: true }}
+        >
+          <GradientUnderline className="pr-2" from="#0ea5e9" to="rgba(14,165,233,0)">SAT</GradientUnderline>{' '}Preparation Made
+        </motion.h1>
+        <motion.h1
+          className="text-[45px] sm:text-[70px] font-[600] leading-[0.88em] tracking-[-0.055em]"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          Simple and <GradientUnderline from="#0d4fff" to="rgba(13,79,255,0)">Effective</GradientUnderline>.
+        </motion.h1>
+      </div>
 
       <motion.div
-        className="relative z-10 text-lg text-gray-700 p-4 max-w-xl"
+        className="relative z-10 text-lg text-gray-700 p-4 max-w-xl mt-2 md:mt-3"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
@@ -132,51 +136,69 @@ const Hero = () => {
           alt={slides[index].alt}
           initial={{ scale: 0.9, opacity: 0, rotate: slides[index].initialRot }}
           animate={{ scale: 1, opacity: 0.27, rotate: slides[index].finalRot }}
-          exit={{ scale: 0.9, opacity: 0, rotate: slides[index].initialRot}}
+          exit={{ scale: 0.9, opacity: 0, rotate: slides[index].initialRot }}
           transition={{ duration: 0.5 }}
           style={
             showMask
               ? {
-                  WebkitMaskImage:
-                    (slides[index].side == "right")
-                      ? 'radial-gradient(circle at 50vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)'
-                      : 'radial-gradient(circle at 0vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)',
-                  maskImage:
-                    (slides[index].side == "right")
-                      ? 'radial-gradient(circle at 50vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)'
-                      : 'radial-gradient(circle at 0vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)',
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskRepeat: 'no-repeat',
-                }
+                WebkitMaskImage:
+                  (slides[index].side == "right")
+                    ? 'radial-gradient(circle at 50vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)'
+                    : 'radial-gradient(circle at 0vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)',
+                maskImage:
+                  (slides[index].side == "right")
+                    ? 'radial-gradient(circle at 50vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)'
+                    : 'radial-gradient(circle at 0vw 50vh, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0) 70%)',
+                WebkitMaskRepeat: 'no-repeat',
+                maskRepeat: 'no-repeat',
+              }
               : {}
           }
           className={"absolute " + slides[index].pos + " z-0 w-[600px] h-auto"}
         />
       </AnimatePresence>
       <motion.div
-        className="relative z-10 flex items-center space-x-2"
+        className="relative z-10 flex items-center space-x-2 mt-4 md:mt-6"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
         viewport={{ once: true }}
       >
-        <Link
-          href="/dashboard"
-          className="text-sm bg-blue-500 text-white py-2 px-4 rounded-lg flex items-center group"
+        <Button
+          asChild
+          variant="running-stroke"
+          ringColor="#3299b3ff"
+          fillColor="#0ea5e9"
+          textColor="#ffffff"
+          strokeThickness="3px"
+          runningColor="white"
+          strokeSpeed="2s"
+          size="lg"
         >
-          Start Your Journey
-          <ArrowSvg
-            className="w-4 h-4 ml-2 transition-transform duration-300 -rotate-45 group-hover:rotate-0"
-            stroke="white"
-          />
-        </Link>
+          <Link href="/dashboard" className="flex items-center">
+            Start Your Journey
+            <ArrowSvg
+              className="w-4 h-4 ml-2 transition-transform duration-300 -rotate-45 group-hover:rotate-0"
+              stroke="white"
+            />
+          </Link>
+        </Button>
 
-        <Link
-          href="/#how-it-works"
-          className="text-sm border border-gray-600 text-black py-2 px-4 rounded-lg flex items-center group"
+        <Button
+          asChild
+          variant="running-stroke"
+          ringColor="#ddddddff"
+          fillColor="white"
+          textColor="#111827"
+          strokeThickness="3px"
+          strokeSpeed="2s"
+          runningColor="#00FFFF"
+          size="lg"
         >
-          See How It Works
-        </Link>
+          <Link href="/#how-it-works" className="flex items-center">
+            See How It Works
+          </Link>
+        </Button>
       </motion.div>
     </div>
   );
